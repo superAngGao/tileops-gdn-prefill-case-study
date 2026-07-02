@@ -1,6 +1,6 @@
 # Blog Ladder Evidence: GDN Prefill 64K/H16
 
-Purpose: writing-facing evidence package for the GDN prefill blog. This file
+Purpose: evidence package for the GDN prefill case study. This file
 separates experiment-adapter rows from final/external anchors so the
 blog does not mix attribution lanes.
 
@@ -43,8 +43,7 @@ controlled producer-swap rows.
 These rows share the same formal input hash, pass correctness against the
 recorded FLA reference, and are marked `causal_ladder_eligible=true` in the
 harness. That machine-readable field means they are allowed into the controlled
-experiment table; it does not mean every row should be a headline narrative
-milestone.
+experiment table; it does not mean every row is a headline narrative milestone.
 
 | Role | Variant | Blog meaning | Latency ms | Speedup vs previous | Use |
 | --- | --- | --- | ---: | ---: | --- |
@@ -78,7 +77,7 @@ generic A producer, supports the process claim that the agent was adapting a
 schedule idea rather than reproducing a finished kernel. The incomplete
 intermediate row motivated the cleaner A/replay attribution experiment.
 
-The FlashQLA-learning sequence should be written as:
+The FlashQLA-learning sequence is:
 
 ```text
 local wall
@@ -88,7 +87,7 @@ local wall
   -> TileOps blocksolve / Neumann-style A producer full row: measured
 ```
 
-The clean Section 11 table should use full end-to-end rows:
+The clean A-producer table uses full end-to-end rows:
 
 | Evidence | Latency ms | Meaning |
 | --- | ---: | --- |
@@ -97,8 +96,8 @@ The clean Section 11 table should use full end-to-end rows:
 | TileOps blocksolve A + TileOps replay/output full row | 0.695237 | same-scope measured TileOps prepare-A row |
 
 Replay-only and component-sum rows can stay in supporting diagnostics, but
-they should not replace the headline Section 11 rows. The native current-TL KKT
-port remains rejected, but the missing no-Neumann combined row is filled by the
+they do not replace the headline A-producer rows. The native current-TL KKT port
+remains rejected, but the missing no-Neumann combined row is filled by the
 TL0.1.8-lowering injection measurement.
 
 We also attempted a true measured combined row:
@@ -114,7 +113,7 @@ combined row uses the TL0.1.8 lowered KKT via an external launcher.
 
 ## External And Final Anchors
 
-These rows are useful context, but they should not be mixed into the controlled
+These rows are useful context, but they are not mixed into the controlled
 experiment-adapter chain as if they were intermediate algorithmic steps. For
 the main article's productionization section, the stronger claim is now the
 refreshed production-surface sweep rather than the single `64K/H16` wrapper
@@ -132,8 +131,8 @@ explicit V6 adapter:
 0.715062 ms / 0.692026 ms = 1.03x
 ```
 
-This is a production wrapper / dispatch-context observation. It should not be
-written as a new algorithmic jump after the blocked-inverse A producer.
+This is a production wrapper / dispatch-context observation, not a new
+algorithmic jump after the blocked-inverse A producer.
 
 Production-surface evidence:
 
@@ -191,7 +190,7 @@ vendor_commit_file=91d2f468944842ab2d947350d280ca1db793db57
 
 This does not invalidate the controlled TileOps internal ladder, because the
 same recorded reference and same input hash are used consistently for
-correctness. However, external FLA claims should be phrased conservatively:
+correctness. External FLA claims use the conservative phrase:
 
 ```text
 recorded vendored FLA reference
@@ -200,7 +199,7 @@ recorded vendored FLA reference
 or should include a footnote that the requested `FLA 0.5.1` package identity was
 not independently verified in this run.
 
-## Suggested Blog Claims
+## Supported Claims
 
 Supported:
 

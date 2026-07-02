@@ -67,3 +67,8 @@ they need.
 
 See [`PUBLICATION_STATUS.md`](PUBLICATION_STATUS.md) for the current release
 status and known caveats.
+
+## License / Reuse
+
+This repository is public for reading, review, and citation. No open reuse
+license is granted by default; see [`LICENSE.md`](LICENSE.md).

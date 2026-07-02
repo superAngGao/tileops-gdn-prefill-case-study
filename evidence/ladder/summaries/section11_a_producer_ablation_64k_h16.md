@@ -23,7 +23,7 @@ adaptation, not the controlled A-producer ablation.
 
 ## Main Full End-To-End Rows
 
-These are the rows Section 11 should use in the main text.
+These are the main full end-to-end rows for the A-producer comparison.
 
 | Row | Prepare-A producer | Replay/output | Timing scope | Correctness | Latency ms | Use |
 | --- | --- | --- | --- | --- | ---: | --- |
@@ -53,8 +53,8 @@ unchanged TileOps PR1596 replay path.
 
 The external-lowering rows pass against the public TL0.1.8 artifact; the older
 replay-only TileOps diagnostics pass against the recorded vendored FLA
-reference. These diagnostics explain the mechanism, but they should not replace
-the main full-op Section 11 table.
+reference. These diagnostics explain the mechanism, but they do not replace the
+main full-op A-producer table.
 
 ## Rejected Measured Combined Rows
 
@@ -68,9 +68,9 @@ current-TL FlashQLA-style KKT producer + TileOps PR1596 replay
 This is exactly the "replace TileOps blocksolve / Neumann producer with a
 FlashQLA-style producer under the same TileOps replay path" test. It is
 measurable in the harness, but it is not correct at `64K/H16`, so its latency
-is not performance evidence and should not be shown in the blog. The failed
-diagnostics covered `default`, `legacy`, and `wgmma` compatibility modes; see
-the JSON files listed below for raw failure details.
+is not performance evidence. The failed diagnostics covered `default`, `legacy`,
+and `wgmma` compatibility modes; see the JSON files listed below for raw
+failure details.
 
 The root cause is the current-TL FlashQLA KKT producer, not the replay
 handoff. A direct diagnostic on the same artifact showed:
@@ -82,7 +82,7 @@ TL0.1.8 exported A: 0 nonfinite values, range [-0.269, 1.0]
 ```
 
 Therefore, those current-TL measured combined rows exist but are rejected.
-They should not overwrite the new passing TL0.1.8-lowering injection row.
+They do not overwrite the new passing TL0.1.8-lowering injection row.
 The correct evidence is now:
 
 1. public TL0.1.8 FlashQLA producer component;
@@ -172,11 +172,10 @@ TileOps replay," not as a native current-TL KKT port.
 We did attempt the single measured combined path in the current harness, but
 the current-TL FlashQLA-style KKT producer failed correctness at `64K/H16`
 under `default`, `legacy`, and `wgmma` compatibility modes. Those failed rows
-should be reported as rejected diagnostics, not performance evidence.
+are rejected diagnostics, not performance evidence.
 
-The V5 bridge row should not be called "FlashQLA-style A plus production
-replay." It uses a conservative generic TileOps A producer under a mixed
-experiment adapter.
+The V5 bridge row is not "FlashQLA-style A plus production replay." It uses a
+conservative generic TileOps A producer under a mixed experiment adapter.
 
 Current-TL FlashQLA migration KKT rows produced non-finite outputs at this
 shape and are rejected for attribution.

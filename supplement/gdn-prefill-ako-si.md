@@ -96,9 +96,8 @@ full transition:    M, b  have shape DK x DK and DK x DV
 augmented summary:  [b | M] has width DV + DK
 ```
 
-Figure 12 shows the tradeoff. In the final illustration, this should be drawn
-as two side-by-side panels: dependency depth on the left, representation cost
-on the right.
+Figure 12 presents the tradeoff as two side-by-side panels: dependency depth on
+the left and representation cost on the right.
 
 ```mermaid
 flowchart LR
@@ -184,11 +183,11 @@ generic_a_legacy
   -> tileops_owned_cp_blocked_inverse_a
 ```
 
-The V5 row should be discussed as the first correct TileOps-owned adaptation
-after studying FlashQLA. It moved into the CP-split downstream structure, but
-the conservative generic A producer and mixed bridge implementation kept the
-full-op latency far from FlashQLA. That is useful evidence: it shows the gap
-between adopting a schedule idea and reproducing a finished kernel.
+The V5 row is the first correct TileOps-owned adaptation after studying
+FlashQLA. It moved into the CP-split downstream structure, but the conservative
+generic A producer and mixed bridge implementation kept the full-op latency far
+from FlashQLA. That is useful evidence: it shows the gap between adopting a
+schedule idea and reproducing a finished kernel.
 
 The V5/V6 jump is supporting bridge evidence under the same downstream
 contract: replacing the conservative generic A producer with the
@@ -223,9 +222,9 @@ meanings:
 
 #### SI.3.2 External And Final Anchors
 
-These rows should not be mixed into the experiment-adapter rows. The
-`64K/H16` dispatch row is still useful as an anchor, but Section 4.3 should use
-the broader production-surface sweep as the production claim.
+These rows are not mixed into the experiment-adapter rows. The `64K/H16`
+dispatch row is still useful as an anchor, but the broader production-surface
+sweep is the production claim.
 
 | Variant | Role | `64K/H16` latency | Correctness | Use in blog |
 | --- | --- | ---: | --- | --- |
@@ -255,7 +254,7 @@ same-lowering replay attribution experiment.
 #### SI.3.3 Source, ABI, And Correctness Caveats
 
 The formal evidence package is clean enough for the scoped blog claim, but it
-should not be overstated.
+has bounded claim scope.
 
 | Pair / row | ABI/source fact | Evidence |
 | --- | --- | --- |
@@ -289,9 +288,8 @@ vendor_commit_file=91d2f468944842ab2d947350d280ca1db793db57
 
 This does not invalidate the TileOps experiment-adapter rows because
 all rows use the same recorded reference and same input artifact for
-correctness. But external FLA claims should say "recorded vendored FLA
-reference" unless the package identity is independently verified before
-publication.
+correctness. External FLA claims use "recorded vendored FLA reference" unless
+the package identity is independently verified.
 
 #### SI.3.4 A/Replay Cross-Ablation
 
@@ -324,11 +322,10 @@ single combined JSONL file.
 | `TO/TO replay` | TileOps blocksolve A | TileOps PR1596 CP replay | replay-only | recorded vendored FLA reference | `0.542905 ms` |
 | `TO/TO full` | TileOps blocksolve A | TileOps PR1596 CP replay | include producers | public TL0.1.8 artifact | `0.695237 ms` |
 
-This changes the explanation. V5 should not be described as a faithful
-FlashQLA reproduction. It is a controlled bridge row that keeps a conservative
-generic A producer while moving into the TileOps-owned CP downstream ABI. That
-is why it can be useful in the adapter table without being
-performance-near FlashQLA.
+This changes the explanation. V5 is not a faithful FlashQLA reproduction. It is
+a controlled bridge row that keeps a conservative generic A producer while
+moving into the TileOps-owned CP downstream ABI. That is why it can be useful in
+the adapter table without being performance-near FlashQLA.
 
 The degradation is part of the evidence, not a result to hide. Together with
 the mixed TileOps-owned implementation path and conservative generic A producer,
@@ -372,11 +369,11 @@ path, but slower than the same-input TileOps full row:
 
 That row is a measured single host-process path, but it is still an
 external-lowering harness row rather than a production TileOps API row. It
-should be named precisely: TL0.1.8 lowered FlashQLA KKT via external launcher
-plus unchanged TileOps PR1596 replay.
+is named precisely as TL0.1.8 lowered FlashQLA KKT via external launcher plus
+unchanged TileOps PR1596 replay.
 
-This is also why the Neumann prepare section should not use the `2.7674 ms -> 0.715062 ms`
-adapter jump as the main A-producer proof. The cleaner ablation is:
+This is also why the `2.7674 ms -> 0.715062 ms` adapter jump is not the main
+A-producer proof. The cleaner ablation is:
 
 ```text
 TL0.1.8-lowering prepare + TileOps replay: 0.815029 ms
@@ -574,9 +571,9 @@ input hash should match the archived artifact when the same artifact is reused:
 sha256:a8987a2c6d16c658a1cb8ed95e409d973a3f736e2019d8719b143f18b4741513
 ```
 
-The generated summary should show `publication_eligible=true` for the accepted
-formal rows and should keep `tileops_final_dispatch` outside the controlled
-causal ladder.
+The generated summary reports `publication_eligible=true` for the accepted
+formal rows and keeps `tileops_final_dispatch` outside the controlled causal
+ladder.
 
 The A/replay cross-ablation uses a specialized external-lowering launcher. Its
 archived machine-readable result is listed above; rerun it only in the
@@ -585,9 +582,9 @@ sweep is also archived as raw JSONL. The single `run_ladder.py` command above
 reproduces the formal `64K/H16` harness rows; it is not the reproduction command
 for the five-shape TileOps/FlashQLA surface sweep.
 
-### SI.4 Remaining Publication Guardrails
+### SI.4 Claim And Update Guardrails
 
-Before publication:
+When citing or updating this package:
 
 1. Keep the Neumann/blocksolve formulas tied to the implementation caveat:
    TileOps uses a blocked-inverse / Neumann-style producer, and the materialized

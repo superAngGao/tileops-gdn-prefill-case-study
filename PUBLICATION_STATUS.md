@@ -24,14 +24,16 @@ This repository packages the current GDN prefill AKO case study as three layers:
 
 - The FlashQLA comparison is public-environment context, not a same-lowering
   attribution experiment.
-- The FLA baseline should be described as a recorded vendored FLA reference
-  unless package identity is independently verified.
+- The FLA baseline is described as a recorded vendored FLA reference unless
+  package identity is independently verified.
 - The TL0.1.8-lowering FlashQLA-style prepare row is an external-lowering
   harness row, not a native current-TileLang KKT port.
-- Benchmark tables should be refreshed if the TileOps PR head, TileLang wheel,
+- Benchmark tables require refresh if the TileOps PR head, TileLang wheel,
   docker/runtime, GPU, timer semantics, or input artifact changes.
 
-## License
+## License / Reuse
 
-License is not declared in this package yet. Add a license before treating this
-repository as reusable source material beyond reading and review.
+This package is published for reading, review, and citation. No open reuse
+license is granted by default; see [`LICENSE.md`](LICENSE.md). Contact the
+author before reusing substantial text, figures, benchmark data, or code outside
+normal quotation/citation.

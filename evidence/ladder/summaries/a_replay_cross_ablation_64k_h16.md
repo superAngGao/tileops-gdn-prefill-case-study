@@ -8,9 +8,9 @@ CP row not match FlashQLA? And if the final TileOps row beats FlashQLA, did the
 replay side or the A-producer side improve?
 ```
 
-This file is a writing-facing evidence note. It should be used to explain the
-mechanism, not as a replacement for the TileOps experiment-adapter
-rows in `blog_ladder_evidence_64k_h16.md`.
+This file is an evidence note for mechanism-level A/replay attribution. It does
+not replace the TileOps experiment-adapter rows in
+`blog_ladder_evidence_64k_h16.md`.
 
 July 1 refresh: the TileOps replay rows below were rerun under the same
 `warmup=5, repeat=20, trials=3` CUPTI/L2-flush timing contract as the public
@@ -55,7 +55,7 @@ Neumann row.
 
 The old explanation was under-specified. The data says two things at once:
 
-First, the FlashQLA-learning story should be presented as three nodes:
+First, the FlashQLA-learning evidence separates into three nodes:
 
 | Node | Evidence | Meaning |
 | --- | --- | --- |
@@ -65,8 +65,8 @@ First, the FlashQLA-learning story should be presented as three nodes:
 
 1. The V5 `tileops_owned_cp_generic_a` row is not a faithful FlashQLA
    reproduction row. It is a controlled bridge row: generic TileOps A producer
-   plus the TileOps-owned CP downstream ABI. Its `5.3912 ms` latency should not
-   be used to say "learning the FlashQLA schedule only gets this far."
+   plus the TileOps-owned CP downstream ABI. Its `5.3912 ms` latency is not
+   evidence that "learning the FlashQLA schedule only gets this far."
 
 2. With public FlashQLA TL0.1.8 A/g fixed, TileOps replay is substantially
    faster than public FlashQLA replay under this benchmark method:
