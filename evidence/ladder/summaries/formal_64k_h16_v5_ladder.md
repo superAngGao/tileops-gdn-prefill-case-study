@@ -1,5 +1,10 @@
 # GDN Prefill Ladder Summary
 
+Archived diagnostic scope: this summary is retained for provenance of the V5
+experiment-adapter run. It is superseded for headline numbers by the refreshed
+formal/current summaries, the same-input A-producer ablation, and the production
+surface sweep. Do not use the V5 latency here as a headline performance row.
+
 - Source JSONL: `experiments/gated_deltanet_prefill_blog_ladder/results/formal_64k_h16_v5_ladder.jsonl`
 - Rows: 4
 - Publication-eligible evidence rows: 4

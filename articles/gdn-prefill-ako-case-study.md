@@ -25,8 +25,10 @@ Benchmark scope:
   BTHD layout; sequence length and head count vary by row.
 - Hardware/timer: H200 using CUPTI kernel-only timing with L2 flush. The
   archived surface rows use `warmup=5`, `repeat=20`, and `trials=3`.
-- JSONL source: TileOps/FLA rows and public FlashQLA rows are archived under
-  `evidence/ladder/results/production_surface_*_20260701*.jsonl`.
+- JSONL source:
+  [`production_surface_tileops_vs_fla_20260701_tmpdir.jsonl`](../evidence/ladder/results/production_surface_tileops_vs_fla_20260701_tmpdir.jsonl)
+  and
+  [`production_surface_flashqla_20260701.jsonl`](../evidence/ladder/results/production_surface_flashqla_20260701.jsonl).
 - Reference roles: FLA is a recorded vendored correctness/latency reference;
   FlashQLA is a public TL0.1.8 anchor.
 - Claim role: this table supports the production serving-surface claim. It does
@@ -131,7 +133,7 @@ contract. Each candidate needed four gates:
 
 1. **Correctness gate.** Compare output and final state against the recorded
    FLA reference for the scoped shapes, dtype, input distribution, and
-   tolerance.
+   tolerance. SI records the tolerances and diagnostic error metrics.
 2. **Benchmark gate.** Use the TileOps benchmark infrastructure and preserve
    metadata: GPU, timer, warmup/repeat/trials, commit, layout, seed, and input
    artifact.
@@ -273,8 +275,8 @@ Then the effective writes have the shape:
 ```math
 \begin{aligned}
 A &= (I + M)^{-1}, \\
-R_K &= \text{beta-scaled keys under the chosen ABI}, \\
-R_V &= \text{beta-scaled values under the chosen ABI}, \\
+R_K &= \text{ABI-scaled keys}, \\
+R_V &= \text{ABI-scaled values}, \\
 W &= A R_K, \\
 U &= A R_V .
 \end{aligned}
@@ -285,9 +287,10 @@ operator-level interaction; the production path may split factors between the A
 producer and the replay/output kernel.
 
 The beta index is also convention-dependent. Some derivations place the write
-strength on the earlier token or fold it into the key/value write tensors. This
-article uses the implementation-scoped convention above and treats the remaining
-factor placement as part of the A-producer / replay ABI.
+strength on the earlier token or fold it into the key/value write tensors. These
+placements are not all applied simultaneously. This article uses the
+implementation-scoped convention above and treats the remaining factor placement
+as part of the A-producer / replay ABI.
 
 Why does a lower-triangular solve appear at all? A small three-token sketch is
 enough. Suppose the raw write at token `i` is corrected by the residuals from
@@ -360,6 +363,8 @@ Three nearby numbers have different meanings:
 Keeping those rows separate is what prevents the A-producer attribution, replay
 attribution, and production-dispatch claim from collapsing into one misleading
 speedup ladder.
+
+### Final Attribution Split
 
 The attribution split is:
 
