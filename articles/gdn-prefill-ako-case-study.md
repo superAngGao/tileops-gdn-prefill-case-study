@@ -25,6 +25,8 @@ Benchmark scope:
   BTHD layout; sequence length and head count vary by row.
 - Hardware/timer: H200 using CUPTI kernel-only timing with L2 flush. The
   archived surface rows use `warmup=5`, `repeat=20`, and `trials=3`.
+- JSONL source: TileOps/FLA rows and public FlashQLA rows are archived under
+  `evidence/ladder/results/production_surface_*_20260701*.jsonl`.
 - Reference roles: FLA is a recorded vendored correctness/latency reference;
   FlashQLA is a public TL0.1.8 anchor.
 - Claim role: this table supports the production serving-surface claim. It does
