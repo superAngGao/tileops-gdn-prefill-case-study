@@ -21,6 +21,16 @@ public FlashQLA TL0.1.8 anchor under the documented benchmark contracts. The
 FlashQLA comparison is a public-environment comparison, not a controlled
 same-lowering attribution experiment.
 
+Benchmark scope:
+
+- Hardware/timer: H200 using the TileOps benchmark infrastructure and archived
+  kernel-timing metadata.
+- Reference roles: FLA is a recorded vendored correctness/latency reference;
+  FlashQLA is a public TL0.1.8 anchor.
+- Claim role: this table supports the production serving-surface claim. It does
+  not support same-lowering attribution claims about FlashQLA replay or KKT
+  lowering.
+
 | Shape | TileOps production dispatch | Recorded FLA reference | Public FlashQLA TL0.1.8 anchor | TileOps / FLA throughput | TileOps / FlashQLA throughput |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | `32K/H16` | `0.3723 ms` | `3.7964 ms` | `0.5440 ms` | `10.20x` | `1.46x` public-env |
@@ -138,8 +148,8 @@ the same gates.
 
 ## 3. Local AKO: Useful Wins And The Wall
 
-This section proves that local agentic kernel tuning helped, but did not
-reduce the long replay dependency depth.
+This section shows, under the recorded diagnostics, that local agentic kernel
+tuning helped but did not reduce the long replay dependency depth.
 
 The first useful local win was scale placement. The recurrence update contains
 a per-token gate scale. One expression scales the key side before the matrix
@@ -324,8 +334,17 @@ context:
 | FlashQLA-style prepare A + TileOps replay | TL0.1.8-lowering KKT via external launcher | TileOps CP replay | `0.815029 ms` | no-Neumann combined row |
 | TileOps prepare A + TileOps replay | blocked-inverse / Neumann-style A | TileOps CP replay | `0.695237 ms` | headline prepare-A comparison |
 
-Adapter, ablation, and production-wrapper numbers are separated in SI to avoid
-mixing evidence lanes.
+Three nearby numbers have different meanings:
+
+| Number | Meaning |
+| ---: | --- |
+| `0.715062 ms` | adapter bridge evidence: the blocked-inverse producer can feed the same CP downstream ABI, but this is not the clean A-producer proof |
+| `0.695237 ms` | same-input A-producer ablation: the headline prepare-A comparison in this section |
+| `0.692026 ms` / `~0.6951 ms` | production wrapper / refreshed dispatch surface evidence: production context, not the A-producer ablation proof |
+
+Keeping those rows separate is what prevents the A-producer attribution, replay
+attribution, and production-dispatch claim from collapsing into one misleading
+speedup ladder.
 
 The native current-TL FlashQLA-style KKT producer remains a rejected diagnostic
 at `64K/H16`; the no-Neumann row above uses the TL0.1.8-lowering harness.

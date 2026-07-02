@@ -960,9 +960,8 @@ There is one implementation convention to state carefully. In the partitioned
 CP path, TileOps builds the materialized `A` with a zero gate input and passes
 the chunk-local cumulative gate `g_cum` separately to the CP replay/output
 path. In the older non-CP prepare path, the gate factor can be folded directly
-into `A`. The blog should present the formula above as the mathematical
-operator view, then say the production ABI may split the gate factor between
-the A producer and the replay kernel.
+into `A`. The formula above is the mathematical operator view; the production
+ABI may split the gate factor between the A producer and the replay kernel.
 
 A Neumann view explains why this is an attractive producer shape. Because `M`
 is strictly lower triangular inside a fixed chunk:

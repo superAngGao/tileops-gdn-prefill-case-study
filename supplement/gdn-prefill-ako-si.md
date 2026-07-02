@@ -124,9 +124,8 @@ the better engineering choice.
 
 Historical negative-result evidence:
 
-Temporary historical evidence. Replace this block with refreshed negative-result
-evidence before publication, or move it to an appendix as dated trajectory
-evidence.
+This block is retained as dated diagnostic context. It is not used for headline
+performance claims.
 
 | Candidate family | Result | Scope |
 | --- | --- | --- |
@@ -518,13 +517,12 @@ TileOps blocksolve tail:             1,610,612,736 MACs
 ```
 
 This comparison is source-level arithmetic accounting, not a generated-SASS
-instruction count. The blog should therefore say the Neumann-style tail spends
-slightly more arithmetic than the forward hierarchy, but exposes the work as a
-fixed sequence of small block GEMMs. Do not use this tail-only comparison to
-make claims about the full prepare-A producer, because interaction construction
-is a separate stage.
+instruction count. The Neumann-style tail spends slightly more arithmetic than
+the forward hierarchy, but exposes the work as a fixed sequence of small block
+GEMMs. This tail-only comparison does not support claims about the full
+prepare-A producer, because interaction construction is a separate stage.
 
-#### SI.3.5 What Still Needs Refresh Before Publication
+#### SI.3.5 Evidence Refresh Conditions
 
 The formal `64K/H16` package and the five-shape production-surface sweep replace
 the old mixed historical speed ladder as the main evidence spine. They still
@@ -583,10 +581,9 @@ causal ladder.
 The A/replay cross-ablation uses a specialized external-lowering launcher. Its
 archived machine-readable result is listed above; rerun it only in the
 TL0.1.8-lowering environment used for that experiment. The production-surface
-sweep is also archived as raw JSONL. A compact single-command surface rerun is
-still a tooling TODO; until it exists, cite the archived JSONL rather than
-pretending the five-shape TileOps/FlashQLA sweep is reproduced by the single
-`run_ladder.py` command above.
+sweep is also archived as raw JSONL. The single `run_ladder.py` command above
+reproduces the formal `64K/H16` harness rows; it is not the reproduction command
+for the five-shape TileOps/FlashQLA surface sweep.
 
 ### SI.4 Remaining Publication Guardrails
 

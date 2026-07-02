@@ -38,6 +38,21 @@ they need.
 | `algorithm/` | Supplemental algorithm notes. |
 | `archive/` | Historical drafts and planning documents retained for provenance. |
 
+## For Reviewers
+
+1. Read the publication-oriented story:
+   [`articles/gdn-prefill-ako-case-study.md`](articles/gdn-prefill-ako-case-study.md).
+2. Check the headline production-surface evidence:
+   [`production_surface_tileops_vs_fla_20260701_tmpdir.jsonl`](evidence/ladder/results/production_surface_tileops_vs_fla_20260701_tmpdir.jsonl)
+   and
+   [`production_surface_flashqla_20260701.jsonl`](evidence/ladder/results/production_surface_flashqla_20260701.jsonl).
+3. Check the prepare-A / replay attribution:
+   [`section11_a_producer_ablation_64k_h16.md`](evidence/ladder/summaries/section11_a_producer_ablation_64k_h16.md).
+4. Check variant roles and rejected rows:
+   [`variant_inventory.md`](evidence/ladder/docs/variant_inventory.md).
+5. Check rerun commands and caveats:
+   [`gdn-prefill-ako-si.md`](supplement/gdn-prefill-ako-si.md).
+
 ## Evidence Boundaries
 
 - TileOps vs FlashQLA numbers are public-environment comparisons, not
