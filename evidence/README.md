@@ -1,0 +1,25 @@
+# Evidence Bundle
+
+This directory contains the archived evidence behind the GDN prefill case study.
+The Markdown summaries are for human review; the JSONL files are the
+machine-readable source of truth.
+
+## Headline Pointers
+
+| Evidence target | Files |
+| --- | --- |
+| Main `64K/H16` story and writing summary | [`ladder/summaries/blog_ladder_evidence_64k_h16.md`](ladder/summaries/blog_ladder_evidence_64k_h16.md) |
+| Variant inventory and claim roles | [`ladder/docs/variant_inventory.md`](ladder/docs/variant_inventory.md) |
+| Same-input A-producer ablation | [`ladder/summaries/section11_a_producer_ablation_64k_h16.md`](ladder/summaries/section11_a_producer_ablation_64k_h16.md) |
+| Replay-side diagnostics | [`ladder/summaries/a_replay_cross_ablation_64k_h16.md`](ladder/summaries/a_replay_cross_ablation_64k_h16.md) |
+| Production dispatch surface, TileOps vs FLA | [`ladder/results/production_surface_tileops_vs_fla_20260701_tmpdir.jsonl`](ladder/results/production_surface_tileops_vs_fla_20260701_tmpdir.jsonl) |
+| Production dispatch surface, public FlashQLA | [`ladder/results/production_surface_flashqla_20260701.jsonl`](ladder/results/production_surface_flashqla_20260701.jsonl) |
+
+## Reading Rules
+
+- Do not mix controlled ladder rows, public FlashQLA anchors, component
+  diagnostics, and production-wrapper rows as if they were one causal ladder.
+- Use `publication_role`, `causal_ladder_eligible`, and correctness metadata in
+  the JSONL rows to determine what each row is allowed to support.
+- FLA references are recorded vendored references unless the row metadata
+  explicitly verifies package identity.
