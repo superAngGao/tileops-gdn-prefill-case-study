@@ -1,11 +1,9 @@
 # A Case Study in Agentic Kernel Optimization: Gated DeltaNet Prefill in TileLang
 
-Gated DeltaNet prefill is a useful stress test for AI-assisted kernel work
-because it is not just a matrix multiply. It has chunk-local causal work,
-recurrent key-value memory, gate decay, delta-rule residual writes, output
-replay, final-state production, and shape-sensitive long-context serving.
-Prefill wants parallel throughput, but the final state must still match
-token-by-token decode.
+Long-context Gated DeltaNet prefill is a useful test for agent-assisted kernel
+work because it asks for two things at once: expose parallelism across tens of
+thousands of tokens, and still produce the same recurrent final state as
+token-by-token decode. That makes it harder than optimizing a standalone GEMM.
 
 This case study follows how TileOps turned that operator into a production
 prefill path. The final path combines three ingredients:
@@ -15,16 +13,18 @@ prefill path. The final path combines three ingredients:
 3. an expert blocked-inverse / Neumann-style prepare-A producer implemented in
    TileOps.
 
-On the refreshed H200 serving-shape sweep below, the TileOps production
-dispatch path is faster than the recorded FLA reference and faster than the
-public FlashQLA TL0.1.8 anchor under the documented benchmark contracts. The
-FlashQLA comparison is a public-environment comparison, not a controlled
-same-lowering attribution experiment.
+On five H200 serving-shaped synthetic-input sweeps, the TileOps dispatch
+candidate measured `8.2-13.3x` faster than the recorded vendored FLA reference
+and `1.46-2.91x` faster than a public FlashQLA TL0.1.8 anchor. These are
+production-surface measurements under the archived benchmark contracts; the
+FlashQLA rows are public-environment anchors, not same-lowering attribution.
 
 Benchmark scope:
 
-- Hardware/timer: H200 using the TileOps benchmark infrastructure and archived
-  kernel-timing metadata.
+- Shape/input: synthetic inputs with `B=1`, `DK=DV=128`, `chunk64`, `fp16`,
+  BTHD layout; sequence length and head count vary by row.
+- Hardware/timer: H200 using CUPTI kernel-only timing with L2 flush. The
+  archived surface rows use `warmup=5`, `repeat=20`, and `trials=3`.
 - Reference roles: FLA is a recorded vendored correctness/latency reference;
   FlashQLA is a public TL0.1.8 anchor.
 - Claim role: this table supports the production serving-surface claim. It does
@@ -41,6 +41,12 @@ Benchmark scope:
 
 The FLA row is a recorded vendored reference unless package identity is
 explicitly verified; SI records the source and version caveats.
+
+Reference identity: the FLA path used here is a vendored source reference with
+vendor commit `91d2f468944842ab2d947350d280ca1db793db57` and no independently
+verified package version in this evidence package. It supports the recorded
+correctness oracle and latency context; it is not a claim about an externally
+verified official FLA `0.5.1` package.
 
 The main lesson is not that an agent magically invented a better GPU kernel.
 It is that agentic optimization becomes useful when the problem is made
@@ -276,6 +282,11 @@ The exact beta/gate placement is ABI-dependent. This formula shows the
 operator-level interaction; the production path may split factors between the A
 producer and the replay/output kernel.
 
+The beta index is also convention-dependent. Some derivations place the write
+strength on the earlier token or fold it into the key/value write tensors. This
+article uses the implementation-scoped convention above and treats the remaining
+factor placement as part of the A-producer / replay ABI.
+
 Why does a lower-triangular solve appear at all? A small three-token sketch is
 enough. Suppose the raw write at token `i` is corrected by the residuals from
 earlier tokens:
@@ -323,7 +334,9 @@ does more arithmetic than the minimal strictly triangular interaction, but it
 exposes the work as regular GEMM-shaped blocks. In the solve/composition tail,
 the TileOps blocked shape is about `1.097x` the MAC count of the FlashQLA-style
 forward solve/combine tail. The advantage is not magic arithmetic reduction;
-it is a more parallel backend-friendly shape. SI gives the full MAC accounting.
+it is a more parallel backend-friendly shape. The win is therefore a scheduling
+and backend-shape win, not a claim that the mathematical operator became cheaper
+in the abstract. SI gives the full MAC accounting.
 
 The clean prepare-A comparison is shown with the public FlashQLA anchor for
 context:
@@ -345,6 +358,14 @@ Three nearby numbers have different meanings:
 Keeping those rows separate is what prevents the A-producer attribution, replay
 attribution, and production-dispatch claim from collapsing into one misleading
 speedup ladder.
+
+The attribution split is:
+
+| Axis | Evidence | Meaning |
+| --- | --- | --- |
+| CP-split schedule | FlashQLA source and public anchor | FlashQLA supplied the schedule family that breaks the long replay wall. |
+| Replay/output implementation | public FlashQLA `A/g` + TileOps replay: `0.542807 ms`; public FlashQLA replay anchor: `0.860569 ms` | TileOps replay/output contributes an independent speedup under this benchmark method. |
+| Prepare-A producer | FlashQLA-style prepare + TileOps replay: `0.815029 ms`; TileOps prepare + TileOps replay: `0.695237 ms` | blocked-inverse / Neumann-style prepare improves the same replay family. |
 
 The native current-TL FlashQLA-style KKT producer remains a rejected diagnostic
 at `64K/H16`; the no-Neumann row above uses the TL0.1.8-lowering harness.
@@ -393,6 +414,17 @@ The broader lesson is simple: agentic kernel optimization is most credible
 when it is auditable. The agent can move quickly, but correctness gates,
 benchmark metadata, evidence lanes, and attribution boundaries determine
 which results are safe to publish.
+
+The publishable unit is not an agent-generated kernel. It is an auditable
+optimization loop: fixed correctness contract, reproducible benchmark metadata,
+explicit attribution lanes, and clear credit boundaries.
+
+## References
+
+- [QwenLM FlashQLA](https://github.com/QwenLM/FlashQLA)
+- [Gated Delta Networks](https://arxiv.org/abs/2412.06464)
+- [NVlabs GatedDeltaNet implementation](https://github.com/NVlabs/GatedDeltaNet)
+- [TileLang documentation](https://tilelang.com/)
 
 ## Supporting Information
 

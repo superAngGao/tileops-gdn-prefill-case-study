@@ -12,6 +12,10 @@ This file is an evidence note for mechanism-level A/replay attribution. It does
 not replace the TileOps experiment-adapter rows in
 `blog_ladder_evidence_64k_h16.md`.
 
+Superseded diagnostic scope: this file retains older replay-side and V5 process
+numbers for attribution analysis. It is not the source for headline production
+surface numbers or the final same-input A-producer table.
+
 July 1 refresh: the TileOps replay rows below were rerun under the same
 `warmup=5, repeat=20, trials=3` CUPTI/L2-flush timing contract as the public
 FlashQLA TL0.1.8 export. These refreshed rows are supporting diagnostics for

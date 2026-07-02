@@ -515,6 +515,11 @@ L_ij ≈ 1[i > j] * decay(j -> i) * beta_j * (k_i^T k_j)
 会把 gate scaling 放在不同的张量上，但它表达的是同一件事：较早写入的状态在被
 后面 token 读取之前，会先经过若干步遗忘。
 
+注意：英文主文里的 `M_{i,j}` 使用的是 implementation-scoped 约定，把一部分
+write strength 写在当前行/读侧；这里为了直觉解释，把 `beta_j` 说成第 `j` 个
+token 的写入强度。两种写法不能逐符号对照，必须连同 A producer、`R_K/R_V` 和
+replay ABI 的 factor placement 一起看。
+
 `L` 描述的是：
 
 ```text
