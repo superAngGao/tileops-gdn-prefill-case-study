@@ -71,17 +71,18 @@ In this project, the agent was useful in three different roles:
 3. **Implement and tune a new search space once external input changes it.**
    Human mathematical analysis reframed the prepare stage as a blocked
    inverse / Neumann-style producer. Qwen's FlashQLA showed the production
-   CP-split replay schedule and fused replay/output skeleton for long
-   prefill. TileOps then studied, ported, tuned, dispatched, benchmarked, and
-   productionized those ideas in an owned implementation.
+   CP-split scheduling pattern for corrected h-state segment starts in long
+   prefill. TileOps then studied, adapted, tuned, dispatched, benchmarked, and
+   productionized that scheduling idea in an owned implementation.
 
 That boundary matters. TileOps did not invent the CP-split replay schedule.
-The contribution was to study, validate, port, tune, dispatch, benchmark, and
-productionize the FlashQLA-style schedule inside TileOps, combined with
-TileOps' own A producer. At the same time, the work was not a direct wrapper
-around the upstream FlashQLA kernel: the TileOps path includes an owned BTHD
-production implementation, a faster specialized A producer, shape-aware
-dispatch, correctness validation, and production benchmark integration.
+The contribution was to study, validate, adapt, tune, dispatch, benchmark, and
+productionize the FlashQLA-style h-state CP-split schedule inside TileOps,
+combined with TileOps' own A producer and local replay/output implementation.
+At the same time, the work was not a direct wrapper around the upstream
+FlashQLA kernel: the TileOps path includes an owned BTHD production
+implementation, a faster specialized A producer, shape-aware dispatch,
+correctness validation, and production benchmark integration.
 
 This article therefore uses a three-level structure rather than a chronological
 round diary. The performance story should also be read as a sequence of
@@ -161,7 +162,7 @@ This article compares TileOps, FLA, and FlashQLA in three different roles:
 | --- | --- |
 | GDN | Gated DeltaNet, a recurrent linear-attention-style operator with decay gates and delta-rule residual writes. |
 | FLA | Flash Linear Attention. The main behavioral correctness reference for full-op validation; reported here as a recorded vendored FLA reference unless package identity is explicitly verified. |
-| FlashQLA | Qwen's FlashQLA project. The source of the CP-split GDN prefill schedule and fused replay/output skeleton that TileOps later ported and productionized. |
+| FlashQLA | Qwen's FlashQLA project. The source-level reference for the h-state / corrected-segment-start CP-split schedule that TileOps later adapted and productionized. |
 | TileOps | The production kernel surface discussed here: TileLang-owned BTHD prefill path, dispatch, validation, and benchmark integration. |
 | AKO | Agentic Kernel Optimization: a gated loop of hypothesis, implementation, correctness, benchmark, lowering inspection, and decision logging. |
 | BTHD | `[batch, time, heads, dim]`, the main serving layout used in the FLA/Qwen-style path discussed here. |
@@ -749,8 +750,8 @@ problems:
 Those changes did not come from unconstrained local AKO. They came from
 external input that reshaped the search space:
 
-- Qwen FlashQLA provided the production CP-split replay schedule and fused
-  replay/output skeleton;
+- Qwen FlashQLA provided the production CP-split replay schedule for corrected
+  h-state segment starts;
 - human mathematical analysis reframed prepare as a blocked inverse /
   Neumann-style producer.
 
@@ -770,10 +771,10 @@ Figure 7 summarizes the attribution map.
 ```mermaid
 flowchart LR
     FLA["FLA<br/>behavioral correctness reference"]
-    FlashQLA["Qwen FlashQLA<br/>CP-split schedule<br/>fused replay skeleton"]
+    FlashQLA["Qwen FlashQLA<br/>h-state CP-split<br/>schedule reference"]
     Human["Human expert<br/>blocked inverse / Neumann framing"]
     AKO["AKO<br/>implementation/tuning loop"]
-    TileOps["TileOps<br/>owned port + A producer<br/>dispatch + validation"]
+    TileOps["TileOps<br/>owned implementation + A producer<br/>dispatch + validation"]
 
     FLA --> TileOps
     FlashQLA --> TileOps
@@ -841,10 +842,10 @@ The right side must include `prepare_h/correct_h0`; CP segments are not
 naturally independent. They become valid because the schedule computes
 corrected segment initial states first.
 
-At the source level, the production-shaped flow is:
+At the source level, the production-shaped schedule is:
 
 ```python
-# Production long-prefill schedule, credited to Qwen FlashQLA.
+# Production long-prefill schedule pattern, credited to Qwen FlashQLA.
 g = chunk_local_cumsum(g)
 A = kkt_solve_or_blocksolve(k, g, beta)
 
@@ -859,9 +860,9 @@ o, final_state = fused_gdr_fwd(
 )
 ```
 
-In this skeleton, the A producer is intentionally abstract. FlashQLA supplies
-the CP-split replay schedule and fused replay/output skeleton; TileOps later
-plugs in its owned A producer.
+In this schedule sketch, the A producer is intentionally abstract. FlashQLA
+supplies the h-state / corrected-segment-start CP-split scheduling reference;
+TileOps plugs in its owned A producer and local replay/output implementation.
 
 The important output contract is still simple:
 

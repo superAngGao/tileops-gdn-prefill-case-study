@@ -21,10 +21,10 @@ than the spine of the story.
 
 ### SI.1 Source Similarity Is Not Performance Equality
 
-Studying FlashQLA was a source-level adaptation, not a direct wrapper around
-the upstream kernel. The first question was whether the same source-level
-skeleton preserved the same lowering behavior in the current TileOps TileLang
-environment. It did not always do so automatically.
+Studying FlashQLA was a source-level adaptation of a schedule idea, not a
+direct wrapper around the upstream kernel. The first question was whether a
+source-level CP-split schedule port preserved the same lowering behavior in the
+current TileOps TileLang environment. It did not always do so automatically.
 
 In the migration experiments, one source-equivalent shape failed to recover
 the intended TMA-specialized path:
@@ -50,7 +50,7 @@ Figure 11 shows the lesson.
 
 ```mermaid
 flowchart LR
-    Source["source-level skeleton<br/>looks similar"]
+    Source["source-level schedule port<br/>looks similar"]
     Copy["T.copy path<br/>pipeline not restored"]
     TMA["explicit TMA path<br/>intended lowering restored"]
     Evidence["generated-code evidence<br/>required for claims"]
