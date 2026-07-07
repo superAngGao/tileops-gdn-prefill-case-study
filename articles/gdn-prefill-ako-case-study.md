@@ -65,6 +65,15 @@ Credit boundary:
 > TileOps rebuilt, validated, tuned, dispatched, and combined that schedule
 > with an owned blocked-inverse A producer and a production dispatch surface.
 
+The roles are deliberately separated throughout the article:
+
+| Stage | Agent / TileOps work | External reference or human input | Gate |
+| --- | --- | --- | --- |
+| Local AKO | Try scale placement, store-path changes, and small fusion candidates. | Fixed operator contract from the GDN recurrence. | Correctness + component/full-op latency. |
+| CP-split replay | Port the schedule into TileOps and make it shape-aware. | Qwen FlashQLA supplied the CP-split schedule family. | Same-input replay checks + public-anchor caveat. |
+| Prepare-A producer | Implement and benchmark a blocked producer inside the same replay family. | Human blocked-inverse / Neumann-style derivation. | A/replay ablation + full-op correctness. |
+| Dispatch surface | Turn the fast path into a selected serving candidate. | Benchmark shape contract and production policy. | Five-shape sweep + metadata. |
+
 ## 1. The Operator: Recurrent Memory Meets Long Prefill
 
 For one `(batch, head)` stream, a Gated DeltaNet decode step can be viewed as a
@@ -133,7 +142,10 @@ contract. Each candidate needed four gates:
 
 1. **Correctness gate.** Compare output and final state against the recorded
    FLA reference for the scoped shapes, dtype, input distribution, and
-   tolerance. SI records the tolerances and diagnostic error metrics.
+   tolerance. For fp16 rows, the gate uses `torch.allclose` at
+   `atol=rtol=5e-2`; `max_abs` and `max_rel` are diagnostics, and large
+   relative error near zero is interpreted together with absolute error and
+   final-state checks.
 2. **Benchmark gate.** Use the TileOps benchmark infrastructure and preserve
    metadata: GPU, timer, warmup/repeat/trials, commit, layout, seed, and input
    artifact.
@@ -244,10 +256,29 @@ prepare corrected segment starts
   -> segment2 replay/output
 ```
 
+Conceptually, the schedule looks like:
+
+```python
+# serial replay has one dependency chain over all chunks
+h = h0
+for chunk in chunks:
+    o[chunk], h = replay_output(chunk, h)
+
+# CP split moves part of causality into segment-start correction
+h_start = correct_segment_starts(segment_summaries, h0)
+for segment in segments:  # independent once h_start is known
+    h = h_start[segment]
+    for chunk in segment:  # short local recurrence
+        o[chunk], h = fused_replay_output(chunk, h)
+```
+
 The segments are not naturally independent. Their initial states must be
 corrected so each segment starts from the state it would have seen in the full
 causal chain. That is why CP split is a schedule-level change, not just a
-local fusion.
+local fusion: it does not remove causality, but it changes where the long
+dependency is paid. The replay/output path now sees short local chains instead
+of one chain over all chunks, while the segment-start correction carries the
+cross-segment dependency.
 
 The first TileOps-owned CP adaptation was useful as bridge evidence, but it
 was not a finished FlashQLA reproduction. The row proved that the schedule idea
