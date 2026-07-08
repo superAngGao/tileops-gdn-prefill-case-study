@@ -12,8 +12,12 @@ machine-readable source of truth.
 | Variant inventory and claim roles | [`ladder/docs/variant_inventory.md`](ladder/docs/variant_inventory.md) |
 | Same-input A-producer ablation | [`ladder/summaries/section11_a_producer_ablation_64k_h16.md`](ladder/summaries/section11_a_producer_ablation_64k_h16.md) |
 | Replay-side diagnostics | [`ladder/summaries/a_replay_cross_ablation_64k_h16.md`](ladder/summaries/a_replay_cross_ablation_64k_h16.md) |
-| Production dispatch surface, TileOps vs FLA | [`ladder/results/production_surface_tileops_vs_fla_20260701_tmpdir.jsonl`](ladder/results/production_surface_tileops_vs_fla_20260701_tmpdir.jsonl) |
+| Production dispatch surface, TileOps vs FLA | [`ladder/results/production_surface_tileops_vs_fla_20260701.jsonl`](ladder/results/production_surface_tileops_vs_fla_20260701.jsonl) |
 | Production dispatch surface, public FlashQLA | [`ladder/results/production_surface_flashqla_20260701.jsonl`](ladder/results/production_surface_flashqla_20260701.jsonl) |
+
+The older `production_surface_tileops_vs_fla_20260701_tmpdir.jsonl` file is
+retained only as provenance for the original collection path; the publication
+pointer above uses the non-`tmpdir` artifact name.
 
 ## Reading Rules
 

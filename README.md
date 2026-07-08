@@ -43,7 +43,7 @@ they need.
 1. Read the publication-oriented story:
    [`articles/gdn-prefill-ako-case-study.md`](articles/gdn-prefill-ako-case-study.md).
 2. Check the headline production-surface evidence:
-   [`production_surface_tileops_vs_fla_20260701_tmpdir.jsonl`](evidence/ladder/results/production_surface_tileops_vs_fla_20260701_tmpdir.jsonl)
+   [`production_surface_tileops_vs_fla_20260701.jsonl`](evidence/ladder/results/production_surface_tileops_vs_fla_20260701.jsonl)
    and
    [`production_surface_flashqla_20260701.jsonl`](evidence/ladder/results/production_surface_flashqla_20260701.jsonl).
 3. Check the prepare-A / replay attribution:

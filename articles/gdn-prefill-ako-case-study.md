@@ -13,12 +13,12 @@ prefill path. The final path combines three ingredients:
 3. an expert blocked-inverse / Neumann-style prepare-A producer implemented in
    TileOps.
 
-On five H200 serving-shaped synthetic-input sweeps, the merged TileOps
-production dispatch path measured `8.2-13.3x` faster than the recorded vendored
-FLA reference and `1.46-2.91x` faster than a public FlashQLA TL0.1.8 anchor.
-These are production-surface measurements under the archived benchmark
-contracts; the FlashQLA rows are public-environment anchors, not same-lowering
-attribution.
+The optimized path has since merged into TileOps main via PR1596. The archived
+five-shape benchmark table below was collected from the pre-merge PR1596
+worktree under the recorded benchmark contract, where the TileOps path measured
+`8.2-13.3x` faster than the recorded vendored FLA reference and `1.46-2.91x`
+faster than a public FlashQLA TL0.1.8 anchor. The FlashQLA rows are
+public-environment anchors, not same-lowering attribution.
 
 Benchmark scope:
 
@@ -27,7 +27,7 @@ Benchmark scope:
 - Hardware/timer: H200 using CUPTI kernel-only timing with L2 flush. The
   archived surface rows use `warmup=5`, `repeat=20`, and `trials=3`.
 - JSONL source:
-  [`production_surface_tileops_vs_fla_20260701_tmpdir.jsonl`](../evidence/ladder/results/production_surface_tileops_vs_fla_20260701_tmpdir.jsonl)
+  [`production_surface_tileops_vs_fla_20260701.jsonl`](../evidence/ladder/results/production_surface_tileops_vs_fla_20260701.jsonl)
   and
   [`production_surface_flashqla_20260701.jsonl`](../evidence/ladder/results/production_surface_flashqla_20260701.jsonl).
 - TileOps code status: the GDN prefill path entered TileOps main through
@@ -38,6 +38,9 @@ Benchmark scope:
 - Claim role: this table supports the production serving-surface claim. It does
   not support same-lowering attribution claims about FlashQLA replay or KKT
   lowering.
+- PR relation: PR1596's body contains an earlier concise performance table under
+  a different archived benchmark/reference package. The table below uses the
+  JSONL files linked above as its source of truth.
 
 | Shape | TileOps production dispatch | Recorded FLA reference | Public FlashQLA TL0.1.8 anchor | TileOps / FLA throughput | TileOps / FlashQLA throughput |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -71,12 +74,12 @@ Credit boundary:
 
 The roles are deliberately separated throughout the article:
 
-| Stage | Agent / TileOps work | External reference or human input | Gate |
-| --- | --- | --- | --- |
-| Local AKO | Try scale placement, store-path changes, and small fusion candidates. | Fixed operator contract from the GDN recurrence. | Correctness + component/full-op latency. |
-| CP-split replay | Port the schedule into TileOps and make it shape-aware. | Qwen FlashQLA supplied the CP-split schedule family. | Same-input replay checks + public-anchor caveat. |
-| Prepare-A producer | Implement and benchmark a blocked producer inside the same replay family. | Human blocked-inverse / Neumann-style derivation. | A/replay ablation + full-op correctness. |
-| Dispatch surface | Turn the fast path into a merged serving dispatch surface. | Benchmark shape contract and production policy. | Five-shape sweep + metadata. |
+| Stage | Agent-assisted work | TileOps-owned engineering | External reference or human input | Gate |
+| --- | --- | --- | --- | --- |
+| Local AKO | Try scale placement, store-path changes, and small fusion candidates. | Keep candidates inside the fixed op contract and benchmark harness. | Fixed operator contract from the GDN recurrence. | Correctness + component/full-op latency. |
+| CP-split replay | Adapt and test schedule variants. | Make the CP-split path shape-aware in TileOps. | Qwen FlashQLA supplied the CP-split schedule family. | Same-input replay checks + public-anchor caveat. |
+| Prepare-A producer | Help implement and benchmark candidate producers. | Integrate the blocked producer into the same replay family. | Human blocked-inverse / Neumann-style derivation. | A/replay ablation + full-op correctness. |
+| Dispatch surface | Run gated sweeps and metadata checks. | Merge the selected serving dispatch surface. | Benchmark shape contract and production policy. | Five-shape sweep + metadata. |
 
 ## 1. The Operator: Recurrent Memory Meets Long Prefill
 
@@ -149,7 +152,9 @@ contract. Each candidate needed four gates:
    tolerance. For fp16 rows, the gate uses `torch.allclose` at
    `atol=rtol=5e-2`; `max_abs` and `max_rel` are diagnostics, and large
    relative error near zero is interpreted together with absolute error and
-   final-state checks.
+   final-state checks. This tolerance is scoped to fp16 long-sequence recurrent
+   accumulation and requires both output and final-state checks, not only a
+   single output tensor.
 2. **Benchmark gate.** Use the TileOps benchmark infrastructure and preserve
    metadata: GPU, timer, warmup/repeat/trials, commit, layout, seed, and input
    artifact.
@@ -285,11 +290,11 @@ of one chain over all chunks, while the segment-start correction carries the
 cross-segment dependency.
 
 The first TileOps-owned CP adaptation was useful as bridge evidence, but it
-was not a finished FlashQLA reproduction. The row proved that the schedule idea
-could be adapted into TileOps, and it also made the difference between a
-schedule idea and a production-quality kernel visible. The main text therefore
-uses the later A/replay ablation and production sweep for performance claims;
-the intermediate bridge row stays in SI.
+was not a finished FlashQLA reproduction. The row provided bridge evidence that
+the schedule idea could be adapted into TileOps, and it also made the difference
+between a schedule idea and a production-quality kernel visible. The main text
+therefore uses the later A/replay ablation and production sweep for performance
+claims; the intermediate bridge row stays in SI.
 
 ## 5. Search-Space Expansion II: Blocked-Inverse / Neumann Prepare
 
@@ -378,8 +383,8 @@ it is a more parallel backend-friendly shape. The win is therefore a scheduling
 and backend-shape win, not a claim that the mathematical operator became cheaper
 in the abstract. SI gives the full MAC accounting.
 
-The clean prepare-A comparison is shown with the public FlashQLA anchor for
-context:
+The cleanest available measured prepare-A comparison in this evidence package is
+shown with the public FlashQLA anchor for context:
 
 | Row | Prepare-A producer | Replay/output | `64K/H16` latency | Meaning |
 | --- | --- | --- | ---: | --- |

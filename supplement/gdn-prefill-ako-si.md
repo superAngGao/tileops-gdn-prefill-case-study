@@ -242,7 +242,7 @@ observation, not as an additional algorithmic improvement after the
 blocked-inverse A producer. The historical single-shape wrapper delta is kept in
 the evidence note; the stronger main-text statement is the refreshed shape
 sweep:
-`evidence/ladder/results/production_surface_tileops_vs_fla_20260701_tmpdir.jsonl`
+`evidence/ladder/results/production_surface_tileops_vs_fla_20260701.jsonl`
 plus the public FlashQLA TL0.1.8 sweep:
 `evidence/ladder/results/production_surface_flashqla_20260701.jsonl`.
 
@@ -545,7 +545,7 @@ The archived evidence files are the publication source of truth:
 | --- | --- |
 | Main `64K/H16` ladder and writing summary | [`blog_ladder_evidence_64k_h16.md`](../evidence/ladder/summaries/blog_ladder_evidence_64k_h16.md), [`formal_64k_h16_current_gpu4_rerun.jsonl`](../evidence/ladder/results/formal_64k_h16_current_gpu4_rerun.jsonl), [`formal_64k_h16_historical_local.jsonl`](../evidence/ladder/results/formal_64k_h16_historical_local.jsonl) |
 | A/replay cross-ablation | [`section11_a_producer_ablation_64k_h16.md`](../evidence/ladder/summaries/section11_a_producer_ablation_64k_h16.md), [`a_replay_cross_ablation_64k_h16.md`](../evidence/ladder/summaries/a_replay_cross_ablation_64k_h16.md), [`section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl`](../evidence/ladder/results/section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl), [`section11_a_producer_ablation_64k_h16_fq18_to_replay.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq18_to_replay.jsonl), [`section11_a_producer_ablation_64k_h16_to_to_replay.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_to_to_replay.jsonl), [`section11_a_producer_ablation_64k_h16_to_to_full.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_to_to_full.jsonl), [`section11_a_producer_ablation_64k_h16_fq_current_to_full.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq_current_to_full.jsonl), [`section11_a_producer_ablation_64k_h16_fq_current_to_full_legacy.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq_current_to_full_legacy.jsonl), [`section11_a_producer_ablation_64k_h16_fq_current_to_full_wgmma.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq_current_to_full_wgmma.jsonl) |
-| Production dispatch surface | [`production_surface_tileops_vs_fla_20260701_tmpdir.jsonl`](../evidence/ladder/results/production_surface_tileops_vs_fla_20260701_tmpdir.jsonl), [`production_surface_flashqla_20260701.jsonl`](../evidence/ladder/results/production_surface_flashqla_20260701.jsonl) |
+| Production dispatch surface | [`production_surface_tileops_vs_fla_20260701.jsonl`](../evidence/ladder/results/production_surface_tileops_vs_fla_20260701.jsonl), [`production_surface_flashqla_20260701.jsonl`](../evidence/ladder/results/production_surface_flashqla_20260701.jsonl) |
 
 To rerun the current `64K/H16` harness rows from the TileOps repository root:
 

@@ -1121,11 +1121,11 @@ direct diagnostic stayed producer-local: `g_cum` matched exactly, while
 current-TL `A` contained hundreds of nonfinite values and saturated near fp16
 limits; the exported TL0.1.8 `A` stayed finite in `[-0.269287109375, 1.0]`.
 
-The filled no-Neumann row is the clean comparison against the `0.695237 ms`
-TileOps prepare-A row. Replay-only and component diagnostics remain in the
-evidence note as diagnostics rather than headline A-producer claims. The caveat
-is that this row is an external TL0.1.8-lowering harness row, not a native
-current-TL KKT port.
+The filled no-Neumann row is the cleanest available measured comparison against
+the `0.695237 ms` TileOps prepare-A row. Replay-only and component diagnostics
+remain in the evidence note as diagnostics rather than headline A-producer
+claims. The caveat is that this row is an external TL0.1.8-lowering harness row,
+not a native current-TL KKT port.
 
 The V5/V6 adapter rows are supporting bridge evidence only. V5 and V6 use the
 same CP downstream ABI and materialized A handoff shape/layout, but they do not

@@ -142,7 +142,7 @@ algorithmic jump after the blocked-inverse A producer.
 Production-surface evidence:
 
 - TileOps vs FLA, GPU3/H200, TileOps benchmark infrastructure:
-  `evidence/ladder/results/production_surface_tileops_vs_fla_20260701_tmpdir.jsonl`.
+  `evidence/ladder/results/production_surface_tileops_vs_fla_20260701.jsonl`.
 - Public FlashQLA TL0.1.8 Docker sweep:
   `evidence/ladder/results/production_surface_flashqla_20260701.jsonl`.
 
