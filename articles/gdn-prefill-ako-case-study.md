@@ -29,10 +29,6 @@ How to read the numbers:
   BTHD layout; sequence length and head count vary by row.
 - Hardware/timer: H200 using CUPTI kernel-only timing with L2 flush. The
   archived surface rows use `warmup=5`, `repeat=20`, and `trials=3`.
-- JSONL source:
-  [`production_surface_tileops_vs_fla_20260701.jsonl`](../evidence/ladder/results/production_surface_tileops_vs_fla_20260701.jsonl)
-  and
-  [`production_surface_flashqla_20260701.jsonl`](../evidence/ladder/results/production_surface_flashqla_20260701.jsonl).
 - TileOps code status: the GDN prefill path entered TileOps main through
   [tile-ai/TileOps#1596](https://github.com/tile-ai/TileOPs/pull/1596),
   merge commit `79469fc0ddae584537df03e35d935575870574f6`.
@@ -41,9 +37,6 @@ How to read the numbers:
 - Claim role: this table supports the production serving-surface claim. It does
   not support same-lowering attribution claims about FlashQLA replay or KKT
   lowering.
-- PR relation: PR1596's body contains an earlier concise performance table under
-  a different archived benchmark/reference package. The table below uses the
-  JSONL files linked above as its source of truth.
 
 | Shape | TileOps scoped production dispatch | Recorded FLA reference | Public FlashQLA TL0.1.8 anchor | TileOps / recorded FLA ref | TileOps / public FlashQLA anchor |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -53,6 +46,13 @@ How to read the numbers:
 | `64K/H32` | `1.2238 ms` | `10.2402 ms` | `2.5942 ms` | `8.37x` | `2.12x` public-env |
 | `64K/H64` | `2.3085 ms` | `18.9782 ms` | `6.7233 ms` | `8.22x` | `2.91x` public-env |
 
+Source of truth: the table uses the archived
+[`TileOps/FLA JSONL`](../evidence/ladder/results/production_surface_tileops_vs_fla_20260701.jsonl)
+and
+[`FlashQLA JSONL`](../evidence/ladder/results/production_surface_flashqla_20260701.jsonl).
+PR1596's body contains an earlier concise table under a different archived
+benchmark/reference package.
+
 Reference identity: the FLA path used here is a vendored source reference with
 vendor commit `91d2f468944842ab2d947350d280ca1db793db57` and no independently
 verified package version in this evidence package. It supports the recorded
@@ -61,9 +61,9 @@ verified official FLA `0.5.1` package.
 
 Credit boundary:
 
-> FlashQLA supplied the production-grade CP-split replay schedule family.
+> FlashQLA supplied the serving-grade CP-split replay schedule family.
 > TileOps rebuilt, validated, tuned, dispatched, and combined that schedule
-> with an owned blocked-inverse A producer and a production dispatch surface.
+> with an owned blocked-inverse A producer and a scoped dispatch surface.
 
 ## 1. The Operator: Recurrent Memory Meets Long Prefill
 
@@ -395,17 +395,9 @@ row is context; the attribution comparison is the two TileOps-replay rows.
 | FlashQLA-style prepare A + TileOps replay | TL0.1.8-lowering KKT via external launcher | TileOps CP replay | `0.815029 ms` | no-Neumann combined row |
 | TileOps prepare A + TileOps replay | blocked-inverse / Neumann-style A | TileOps CP replay | `0.695237 ms` | headline prepare-A comparison |
 
-Three nearby numbers have different meanings:
-
-| Number | Meaning |
-| ---: | --- |
-| `0.715062 ms` | adapter bridge evidence: the blocked-inverse producer can feed the same CP downstream ABI, but this is not the clean A-producer proof |
-| `0.695237 ms` | same-input A-producer ablation: the headline prepare-A comparison in this section |
-| `0.692026 ms` / `~0.6951 ms` | production wrapper / refreshed dispatch surface evidence: production context, not the A-producer ablation proof |
-
-Keeping those rows separate is what prevents the A-producer attribution, replay
-attribution, and production-dispatch claim from collapsing into one misleading
-speedup ladder.
+Nearby wrapper and bridge numbers are separated in the SI so the A-producer
+attribution, replay attribution, and scoped-dispatch claim do not collapse into
+one misleading speedup ladder.
 
 ### Final Attribution Split
 
