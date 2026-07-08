@@ -15,11 +15,11 @@ overclaiming.
 
 The main path is now clear: FlashQLA supplied the CP-split replay schedule,
 human analysis supplied the stronger A producer shape, and TileOps turned that
-combination into an owned production path. Two side lessons are still worth
+combination into an owned scoped serving path. Two side lessons are still worth
 keeping, but they belong after the main path because they are guardrails rather
 than the spine of the story.
 
-Code status: the production path discussed by the main article entered TileOps
+Code status: the scoped serving path discussed by the main article entered TileOps
 main through [tile-ai/TileOps#1596](https://github.com/tile-ai/TileOPs/pull/1596),
 merge commit `79469fc0ddae584537df03e35d935575870574f6`. Some archived JSONL
 rows below still record the pre-merge PR worktree path because that is where the
@@ -205,7 +205,7 @@ The FlashQLA-alignment node is not V5. It is the A/replay cross-ablation:
 TL0.1.8 lowered FlashQLA KKT injected through an external launcher plus
 TileOps replay gives a measured `0.815029 ms` full path, faster than refreshed
 public FlashQLA full `1.306838 ms`; then TileOps blocksolve A plus the same
-replay family gives `0.695237 ms` in the clean Section 11 same-input row.
+replay family gives `0.695237 ms` in the same-input A-producer ablation row.
 
 This experiment-adapter table alone is not the complete FlashQLA attribution
 story. The A/replay cross-ablation below adds the missing split: with
@@ -224,7 +224,7 @@ meanings:
 | ---: | --- | --- |
 | `0.715062 ms` | adapter bridge | compatibility evidence under the same CP downstream ABI |
 | `0.695237 ms` | same-input A-producer ablation | headline Neumann prepare comparison |
-| `0.692026 ms` / `~0.6951 ms` | production wrapper / surface sweep | production-context evidence, not the ablation proof |
+| `0.692026 ms` / `~0.6951 ms` | dispatch wrapper / surface sweep | dispatch-context evidence, not the ablation proof |
 
 #### SI.3.2 External And Final Anchors
 
@@ -235,9 +235,9 @@ sweep is the production claim.
 | Variant | Role | `64K/H16` latency | Correctness | Use in blog |
 | --- | --- | ---: | --- | --- |
 | `ref_fla_051` | recorded vendored FLA reference baseline | `8.02574 ms` | self/reference row | correctness oracle and FLA latency context, with version caveat |
-| `tileops_final_dispatch` | merged PR1596 production wrapper / dispatch context | `0.692026 ms` historical anchor; `0.6951 ms` in the refreshed surface sweep | pass vs recorded FLA reference | production-surface row family, not an experiment-adapter step |
+| `tileops_final_dispatch` | merged PR1596 dispatch wrapper / dispatch context | `0.692026 ms` historical anchor; `0.6951 ms` in the refreshed surface sweep | pass vs recorded FLA reference | production-surface row family, not an experiment-adapter step |
 
-Write `tileops_final_dispatch` as a production wrapper / dispatch-context
+Write `tileops_final_dispatch` as a dispatch wrapper / dispatch-context
 observation, not as an additional algorithmic improvement after the
 blocked-inverse A producer. The historical single-shape wrapper delta is kept in
 the evidence note; the stronger main-text statement is the refreshed shape
@@ -267,8 +267,8 @@ has bounded claim scope.
 | `tileops_owned_cp_generic_a` | experiment adapter using current-repo generic A producer plus PR1596 CP downstream | generic A module `fused_prepare_compute_w_u.py`; CP downstream module `gdn_prefill/fused_fwd.py`; `used_code_root.kind=mixed_experiment_roots` |
 | `tileops_owned_cp_blocked_inverse_a` | experiment adapter using PR1596 blocked-inverse / blocksolve A producer plus the same PR1596 CP downstream | blocksolve producer module `gated_deltanet_prefill.py`; CP downstream module `gdn_prefill/fused_fwd.py`; `used_code_root.kind=production_root_experiment_adapter` |
 | V5/V6 A comparison | same materialized A handoff shape/layout, different producer math / numerics | `A allclose=false`, `max_abs=0.117279`, V5 `max_rel=20583.9`, V6 `max_rel=29546.4` |
-| V6 adapter | explicit experiment row, not the production dispatch wrapper | `uses_production_dispatch_wrapper=false` |
-| final dispatch | production wrapper merged through PR1596 | `uses_production_dispatch_wrapper=true` |
+| V6 adapter | explicit experiment row, not the final dispatch wrapper | `uses_production_dispatch_wrapper=false` |
+| final dispatch | dispatch wrapper merged through PR1596 | `uses_production_dispatch_wrapper=true` |
 
 Safe wording:
 
@@ -313,8 +313,9 @@ and
 [`a_replay_cross_ablation_64k_h16.md`](../evidence/ladder/summaries/a_replay_cross_ablation_64k_h16.md).
 The full external-lowering and Neumann rows use
 `benchmarks.benchmark_base.bench_kernel`. The machine-readable evidence is
-split across the archived Section 11 JSONL files listed in SI.3.7 rather than a
-single combined JSONL file.
+split across the archived same-input A-producer ablation JSONL files listed in
+SI.3.7 rather than a single combined JSONL file. Several filenames still use
+the historical `section11_*` prefix.
 
 | Row | A producer | Replay/output path | Timing scope | Correctness reference | Latency |
 | --- | --- | --- | --- | --- | ---: |
@@ -404,7 +405,7 @@ publication state for the no-Neumann combined row is now measured.
 The supported narrative is therefore:
 
 ```text
-FlashQLA supplied the production-grade CP-split schedule family.
+FlashQLA supplied the serving-grade CP-split schedule family.
 TileOps improved two implementation axes under that schedule family:
   1. the replay/output implementation;
   2. the A producer via the blocked-inverse / Neumann-style path.

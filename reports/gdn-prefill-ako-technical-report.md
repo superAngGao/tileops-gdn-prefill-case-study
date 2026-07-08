@@ -30,12 +30,14 @@ carrying a recurrent key-value memory whose final state must match
 token-by-token decode. The kernel cannot only be fast; it must preserve the
 same causal state evolution across tens of thousands of tokens.
 
-The result of this case study is a TileOps-owned production prefill path that
-combines local agentic optimization, a FlashQLA-inspired CP-split replay
-schedule, and a human blocked-inverse / Neumann-style prepare algorithm. On the
-refreshed serving-shape sweep, the scoped production dispatch path is faster
-than both the recorded FLA reference and the public FlashQLA TL0.1.8 anchor
-under the documented benchmark contracts. The FlashQLA comparison is a
+The result of this case study is a TileOps-owned scoped serving prefill path
+that combines local agentic optimization, a FlashQLA-inspired CP-split replay
+schedule, and a human blocked-inverse / Neumann-style prepare algorithm. The
+path later merged into TileOps main through PR1596; the archived benchmark rows
+used in this report were collected from the pre-merge PR1596 benchmark package
+under the recorded contract. On the refreshed serving-shape sweep, the scoped
+dispatch path is faster than both the recorded FLA reference and the public
+FlashQLA TL0.1.8 anchor. The FlashQLA comparison is a
 public-environment comparison, not a controlled same-lowering attribution
 experiment; the FLA row is a recorded vendored reference unless otherwise
 stated.
@@ -74,7 +76,7 @@ In this project, the agent was useful in three different roles:
 
 3. **Implement and tune a new search space once external input changes it.**
    Human mathematical analysis reframed the prepare stage as a blocked
-   inverse / Neumann-style producer. Qwen's FlashQLA showed the production
+   inverse / Neumann-style producer. Qwen's FlashQLA showed the serving-grade
    CP-split scheduling pattern for corrected h-state segment starts in long
    prefill. TileOps then studied, adapted, tuned, dispatched, benchmarked, and
    productionized that scheduling idea in an owned implementation.
@@ -115,7 +117,7 @@ The single-shape story rows share the same serving shape:
 `B=1,T=65536,H=16,DK=DV=128,chunk64,fp16,BTHD`, but they come from two evidence
 lanes. The early/local rows are end-to-end historical worktree checkpoints
 under the formal ladder harness. The Level 3 A-producer rows use the same-input
-Section 11 clean ablation, because that is where the TL0.1.8-lowering
+A-producer ablation, because that is where the TL0.1.8-lowering
 FlashQLA-style prepare row and the TileOps Neumann prepare row are directly
 paired. Component-only scale/store diagnostics are kept out of this headline
 table. The public-facing roadmap names story nodes, not internal variant IDs;
@@ -737,7 +739,7 @@ begins.
 ## 4. Level 3 - External Input Changes The Search Space
 
 Level 3 is where the search space changes. FlashQLA supplied the
-production-grade CP-split replay schedule family; human mathematical analysis
+serving-grade CP-split replay schedule family; human mathematical analysis
 supplied the blocked-inverse / Neumann-style prepare producer. The TileOps work
 then became an adaptation, implementation, tuning, and productionization story
 inside those expanded spaces.
@@ -755,7 +757,7 @@ problems:
 Those changes did not come from unconstrained local AKO. They came from
 external input that reshaped the search space:
 
-- Qwen FlashQLA provided the production CP-split replay schedule for corrected
+- Qwen FlashQLA provided the serving-grade CP-split replay schedule for corrected
   h-state segment starts;
 - human mathematical analysis reframed prepare as a blocked inverse /
   Neumann-style producer.
@@ -795,7 +797,7 @@ one-to-one reproduction of a finished FlashQLA kernel.
 
 ### 4.1 Expert Reference: FlashQLA CP-Split Replay
 
-Qwen FlashQLA supplied the production reference for attacking the long replay
+Qwen FlashQLA supplied the serving-grade reference for attacking the long replay
 bottleneck. TileOps did not invent the CP-split replay schedule. The
 contribution was to study that schedule family, rebuild a TileOps-owned
 downstream implementation, and then test it under controlled and
@@ -1089,8 +1091,8 @@ things:
 | Number | Evidence lane | Meaning |
 | ---: | --- | --- |
 | `0.715062 ms` | V5/V6 experiment-adapter bridge | Shows that the blocked-inverse producer can feed the same CP downstream ABI, but it is not the clean A-producer proof. |
-| `0.695237 ms` | Section 11 same-input A-producer ablation | The headline Neumann prepare comparison against the `0.815029 ms` TL0.1.8-lowering FlashQLA-style prepare row. |
-| `0.692026 ms` / `~0.6951 ms` | production wrapper and refreshed dispatch surface | Production-context evidence that the optimized path survives wrapper/dispatch policy; not the Section 11 proof. |
+| `0.695237 ms` | same-input A-producer ablation | The headline Neumann prepare comparison against the `0.815029 ms` TL0.1.8-lowering FlashQLA-style prepare row. |
+| `0.692026 ms` / `~0.6951 ms` | dispatch wrapper and refreshed production surface | Dispatch-context evidence that the optimized path survives wrapper/dispatch policy; not the same-input ablation proof. |
 
 Formal A-producer evidence:
 
@@ -1262,7 +1264,7 @@ family: selected by shape, validated across the serving surface, tied to
 benchmark metadata, and rerunnable when the TileOps main/release commit,
 TileLang wheel, docker/runtime, GPU, or benchmark method changes.
 
-That is why Section 4.3 reports a five-shape production-surface sweep. The
+That is why the production section reports a five-shape scoped dispatch sweep. The
 single `64K/H16` wrapper row is useful as an anchor, but the production claim is
 that the blocked-inverse CP path survives dispatch across `32K-128K` and
 `H16-H64` in the measured surface.
