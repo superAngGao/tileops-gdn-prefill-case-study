@@ -21,7 +21,10 @@ This repository packages the current GDN prefill AKO case study as three layers:
 - A-producer attribution: same-input A/replay ablation rows archived under
   `evidence/ladder/results/section11_*`.
 - Correctness reference: recorded vendored FLA reference, with package identity
-  caveats preserved in metadata.
+  caveats preserved in metadata. The five-shape production surface has an
+  archived correctness-metrics refresh with p95/p99 absolute error, mean
+  absolute error, L2 norm-relative error, nonfinite counts, and input hashes:
+  `evidence/ladder/summaries/production_surface_correctness_metrics_20260708.md`.
 
 ## Release Caveats
 

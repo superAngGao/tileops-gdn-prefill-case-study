@@ -14,6 +14,7 @@ machine-readable source of truth.
 | Replay-side diagnostics | [`ladder/summaries/a_replay_cross_ablation_64k_h16.md`](ladder/summaries/a_replay_cross_ablation_64k_h16.md) |
 | Production dispatch surface, TileOps vs FLA | [`ladder/results/production_surface_tileops_vs_fla_20260701.jsonl`](ladder/results/production_surface_tileops_vs_fla_20260701.jsonl) |
 | Production dispatch surface, public FlashQLA | [`ladder/results/production_surface_flashqla_20260701.jsonl`](ladder/results/production_surface_flashqla_20260701.jsonl) |
+| Production-surface correctness diagnostics | [`ladder/summaries/production_surface_correctness_metrics_20260708.md`](ladder/summaries/production_surface_correctness_metrics_20260708.md), [`ladder/results/production_surface_correctness_metrics_20260708.jsonl`](ladder/results/production_surface_correctness_metrics_20260708.jsonl) |
 
 The older `production_surface_tileops_vs_fla_20260701_tmpdir.jsonl` file is
 retained only as provenance for the original collection path; the publication

@@ -147,9 +147,10 @@ contract. Each candidate needed four gates:
    tolerance. For fp16 rows, the gate uses `torch.allclose` at
    `atol=rtol=5e-2`; `max_abs` and `max_rel` are diagnostics, and large
    relative error near zero is interpreted together with absolute error and
-   final-state checks. This tolerance is scoped to fp16 long-sequence recurrent
-   accumulation and requires both output and final-state checks, not only a
-   single output tensor.
+   final-state checks. The SI records p99 absolute error and L2 norm-relative
+   error for the headline surface rows. This tolerance is scoped to fp16
+   long-sequence recurrent accumulation and requires both output and final-state
+   checks, not only a single output tensor.
 2. **Benchmark gate.** Use the TileOps benchmark infrastructure and preserve
    metadata: GPU, timer, warmup/repeat/trials, commit, layout, seed, and input
    artifact.

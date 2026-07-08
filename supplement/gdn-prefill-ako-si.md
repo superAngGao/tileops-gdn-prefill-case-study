@@ -541,16 +541,22 @@ need to be refreshed if the benchmark contract changes:
 
 The main article keeps the correctness contract short: fp16 rows compare output
 and final state with `torch.allclose(..., atol=5e-2, rtol=5e-2)`, while
-`max_abs` and `max_rel` are diagnostics. The archived JSONL and summaries record
-those diagnostics for the accepted rows. Large max-relative values are interpreted
-with absolute error and final-state checks because near-zero reference values can
-inflate relative error.
+`max_abs` and `max_rel` are diagnostics. The production-surface correctness
+refresh adds distribution-level diagnostics for the five headline shapes:
+p95/p99 absolute error, mean absolute error, L2 norm-relative error, nonfinite
+counts, and input hashes.
 
-For a stricter external benchmark package, refresh rows should also include
-distribution-level diagnostics such as p95/p99 absolute error, mean absolute
-error, and norm-relative error. Those are not required for the current headline
-claim, but they would make the correctness story easier to audit outside the
-original TileOps/FLA harness context.
+| Evidence | Files |
+| --- | --- |
+| production-surface correctness metrics | [`production_surface_correctness_metrics_20260708.md`](../evidence/ladder/summaries/production_surface_correctness_metrics_20260708.md), [`production_surface_correctness_metrics_20260708.jsonl`](../evidence/ladder/results/production_surface_correctness_metrics_20260708.jsonl) |
+
+Large max-relative values are interpreted with absolute error and final-state
+checks because near-zero reference values can inflate relative error. For very
+large output tensors, p95/p99 are computed from deterministic even-stride
+samples; the JSONL rows record the sampling method, sample size, and total
+element count. A broader external benchmark can still add more seeds or real
+model activation distributions, but the headline synthetic-input surface now
+has archived p99 and norm-relative diagnostics.
 
 #### SI.3.7 Reproduce The Headline Rows
 
@@ -561,6 +567,7 @@ The archived evidence files are the publication source of truth:
 | Main `64K/H16` ladder and writing summary | [`blog_ladder_evidence_64k_h16.md`](../evidence/ladder/summaries/blog_ladder_evidence_64k_h16.md), [`formal_64k_h16_current_gpu4_rerun.jsonl`](../evidence/ladder/results/formal_64k_h16_current_gpu4_rerun.jsonl), [`formal_64k_h16_historical_local.jsonl`](../evidence/ladder/results/formal_64k_h16_historical_local.jsonl) |
 | A/replay cross-ablation | [`section11_a_producer_ablation_64k_h16.md`](../evidence/ladder/summaries/section11_a_producer_ablation_64k_h16.md), [`a_replay_cross_ablation_64k_h16.md`](../evidence/ladder/summaries/a_replay_cross_ablation_64k_h16.md), [`section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl`](../evidence/ladder/results/section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl), [`section11_a_producer_ablation_64k_h16_fq18_to_replay.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq18_to_replay.jsonl), [`section11_a_producer_ablation_64k_h16_to_to_replay.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_to_to_replay.jsonl), [`section11_a_producer_ablation_64k_h16_to_to_full.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_to_to_full.jsonl), [`section11_a_producer_ablation_64k_h16_fq_current_to_full.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq_current_to_full.jsonl), [`section11_a_producer_ablation_64k_h16_fq_current_to_full_legacy.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq_current_to_full_legacy.jsonl), [`section11_a_producer_ablation_64k_h16_fq_current_to_full_wgmma.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq_current_to_full_wgmma.jsonl) |
 | Production dispatch surface | [`production_surface_tileops_vs_fla_20260701.jsonl`](../evidence/ladder/results/production_surface_tileops_vs_fla_20260701.jsonl), [`production_surface_flashqla_20260701.jsonl`](../evidence/ladder/results/production_surface_flashqla_20260701.jsonl) |
+| Production-surface correctness metrics | [`production_surface_correctness_metrics_20260708.md`](../evidence/ladder/summaries/production_surface_correctness_metrics_20260708.md), [`production_surface_correctness_metrics_20260708.jsonl`](../evidence/ladder/results/production_surface_correctness_metrics_20260708.jsonl) |
 
 To rerun the current `64K/H16` harness rows from the TileOps repository root:
 
