@@ -1,26 +1,29 @@
 # A Case Study in Agentic Kernel Optimization: Gated DeltaNet Prefill in TileLang
 
-Long-context Gated DeltaNet prefill is a useful test for agent-assisted kernel
-work because it asks for two things at once: expose parallelism across tens of
-thousands of tokens, and still produce the same recurrent final state as
-token-by-token decode. That makes it harder than optimizing a standalone GEMM.
+Long-context Gated DeltaNet prefill is hard because it asks for two things at
+once: expose parallelism across tens of thousands of tokens, and still produce
+the same recurrent final state as token-by-token decode. That makes it harder
+than optimizing a standalone GEMM.
 
-This case study follows how TileOps turned that operator into a production
-prefill path. The final path combines three ingredients:
+The optimized path has since merged into TileOps main via PR1596. Under the
+scoped H200 benchmark contract below, the archived pre-merge PR1596 worktree
+measured `8.2-13.3x` faster than the recorded vendored FLA reference used as the
+correctness oracle, and `1.46-2.91x` faster than a public FlashQLA TL0.1.8
+anchor. The FlashQLA ratio is a public-environment comparison, not a
+same-lowering attribution result.
+
+The lesson is not "the agent invented a kernel." The useful pattern was
+narrower and more reproducible: constrain the operator contract, let agents
+search local implementation choices, and require every candidate to pass
+correctness, timing, lowering, and attribution gates. The final path combines
+three ingredients:
 
 1. local agentic kernel optimization inside a fixed correctness contract;
 2. the CP-split replay schedule family shown by Qwen's FlashQLA project;
 3. an expert blocked-inverse / Neumann-style prepare-A producer implemented in
    TileOps.
 
-The optimized path has since merged into TileOps main via PR1596. The archived
-five-shape benchmark table below was collected from the pre-merge PR1596
-worktree under the recorded benchmark contract, where the TileOps path measured
-`8.2-13.3x` faster than the recorded vendored FLA reference and `1.46-2.91x`
-faster than a public FlashQLA TL0.1.8 anchor. The FlashQLA rows are
-public-environment anchors, not same-lowering attribution.
-
-Benchmark scope:
+How to read the numbers:
 
 - Shape/input: synthetic inputs with `B=1`, `DK=DV=128`, `chunk64`, `fp16`,
   BTHD layout; sequence length and head count vary by row.
@@ -42,7 +45,7 @@ Benchmark scope:
   a different archived benchmark/reference package. The table below uses the
   JSONL files linked above as its source of truth.
 
-| Shape | TileOps production dispatch | Recorded FLA reference | Public FlashQLA TL0.1.8 anchor | TileOps / FLA throughput | TileOps / FlashQLA throughput |
+| Shape | TileOps scoped production dispatch | Recorded FLA reference | Public FlashQLA TL0.1.8 anchor | TileOps / recorded FLA ref | TileOps / public FlashQLA anchor |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | `32K/H16` | `0.3723 ms` | `3.7964 ms` | `0.5440 ms` | `10.20x` | `1.46x` public-env |
 | `64K/H16` | `0.6951 ms` | `7.9840 ms` | `1.3073 ms` | `11.49x` | `1.88x` public-env |
@@ -50,21 +53,11 @@ Benchmark scope:
 | `64K/H32` | `1.2238 ms` | `10.2402 ms` | `2.5942 ms` | `8.37x` | `2.12x` public-env |
 | `64K/H64` | `2.3085 ms` | `18.9782 ms` | `6.7233 ms` | `8.22x` | `2.91x` public-env |
 
-The FLA row is a recorded vendored reference unless package identity is
-explicitly verified; SI records the source and version caveats.
-
 Reference identity: the FLA path used here is a vendored source reference with
 vendor commit `91d2f468944842ab2d947350d280ca1db793db57` and no independently
 verified package version in this evidence package. It supports the recorded
 correctness oracle and latency context; it is not a claim about an externally
 verified official FLA `0.5.1` package.
-
-The main lesson is not that an agent magically invented a better GPU kernel.
-It is that agentic optimization becomes useful when the problem is made
-measurable, the search space is explicit, and every candidate passes through
-correctness, benchmark, lowering, and attribution gates. Agents can reconstruct
-and refine a measurable search space; expert kernels and human derivations can
-reshape it.
 
 Credit boundary:
 
@@ -72,16 +65,18 @@ Credit boundary:
 > TileOps rebuilt, validated, tuned, dispatched, and combined that schedule
 > with an owned blocked-inverse A producer and a production dispatch surface.
 
-The roles are deliberately separated throughout the article:
-
-| Stage | Agent-assisted work | TileOps-owned engineering | External reference or human input | Gate |
-| --- | --- | --- | --- | --- |
-| Local AKO | Try scale placement, store-path changes, and small fusion candidates. | Keep candidates inside the fixed op contract and benchmark harness. | Fixed operator contract from the GDN recurrence. | Correctness + component/full-op latency. |
-| CP-split replay | Adapt and test schedule variants. | Make the CP-split path shape-aware in TileOps. | Qwen FlashQLA supplied the CP-split schedule family. | Same-input replay checks + public-anchor caveat. |
-| Prepare-A producer | Help implement and benchmark candidate producers. | Integrate the blocked producer into the same replay family. | Human blocked-inverse / Neumann-style derivation. | A/replay ablation + full-op correctness. |
-| Dispatch surface | Run gated sweeps and metadata checks. | Merge the selected serving dispatch surface. | Benchmark shape contract and production policy. | Five-shape sweep + metadata. |
-
 ## 1. The Operator: Recurrent Memory Meets Long Prefill
+
+Terms used below:
+
+- **prepare-A**: chunk-local construction of the correction matrix and effective
+  writes consumed by replay.
+- **replay/output**: the state replay that produces `o` and `final_state`.
+- **CP split**: compute corrected segment starts, then replay shorter local
+  segments.
+- **public anchor**: an external baseline measured in its own public environment.
+- **same-input ablation**: a controlled comparison that reuses the same input
+  artifact and fixes the side of the pipeline not being studied.
 
 For one `(batch, head)` stream, a Gated DeltaNet decode step can be viewed as a
 recurrent memory update:
@@ -176,6 +171,14 @@ How to read the rest:
 This is the difference between agentic search and free-form code generation.
 The agent can propose TileLang rewrites, but every rewrite has to pass through
 the same gates.
+
+Representative gated episodes:
+
+| Stage | Agent-assisted action | Human / external input | Accepted evidence | Rejected or bounded evidence | Gate |
+| --- | --- | --- | --- | --- | --- |
+| Local AKO | Try scale-placement and store-path variants. | Fixed GDN recurrence and output contract. | Scale/store diagnostics kept as local wins. | Direct fusion reached the replay wall. | Correctness + component/full-op latency. |
+| CP replay | Adapt the CP-split idea into TileOps. | Qwen FlashQLA schedule family. | TileOps CP bridge and replay ablation. | Bridge rows are not FlashQLA reproduction claims. | Same-input replay + public-env caveat. |
+| Prepare-A | Implement benchmarkable producer variants. | Human blocked-inverse / Neumann derivation. | `0.815029 ms -> 0.695237 ms` prepare-A comparison. | Current-TL KKT nonfinite rows stay diagnostic. | Full-op correctness + A/replay ablation. |
 
 ## 3. Local AKO: Useful Wins And The Wall
 
@@ -383,8 +386,8 @@ it is a more parallel backend-friendly shape. The win is therefore a scheduling
 and backend-shape win, not a claim that the mathematical operator became cheaper
 in the abstract. SI gives the full MAC accounting.
 
-The cleanest available measured prepare-A comparison in this evidence package is
-shown with the public FlashQLA anchor for context:
+The prepare-A claim rests on the following same-scope rows. The public FlashQLA
+row is context; the attribution comparison is the two TileOps-replay rows.
 
 | Row | Prepare-A producer | Replay/output | `64K/H16` latency | Meaning |
 | --- | --- | --- | ---: | --- |
@@ -417,11 +420,12 @@ The attribution split is:
 The native current-TL FlashQLA-style KKT producer remains a rejected diagnostic
 at `64K/H16`; the no-Neumann row above uses the TL0.1.8-lowering harness.
 
-## 6. Production: From Point Kernel To Dispatch Surface
+## 6. Production: From Point Kernel To Scoped Dispatch Surface
 
-A fast point kernel is not yet a production kernel. The production question is
-whether the mechanism survives shape changes, head-count changes, wrapper
-policy, metadata, and dispatch selection.
+A fast point kernel is not yet enough for a scoped serving path. The production
+question here is whether the mechanism survives shape changes, head-count
+changes, wrapper policy, metadata, and dispatch selection inside the documented
+TileOps GDN prefill contract.
 
 TileOps productionization included:
 
@@ -435,8 +439,8 @@ TileOps productionization included:
 
 The production-surface table at the top is the main result. The `64K/H16`
 algorithm ladder is useful for explanation, but the engineering claim is that
-the selected production path passes correctness and stays fast across this
-measured serving surface.
+the selected scoped serving path passes correctness and stays fast across this
+measured surface.
 
 ## 7. What Kernel Engineers Can Reuse
 
@@ -454,8 +458,8 @@ workflow:
 5. **Change the search space deliberately.** CP split came from FlashQLA; the
    blocked-inverse prepare came from expert derivation. Once those ideas
    existed, the agentic loop became useful again.
-6. **Benchmark the dispatch surface.** Production kernels are selected by
-   shape and policy, not by a single isolated latency number.
+6. **Benchmark the dispatch surface.** Serving kernels are selected by shape and
+   policy, not by a single isolated latency number.
 
 The broader lesson is simple: agentic kernel optimization is most credible
 when it is auditable. The agent can move quickly, but correctness gates,

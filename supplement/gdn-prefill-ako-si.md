@@ -313,7 +313,7 @@ and
 [`a_replay_cross_ablation_64k_h16.md`](../evidence/ladder/summaries/a_replay_cross_ablation_64k_h16.md).
 The full external-lowering and Neumann rows use
 `benchmarks.benchmark_base.bench_kernel`. The machine-readable evidence is
-split across the archived Section 11 JSONL files listed in SI.3.6 rather than a
+split across the archived Section 11 JSONL files listed in SI.3.7 rather than a
 single combined JSONL file.
 
 | Row | A producer | Replay/output path | Timing scope | Correctness reference | Latency |
@@ -537,7 +537,22 @@ need to be refreshed if the benchmark contract changes:
 | generated-code archive for TMA/WGMMA claims | needed before making low-level lowering claims |
 | verified FLA package identity | needed before saying externally verified FLA 0.5.1 without caveat |
 
-#### SI.3.6 Reproduce The Headline Rows
+#### SI.3.6 Correctness Tolerance Note
+
+The main article keeps the correctness contract short: fp16 rows compare output
+and final state with `torch.allclose(..., atol=5e-2, rtol=5e-2)`, while
+`max_abs` and `max_rel` are diagnostics. The archived JSONL and summaries record
+those diagnostics for the accepted rows. Large max-relative values are interpreted
+with absolute error and final-state checks because near-zero reference values can
+inflate relative error.
+
+For a stricter external benchmark package, refresh rows should also include
+distribution-level diagnostics such as p95/p99 absolute error, mean absolute
+error, and norm-relative error. Those are not required for the current headline
+claim, but they would make the correctness story easier to audit outside the
+original TileOps/FLA harness context.
+
+#### SI.3.7 Reproduce The Headline Rows
 
 The archived evidence files are the publication source of truth:
 
