@@ -5,33 +5,29 @@ once: expose parallelism across tens of thousands of tokens, and still produce
 the same recurrent final state as token-by-token decode. That makes it harder
 than optimizing a standalone GEMM.
 
-The optimized path has since merged into TileOps main via PR1596. Under the
-scoped H200 benchmark contract below, the archived pre-merge PR1596 worktree
-measured `8.2-13.3x` faster than the recorded vendored FLA reference used as the
-correctness oracle, and `1.46-2.91x` faster than a public FlashQLA TL0.1.8
-anchor. The FlashQLA ratio is a public-environment comparison, not a
-same-lowering attribution result.
+In this case study, TileOps turns that recurrent operator into a scoped
+serving dispatch path. The path has merged into TileOps main via
+[PR1596](https://github.com/tile-ai/TileOPs/pull/1596). The archived
+pre-merge PR1596 benchmark package below measured `8.2-13.3x` faster than the
+recorded vendored FLA reference used as the correctness oracle, and `1.46-2.91x`
+faster than a public-environment FlashQLA TL0.1.8 anchor.
 
-The lesson is not "the agent invented a kernel." The useful pattern was
-narrower and more reproducible: constrain the operator contract, let agents
-search local implementation choices, and require every candidate to pass
-correctness, timing, lowering, and attribution gates. The final path combines
-three ingredients:
+The useful lesson is narrower than "an agent invented a kernel." The repeatable
+pattern was: fix the operator contract, let agents search local implementation
+choices, and require every candidate to pass correctness, timing, lowering, and
+attribution gates. The final path combines three ingredients:
 
 1. local agentic kernel optimization inside a fixed correctness contract;
 2. the CP-split replay schedule family shown by Qwen's FlashQLA project;
 3. an expert blocked-inverse / Neumann-style prepare-A producer implemented in
    TileOps.
 
-How to read the numbers:
+Benchmark scope for the headline table:
 
 - Shape/input: synthetic inputs with `B=1`, `DK=DV=128`, `chunk64`, `fp16`,
   BTHD layout; sequence length and head count vary by row.
 - Hardware/timer: H200 using CUPTI kernel-only timing with L2 flush. The
   archived surface rows use `warmup=5`, `repeat=20`, and `trials=3`.
-- TileOps code status: the GDN prefill path entered TileOps main through
-  [tile-ai/TileOps#1596](https://github.com/tile-ai/TileOPs/pull/1596),
-  merge commit `79469fc0ddae584537df03e35d935575870574f6`.
 - Reference roles: FLA is a recorded vendored correctness/latency reference;
   FlashQLA is a public TL0.1.8 anchor.
 - Claim role: this table supports the production serving-surface claim. It does
@@ -51,7 +47,8 @@ Source of truth: the table uses the archived
 and
 [`FlashQLA JSONL`](../evidence/ladder/results/production_surface_flashqla_20260701.jsonl).
 PR1596's body contains an earlier concise table under a different archived
-benchmark/reference package.
+benchmark/reference package; the optimized path later merged at commit
+`79469fc0ddae584537df03e35d935575870574f6`.
 
 Reference identity: the FLA path used here is a vendored source reference with
 vendor commit `91d2f468944842ab2d947350d280ca1db793db57` and no independently
