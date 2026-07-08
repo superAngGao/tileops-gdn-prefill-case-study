@@ -119,10 +119,15 @@ the main article's productionization section, the stronger claim is now the
 refreshed production-surface sweep rather than the single `64K/H16` wrapper
 anchor.
 
+Merge note: PR1596 has since entered TileOps main at merge commit
+`79469fc0ddae584537df03e35d935575870574f6`. Paths under
+`/home/ga/TileOps-pr1596` below are archived pre-merge provenance for the
+benchmark artifacts.
+
 | Variant | Role | Latency ms | Correctness | Use in blog |
 | --- | --- | ---: | --- | --- |
 | `ref_fla_051` | External correctness oracle and FLA latency baseline. | 8.02574 | self/reference row | May be reported as the recorded vendored FLA reference baseline, with version caveat. |
-| `tileops_final_dispatch` | Final production wrapper / dispatch context from PR1596. | 0.692026 historical anchor; 0.6951 in refreshed surface sweep | pass vs FLA reference | May be reported as the production dispatch surface, not as an experiment-adapter step. |
+| `tileops_final_dispatch` | Merged PR1596 production wrapper / dispatch context. | 0.692026 historical anchor; 0.6951 in refreshed surface sweep | pass vs FLA reference | May be reported as the production dispatch surface, not as an experiment-adapter step. |
 
 The historical `tileops_final_dispatch` anchor is slightly faster than the
 explicit V6 adapter:
@@ -176,7 +181,7 @@ The V5/V6 A comparison explicitly shows `allclose=false`.
 | V6 `tileops_owned_cp_blocked_inverse_a` | Experiment adapter using PR1596 blocked-inverse / blocksolve A producer plus the same PR1596 CP downstream. | `used_code_root.kind=production_root_experiment_adapter`; blocked-inverse A module `/home/ga/TileOPs-pr1596/tileops/kernels/gated_deltanet/gated_deltanet_prefill.py`; CP downstream module `/home/ga/TileOPs-pr1596/tileops/kernels/gated_deltanet/gdn_prefill/fused_fwd.py`. |
 | V5/V6 A comparison | Same materialized A handoff shape/layout, different producer math / numerics. | `A allclose=false`; `max_abs=0.117279`; V5 `max_rel=20583.9`; V6 `max_rel=29546.4`. |
 | V6 dispatch wrapper scope | Explicit adapter row, not production dispatch wrapper. | `uses_production_dispatch_wrapper=false`; `uses_pr1596_cp_downstream=true`; `a_producer=blocked_inverse_blocksolve`. |
-| Final dispatch | Production wrapper from PR1596. | `uses_production_dispatch_wrapper=true`; module `/home/ga/TileOPs-pr1596/tileops/ops/gated_deltanet.py`. |
+| Final dispatch | Production wrapper merged through PR1596. | `uses_production_dispatch_wrapper=true`; archived module path `/home/ga/TileOPs-pr1596/tileops/ops/gated_deltanet.py`. |
 
 ## FLA Reference Caveat
 

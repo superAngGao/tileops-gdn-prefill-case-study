@@ -14,7 +14,10 @@ This repository packages the current GDN prefill AKO case study as three layers:
 - Main single-shape story: `64K/H16`, BTHD, fp16, H200, archived under
   `evidence/ladder/`.
 - Production dispatch surface: five serving shapes, with TileOps/FLA and public
-  FlashQLA anchors archived as JSONL.
+  FlashQLA anchors archived as JSONL. The TileOps GDN prefill path entered
+  TileOps main through
+  [tile-ai/TileOps#1596](https://github.com/tile-ai/TileOPs/pull/1596), merge
+  commit `79469fc0ddae584537df03e35d935575870574f6`.
 - A-producer attribution: same-input A/replay ablation rows archived under
   `evidence/ladder/results/section11_*`.
 - Correctness reference: recorded vendored FLA reference, with package identity
@@ -28,8 +31,9 @@ This repository packages the current GDN prefill AKO case study as three layers:
   package identity is independently verified.
 - The TL0.1.8-lowering FlashQLA-style prepare row is an external-lowering
   harness row, not a native current-TileLang KKT port.
-- Benchmark tables require refresh if the TileOps PR head, TileLang wheel,
-  docker/runtime, GPU, timer semantics, or input artifact changes.
+- Benchmark tables require refresh if the TileOps main/release commit,
+  TileLang wheel, docker/runtime, GPU, timer semantics, or input artifact
+  changes.
 
 ## License / Reuse
 

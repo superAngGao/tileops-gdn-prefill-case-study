@@ -40,6 +40,10 @@ public-environment comparison, not a controlled same-lowering attribution
 experiment; the FLA row is a recorded vendored reference unless otherwise
 stated.
 
+Code status: the GDN prefill production path entered TileOps main through
+[tile-ai/TileOps#1596](https://github.com/tile-ai/TileOPs/pull/1596), merge
+commit `79469fc0ddae584537df03e35d935575870574f6`.
+
 This is not a story about an AI magically inventing a faster GPU kernel. It is
 a story about how agents become useful when a kernel problem is made
 measurable, and where they still need human judgment and expert open-source
@@ -417,11 +421,12 @@ what failed.
 
 The gates also protect the narrative. A historical row can explain why a
 candidate was pursued, but it cannot become a final public claim unless it is
-refreshed at the final PR head. A source-level similarity can motivate a
-migration, but it cannot justify a TMA/WGMMA claim unless the generated code
-was inspected and archived. A full-op FlashQLA speedup can be reported under
-its environment, but it cannot be described as a replay algorithm superiority
-claim without a controlled same-lowering experiment.
+refreshed at the relevant TileOps main/release commit. A source-level
+similarity can motivate a migration, but it cannot justify a TMA/WGMMA claim
+unless the generated code was inspected and archived. A full-op FlashQLA
+speedup can be reported under its environment, but it cannot be described as a
+replay algorithm superiority claim without a controlled same-lowering
+experiment.
 
 That discipline is the base layer for the rest of the article. Level 2 will
 show what the agent could optimize inside this measured space: scale
@@ -1194,9 +1199,9 @@ become a dispatchable family whose selected rows pass correctness and stay ahead
 across this measured surface.
 
 ```text
-Rerun Tier-1 correctness and benchmark tables if the PR head, TileLang wheel,
-docker/runtime, dispatch heuristic, benchmark timer, GPU, or FlashQLA/FLA
-environment changes.
+Rerun Tier-1 correctness and benchmark tables if the TileOps main/release
+commit, TileLang wheel, docker/runtime, dispatch heuristic, benchmark timer,
+GPU, or FlashQLA/FLA environment changes.
 ```
 
 ## 5. Takeaways
@@ -1254,8 +1259,8 @@ each speedup to the mechanism that actually caused it.
 A fast point kernel is not yet a production kernel. The final production step
 was to turn the optimized mechanism into a dispatchable kernel family: selected
 by shape, validated across the serving surface, tied to benchmark metadata, and
-rerunnable when the PR head, TileLang wheel, docker/runtime, GPU, or benchmark
-method changes.
+rerunnable when the TileOps main/release commit, TileLang wheel,
+docker/runtime, GPU, or benchmark method changes.
 
 That is why Section 4.3 reports a five-shape production-surface sweep. The
 single `64K/H16` wrapper row is useful as an anchor, but the production claim is
@@ -1281,9 +1286,9 @@ The claims above are bounded by these constraints:
 1. Neumann/blocksolve formulas are tied to the implementation caveat: TileOps
    uses a blocked-inverse / Neumann-style producer, and the materialized `A` is
    not claimed to equal the generic exact/KKT-style producer.
-2. Tier-1 correctness and benchmark tables need refresh when the PR head,
-   TileLang wheel, docker/runtime, dispatch heuristic, benchmark timer, GPU, or
-   FlashQLA/FLA environment changes.
+2. Tier-1 correctness and benchmark tables need refresh when the TileOps
+   main/release commit, TileLang wheel, docker/runtime, dispatch heuristic,
+   benchmark timer, GPU, or FlashQLA/FLA environment changes.
 3. The TL0.1.8-lowering FlashQLA-style prepare-A row is an external-lowering
    harness measurement, not a native current-TL KKT port.
 4. The CP-split schedule remains credited to FlashQLA.

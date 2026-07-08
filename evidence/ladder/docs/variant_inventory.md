@@ -5,6 +5,13 @@ Date: 2026-06-30
 Scope: controlled GDN prefill evidence ladder for the blog plan.  This inventory
 does not modify `tutorial_v3.md` and does not change production dispatch.
 
+Publication note: this inventory was created before
+[tile-ai/TileOps#1596](https://github.com/tile-ai/TileOPs/pull/1596) merged.
+Rows that say `/home/ga/TileOPs-pr1596` or use pre-merge final-dispatch wording
+preserve the pre-merge evidence provenance; the corresponding GDN prefill
+production path has since entered TileOps main at merge commit
+`79469fc0ddae584537df03e35d935575870574f6`.
+
 ## Summary
 
 | Variant | Lane | Publication role | Causal ladder eligible? | Current status | Decision |
@@ -21,7 +28,7 @@ does not modify `tutorial_v3.md` and does not change production dispatch.
 | `flashqla_port_current_tl` | external_anchor | migration_lowering_anchor | no | schedule notes exist, no clean runnable adapter found | unavailable |
 | `tileops_owned_cp_generic_a` | controlled_full_op | causal_ladder_row | yes | experiment-only adapter implemented; smoke/formal full-op correctness pass | accept with ABI caveat |
 | `tileops_owned_cp_blocked_inverse_a` | controlled_full_op | causal_ladder_row | yes | experiment-only adapter implemented; smoke/formal full-op correctness pass | accept as V6 producer-swap row |
-| `tileops_final_dispatch` | controlled_full_op | final_candidate | no | runnable from `/home/ga/TileOPs-pr1596` as current production candidate | accept as final/current candidate |
+| `tileops_final_dispatch` | controlled_full_op | final_candidate | no | archived pre-merge run from `/home/ga/TileOPs-pr1596`; production path now merged | accept as final/current production-dispatch context |
 
 ## Audit Notes
 
@@ -272,8 +279,9 @@ Code pointer:
 /home/ga/TileOPs-pr1596/tileops/kernels/gated_deltanet/gated_deltanet_prefill.py
 ```
 
-The current handoff identifies `prepare008` in PR1596 as the accepted production
-node.  This row can be used as the final/current candidate smoke row:
+The pre-merge handoff identified `prepare008` in PR1596 as the accepted
+production node. This row can be used as the archived final/current dispatch
+smoke row:
 
 ```bash
 python experiments/gated_deltanet_prefill_blog_ladder/run_ladder.py \
@@ -281,7 +289,8 @@ python experiments/gated_deltanet_prefill_blog_ladder/run_ladder.py \
   --production-root /home/ga/TileOPs-pr1596
 ```
 
-Decision: accepted only as final/current production candidate.  Machine-readable
+Decision: accepted only as final/current production-dispatch context.
+Machine-readable
 metadata sets `publication_role="final_candidate"` and
 `causal_ladder_eligible=false`; scripts must not use this row as a replacement
 for `tileops_owned_cp_generic_a` or as a pure A-producer swap claim.

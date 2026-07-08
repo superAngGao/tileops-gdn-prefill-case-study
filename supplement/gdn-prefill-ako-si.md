@@ -19,6 +19,12 @@ combination into an owned production path. Two side lessons are still worth
 keeping, but they belong after the main path because they are guardrails rather
 than the spine of the story.
 
+Code status: the production path discussed by the main article entered TileOps
+main through [tile-ai/TileOps#1596](https://github.com/tile-ai/TileOPs/pull/1596),
+merge commit `79469fc0ddae584537df03e35d935575870574f6`. Some archived JSONL
+rows below still record the pre-merge PR worktree path because that is where the
+benchmark artifacts were collected.
+
 ### SI.1 Source Similarity Is Not Performance Equality
 
 Studying FlashQLA was a source-level adaptation of a schedule idea, not a
@@ -229,7 +235,7 @@ sweep is the production claim.
 | Variant | Role | `64K/H16` latency | Correctness | Use in blog |
 | --- | --- | ---: | --- | --- |
 | `ref_fla_051` | recorded vendored FLA reference baseline | `8.02574 ms` | self/reference row | correctness oracle and FLA latency context, with version caveat |
-| `tileops_final_dispatch` | PR1596 production wrapper / dispatch context | `0.692026 ms` historical anchor; `0.6951 ms` in the refreshed surface sweep | pass vs recorded FLA reference | production-surface row family, not an experiment-adapter step |
+| `tileops_final_dispatch` | merged PR1596 production wrapper / dispatch context | `0.692026 ms` historical anchor; `0.6951 ms` in the refreshed surface sweep | pass vs recorded FLA reference | production-surface row family, not an experiment-adapter step |
 
 Write `tileops_final_dispatch` as a production wrapper / dispatch-context
 observation, not as an additional algorithmic improvement after the
@@ -262,7 +268,7 @@ has bounded claim scope.
 | `tileops_owned_cp_blocked_inverse_a` | experiment adapter using PR1596 blocked-inverse / blocksolve A producer plus the same PR1596 CP downstream | blocksolve producer module `gated_deltanet_prefill.py`; CP downstream module `gdn_prefill/fused_fwd.py`; `used_code_root.kind=production_root_experiment_adapter` |
 | V5/V6 A comparison | same materialized A handoff shape/layout, different producer math / numerics | `A allclose=false`, `max_abs=0.117279`, V5 `max_rel=20583.9`, V6 `max_rel=29546.4` |
 | V6 adapter | explicit experiment row, not the production dispatch wrapper | `uses_production_dispatch_wrapper=false` |
-| final dispatch | production wrapper from PR1596 | `uses_production_dispatch_wrapper=true` |
+| final dispatch | production wrapper merged through PR1596 | `uses_production_dispatch_wrapper=true` |
 
 Safe wording:
 
@@ -527,7 +533,7 @@ need to be refreshed if the benchmark contract changes:
 
 | Refresh / verification item | Why it matters |
 | --- | --- |
-| production-surface sweep refresh | rerun if PR head, TileLang wheel, docker/runtime, dispatch heuristic, benchmark timer, GPU, or FlashQLA/FLA environment changes |
+| production-surface sweep refresh | rerun if TileOps main/release commit, TileLang wheel, docker/runtime, dispatch heuristic, benchmark timer, GPU, or FlashQLA/FLA environment changes |
 | generated-code archive for TMA/WGMMA claims | needed before making low-level lowering claims |
 | verified FLA package identity | needed before saying externally verified FLA 0.5.1 without caveat |
 

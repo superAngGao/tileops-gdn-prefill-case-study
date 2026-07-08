@@ -13,11 +13,12 @@ prefill path. The final path combines three ingredients:
 3. an expert blocked-inverse / Neumann-style prepare-A producer implemented in
    TileOps.
 
-On five H200 serving-shaped synthetic-input sweeps, the TileOps dispatch
-candidate measured `8.2-13.3x` faster than the recorded vendored FLA reference
-and `1.46-2.91x` faster than a public FlashQLA TL0.1.8 anchor. These are
-production-surface measurements under the archived benchmark contracts; the
-FlashQLA rows are public-environment anchors, not same-lowering attribution.
+On five H200 serving-shaped synthetic-input sweeps, the merged TileOps
+production dispatch path measured `8.2-13.3x` faster than the recorded vendored
+FLA reference and `1.46-2.91x` faster than a public FlashQLA TL0.1.8 anchor.
+These are production-surface measurements under the archived benchmark
+contracts; the FlashQLA rows are public-environment anchors, not same-lowering
+attribution.
 
 Benchmark scope:
 
@@ -29,6 +30,9 @@ Benchmark scope:
   [`production_surface_tileops_vs_fla_20260701_tmpdir.jsonl`](../evidence/ladder/results/production_surface_tileops_vs_fla_20260701_tmpdir.jsonl)
   and
   [`production_surface_flashqla_20260701.jsonl`](../evidence/ladder/results/production_surface_flashqla_20260701.jsonl).
+- TileOps code status: the GDN prefill path entered TileOps main through
+  [tile-ai/TileOps#1596](https://github.com/tile-ai/TileOPs/pull/1596),
+  merge commit `79469fc0ddae584537df03e35d935575870574f6`.
 - Reference roles: FLA is a recorded vendored correctness/latency reference;
   FlashQLA is a public TL0.1.8 anchor.
 - Claim role: this table supports the production serving-surface claim. It does
@@ -72,7 +76,7 @@ The roles are deliberately separated throughout the article:
 | Local AKO | Try scale placement, store-path changes, and small fusion candidates. | Fixed operator contract from the GDN recurrence. | Correctness + component/full-op latency. |
 | CP-split replay | Port the schedule into TileOps and make it shape-aware. | Qwen FlashQLA supplied the CP-split schedule family. | Same-input replay checks + public-anchor caveat. |
 | Prepare-A producer | Implement and benchmark a blocked producer inside the same replay family. | Human blocked-inverse / Neumann-style derivation. | A/replay ablation + full-op correctness. |
-| Dispatch surface | Turn the fast path into a selected serving candidate. | Benchmark shape contract and production policy. | Five-shape sweep + metadata. |
+| Dispatch surface | Turn the fast path into a merged serving dispatch surface. | Benchmark shape contract and production policy. | Five-shape sweep + metadata. |
 
 ## 1. The Operator: Recurrent Memory Meets Long Prefill
 

@@ -61,7 +61,8 @@ they need.
   explicitly verified in the evidence metadata.
 - FlashQLA supplied the CP-split replay schedule family. TileOps adapted that
   schedule, combined it with a blocked-inverse / Neumann-style A producer, and
-  turned the result into a shape-aware production dispatch surface.
+  turned the result into a shape-aware production dispatch surface merged via
+  [tile-ai/TileOps#1596](https://github.com/tile-ai/TileOPs/pull/1596).
 - JSONL files under `evidence/` are the machine-readable source of truth for
   the archived benchmark rows.
 
