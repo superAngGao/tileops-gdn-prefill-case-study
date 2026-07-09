@@ -42,6 +42,9 @@ Benchmark scope for the headline table:
 
 - Shape/input: synthetic inputs with `B=1`, `DK=DV=128`, `chunk64`, `fp16`,
   BTHD layout; sequence length and head count vary by row.
+- Generalization: these rows cover the scoped synthetic serving surface shown
+  below. They do not claim coverage of multiple seeds, real model activation
+  distributions, other dtypes/layouts, or `B>1`.
 - Hardware/timer: H200 using CUPTI kernel-only timing with L2 flush. The
   archived surface rows use `warmup=5`, `repeat=20`, and `trials=3`.
 - Reference roles: FLA is a recorded vendored correctness/latency reference;
