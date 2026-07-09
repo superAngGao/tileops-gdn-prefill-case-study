@@ -1,4 +1,4 @@
-# A Case Study in Agentic Kernel Optimization: Gated DeltaNet Prefill in TileLang
+# A Case Study in Agentic Kernel Optimization: Gated DeltaNet Prefill in TileOps with TileLang
 
 Long-context Gated DeltaNet prefill faces a scheduling conflict: fast prefill
 needs to process thousands of tokens in parallel, but the operator must still
@@ -13,13 +13,15 @@ than the FLA `0.5.1` reference used as the correctness oracle, with a
 `1.36-2.68x` public-environment throughput ratio relative to a FlashQLA
 TL0.1.8 anchor.
 
-The useful lesson is narrower than "an agent invented a kernel." The repeatable
-pattern was: fix the operator contract, let agents search local implementation
-choices, and require every candidate to pass correctness, timing, lowering, and
-attribution gates. The final path combines three ingredients:
+The result should be read less as "an agent invented a kernel" and more as an
+auditable optimization loop: fix the operator contract, let agents search local
+implementation choices, and require every candidate to pass correctness,
+timing, lowering, and attribution gates. The final path combines three
+ingredients:
 
 1. local agentic kernel optimization inside a fixed correctness contract;
-2. the CP-split replay schedule family shown by Qwen's FlashQLA project;
+2. the CP-split replay schedule family shown by Qwen's FlashQLA project:
+   compute corrected segment starts, then replay shorter local segments;
 3. an expert blocked-inverse / Neumann-style prepare-A producer implemented in
    TileOps.
 
@@ -28,16 +30,25 @@ Key terms:
 - **prepare-A**: chunk-local construction of the correction matrix and effective
   writes consumed by replay.
 - **replay/output**: the state replay that produces `o` and `final_state`.
-- **CP split**: compute corrected segment starts, then replay shorter local
-  segments.
+- **CP split**: the schedule that first computes corrected segment starts, then
+  replays shorter local segments.
+- **AKO**: Agentic Kernel Optimization, a gated loop of hypothesis,
+  implementation, correctness, benchmark, lowering inspection, and decision
+  logging.
+- **BTHD**: `[batch, time, heads, dim]`, the serving layout used by the
+  headline TileOps path.
+- **KKT**: the FlashQLA-style triangular solve / prepare-A producer family used
+  as an external-lowering comparison in this article.
+- **TL0.1.8**: the TileLang `0.1.8` environment used by the public FlashQLA
+  artifact and external-lowering comparison rows.
 - **public anchor**: an external baseline measured in its own public
   environment; useful as performance context, but not valid for same-lowering
   attribution claims.
 - **same-input ablation**: a controlled comparison that reuses the same input
-  artifact and fixes the side of the pipeline not being studied. The Section 11
-  A/replay ablation uses its own exported FlashQLA TL0.1.8 artifact; that
-  artifact is fixed within the ablation but is not the same file as the formal
-  ladder artifact.
+  artifact and fixes the side of the pipeline not being studied. The A/replay
+  ablation in the companion report uses its own exported FlashQLA TL0.1.8
+  artifact; that artifact is fixed within the ablation but is not the same file
+  as the formal ladder artifact.
 
 Benchmark scope for the headline table:
 
@@ -166,14 +177,15 @@ contract. Each candidate needed four gates:
    tolerance. For fp16 rows, the gate uses `torch.allclose` at
    `atol=rtol=5e-2`; `max_abs` and `max_rel` are diagnostics, and large
    relative error near zero is interpreted together with absolute error and
-   final-state checks. The SI records sampled p99 absolute error, L2
-   norm-relative error, and nonfinite counts for the headline surface rows; in
-   the refreshed five-shape correctness sweep, sampled output `p99_abs` is
-   `6.104e-05`, output `max_abs` stays within `0.002502`, output L2 relative
-   error stays within `0.003501`, nonfinite counts are zero, and final-state
-   checks pass under the same contract. This tolerance is scoped to fp16
-   long-sequence recurrent accumulation and requires both output and
-   final-state checks, not only a single output tensor.
+   final-state checks. The gate is intentionally a little wider than the final
+   observed errors so AKO candidates can iterate without being rejected by
+   harmless fp16 long-recurrence noise. The accepted headline rows are much
+   tighter in practice: sampled output `p99_abs` is `6.104e-05`, output
+   `max_abs` stays within `0.002502`, output L2 relative error stays within
+   `0.003501`, nonfinite counts are zero, final-state sampled `p99_abs` stays
+   within `8.757e-05`, and final-state `max_abs` stays within `6.901e-04`.
+   This tolerance is scoped to fp16 long-sequence recurrent accumulation and
+   requires both output and final-state checks, not only a single output tensor.
 2. **Benchmark gate.** Use the TileOps benchmark infrastructure and preserve
    metadata: GPU, timer, warmup/repeat/trials, commit, layout, seed, and input
    artifact.
@@ -328,7 +340,10 @@ claims; the intermediate bridge row stays in SI.
 
 The second search-space expansion came from an expert derivation of the
 prepare stage. The useful object is a chunk-local lower-triangular correction
-matrix. For a chunk of length `C`, define:
+matrix. Here ABI means the producer/replay tensor contract: which side owns
+beta/gate factors, layout, and chunk-local `g_cum`. Under the implementation
+convention used in this article, one useful logical view for a chunk of length
+`C` is:
 
 ```math
 M_{i,j} =
@@ -419,9 +434,10 @@ FlashQLA row is external context; the attribution comparison is the two
 TileOps-replay rows. The middle row uses the FlashQLA TL0.1.8-lowered KKT
 producer through an external launcher, then feeds its produced `A/g` tensors
 into the TileOps PR1596 replay path. It is not a native current-TileLang KKT
-port and not a direct call to the full FlashQLA forward path. This Section 11
-ablation uses the exported public TL0.1.8 artifact as its fixed reference
-context; the headline surface correctness gate uses FLA `0.5.1`.
+port and not a direct call to the full FlashQLA forward path. This A/replay
+ablation in the companion report uses the exported public TL0.1.8 artifact as
+its fixed reference context; the headline surface correctness gate uses FLA
+`0.5.1`.
 
 | Row | Prepare-A producer | Replay/output | `64K/H16` latency | Meaning |
 | --- | --- | --- | ---: | --- |
