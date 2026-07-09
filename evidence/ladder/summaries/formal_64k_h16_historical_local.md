@@ -11,9 +11,19 @@
 - Input hash: `sha256:a8987a2c6d16c658a1cb8ed95e409d973a3f736e2019d8719b143f18b4741513`
 - Evidence lane note: `final_candidate` rows and `causal_ladder_row` rows are reported separately; this summary does not compute causal speedup between them.
 
+The `Registry key` column below is a machine-readable registry key. Public-facing
+text should use these labels:
+
+| Registry key | Public label |
+| --- | --- |
+| `local_initial_prefill_f147` | initial correct prefill checkpoint |
+| `local_prepare_specialized_00a60` | local prepare-specialized checkpoint |
+| `local_h_tile_tuned_827` | local h-tile diagnostic |
+| `local_bthd_wall_d09c` | local BTHD wall checkpoint |
+
 ## All Rows
 
-| variant | role | lane | causal | formal accepted | correct | latency_ms | ref verified | caveat | used root | ref root |
+| Registry key | role | lane | causal | formal accepted | correct | latency_ms | ref verified | caveat | used root | ref root |
 |---|---|---|---|---|---|---:|---|---|---|---|
 | ref_fla_051 | correctness_oracle_and_fla_baseline | external_anchor | false | true | pass | 8.02445 | false | FLA version unverified | fla_vendor | fla_vendor |
 | local_initial_prefill_f147 | historical_local_ladder_row | historical_full_op | false | true | pass | 11.1762 | false | FLA version unverified | historical_worktree | fla_vendor |
@@ -23,7 +33,7 @@
 
 ## Publication-Eligible Evidence Rows
 
-| variant | role | lane | causal | formal accepted | correct | latency_ms | ref verified | caveat | used root | ref root |
+| Registry key | role | lane | causal | formal accepted | correct | latency_ms | ref verified | caveat | used root | ref root |
 |---|---|---|---|---|---|---:|---|---|---|---|
 | ref_fla_051 | correctness_oracle_and_fla_baseline | external_anchor | false | true | pass | 8.02445 | false | FLA version unverified | fla_vendor | fla_vendor |
 | local_initial_prefill_f147 | historical_local_ladder_row | historical_full_op | false | true | pass | 11.1762 | false | FLA version unverified | historical_worktree | fla_vendor |
@@ -32,17 +42,17 @@
 
 ## Controlled Causal Ladder Rows
 
-| variant | role | lane | causal | formal accepted | correct | latency_ms | ref verified | caveat | used root | ref root |
+| Registry key | role | lane | causal | formal accepted | correct | latency_ms | ref verified | caveat | used root | ref root |
 |---|---|---|---|---|---|---:|---|---|---|---|
 
 ## Final Candidate Rows
 
-| variant | role | lane | causal | formal accepted | correct | latency_ms | ref verified | caveat | used root | ref root |
+| Registry key | role | lane | causal | formal accepted | correct | latency_ms | ref verified | caveat | used root | ref root |
 |---|---|---|---|---|---|---:|---|---|---|---|
 
 ## External Anchor Rows
 
-| variant | role | lane | causal | formal accepted | correct | latency_ms | ref verified | caveat | used root | ref root |
+| Registry key | role | lane | causal | formal accepted | correct | latency_ms | ref verified | caveat | used root | ref root |
 |---|---|---|---|---|---|---:|---|---|---|---|
 | ref_fla_051 | correctness_oracle_and_fla_baseline | external_anchor | false | true | pass | 8.02445 | false | FLA version unverified | fla_vendor | fla_vendor |
 
@@ -58,7 +68,7 @@ These warnings are also summarized in the main tables' caveat column.
 
 ## Code Source Audit
 
-| variant | used module | root match | reference module |
+| Registry key | used module | root match | reference module |
 |---|---|---|---|
 | ref_fla_051 | /home/ga/TileOPs/.github/runner/vendor/flash-linear-attention/fla/ops/gated_delta_rule/chunk.py | N/A | /home/ga/TileOPs/.github/runner/vendor/flash-linear-attention/fla/ops/gated_delta_rule/chunk.py |
 | local_initial_prefill_f147 | /home/ga/TileOPs-gdn-history/initial-f1472392/tileops/ops/gated_deltanet.py | true | /home/ga/TileOPs/.github/runner/vendor/flash-linear-attention/fla/ops/gated_delta_rule/chunk.py |

@@ -14,21 +14,24 @@ production path has since entered TileOps main at merge commit
 
 ## Summary
 
-| Variant | Lane | Publication role | Causal ladder eligible? | Current status | Decision |
-| --- | --- | --- | --- | --- | --- |
-| `local_initial_prefill_f147` | historical_full_op | historical_local_ladder_row | no | historical worktree adapter implemented; formal full-op correctness pass | accept as Level 2 story checkpoint |
-| `local_prepare_specialized_00a60` | historical_full_op | historical_local_ladder_row | no | historical worktree adapter implemented; formal full-op correctness pass | accept as Level 2 story checkpoint |
-| `local_h_tile_tuned_827` | historical_full_op | historical_local_ladder_row | no | historical worktree adapter implemented; formal full-op correctness fail | diagnostic_only |
-| `local_bthd_wall_d09c` | historical_full_op | historical_local_wall_row | no | historical worktree adapter implemented; formal full-op correctness pass | accept as Level 2 wall row |
-| `generic_a_legacy` | controlled_full_op | causal_ladder_row | yes | implemented in current repo as `GatedDeltaNetFwdOp` | accept for rerun |
-| `generic_a_local_ako_best` | conditional_full_op | conditional_causal_ladder_row | no | historical traces exist, no clean current selectable full-op adapter found | unavailable |
-| `generic_a_direct_fused_correct` | conditional_full_op | conditional_boundary_diagnostic | no | no clean correct full-op implementation found | unavailable |
-| `generic_a_direct_fused_failed` | negative_diagnostic | negative_diagnostic | no | historical rejected fused diagnostics exist | diagnostic_only |
-| `flashqla_public_tl018` | external_anchor | external_anchor | no | requires public FlashQLA TL0.1.8 env | unavailable |
-| `flashqla_port_current_tl` | external_anchor | migration_lowering_anchor | no | schedule notes exist, no clean runnable adapter found | unavailable |
-| `tileops_owned_cp_generic_a` | controlled_full_op | causal_ladder_row | yes | experiment-only adapter implemented; smoke/formal full-op correctness pass | accept with ABI caveat |
-| `tileops_owned_cp_blocked_inverse_a` | controlled_full_op | causal_ladder_row | yes | experiment-only adapter implemented; smoke/formal full-op correctness pass | accept as V6 producer-swap row |
-| `tileops_final_dispatch` | controlled_full_op | final_candidate | no | archived pre-merge run from `/home/ga/TileOPs-pr1596`; production path now merged | accept as final/current production-dispatch context |
+The `Registry key` column is machine-readable. Use the `Public label`
+column in article/report prose.
+
+| Registry key | Public label | Lane | Publication role | Causal ladder eligible? | Current status | Decision |
+| --- | --- | --- | --- | --- | --- | --- |
+| `local_initial_prefill_f147` | initial correct prefill checkpoint | historical_full_op | historical_local_ladder_row | no | archived local adapter implemented; formal full-op correctness pass | accept as Level 2 story checkpoint |
+| `local_prepare_specialized_00a60` | local prepare-specialized checkpoint | historical_full_op | historical_local_ladder_row | no | archived local adapter implemented; formal full-op correctness pass | accept as Level 2 story checkpoint |
+| `local_h_tile_tuned_827` | local h-tile diagnostic | historical_full_op | historical_local_ladder_row | no | archived local adapter implemented; formal full-op correctness fail | diagnostic_only |
+| `local_bthd_wall_d09c` | local BTHD wall checkpoint | historical_full_op | historical_local_wall_row | no | archived local adapter implemented; formal full-op correctness pass | accept as Level 2 wall row |
+| `generic_a_legacy` | generic-A legacy baseline | controlled_full_op | causal_ladder_row | yes | implemented in current repo as `GatedDeltaNetFwdOp` | accept for rerun |
+| `generic_a_local_ako_best` | local AKO best candidate | conditional_full_op | conditional_causal_ladder_row | no | historical traces exist, no clean current selectable full-op adapter found | unavailable |
+| `generic_a_direct_fused_correct` | direct-fusion candidate | conditional_full_op | conditional_boundary_diagnostic | no | no clean correct full-op implementation found | unavailable |
+| `generic_a_direct_fused_failed` | rejected direct-fusion diagnostic | negative_diagnostic | negative_diagnostic | no | historical rejected fused diagnostics exist | diagnostic_only |
+| `flashqla_public_tl018` | public FlashQLA TL0.1.8 anchor | external_anchor | external_anchor | no | requires public FlashQLA TL0.1.8 env | unavailable |
+| `flashqla_port_current_tl` | current-TileLang FlashQLA-style port | external_anchor | migration_lowering_anchor | no | schedule notes exist, no clean runnable adapter found | unavailable |
+| `tileops_owned_cp_generic_a` | generic-A CP bridge | controlled_full_op | causal_ladder_row | yes | experiment-only adapter implemented; smoke/formal full-op correctness pass | accept with ABI caveat |
+| `tileops_owned_cp_blocked_inverse_a` | blocked-inverse CP bridge | controlled_full_op | causal_ladder_row | yes | experiment-only adapter implemented; smoke/formal full-op correctness pass | accept as producer-swap bridge row |
+| `tileops_final_dispatch` | scoped dispatch path | controlled_full_op | final_candidate | no | archived pre-merge run from `/home/ga/TileOPs-pr1596`; production path now merged | accept as final/current production-dispatch context |
 
 ## Audit Notes
 
@@ -36,18 +39,18 @@ production path has since entered TileOps main at merge commit
 
 Status: implemented as detached worktree adapters.
 
-These variants were added after the blog roadmap was tightened to use only
-end-to-end rows.  They are not controlled V5/V6 producer-swap rows; they are
-Level 2 story checkpoints before FlashQLA is introduced.
+These rows were added after the blog roadmap was tightened to use only
+end-to-end rows. They are not controlled generic-A/blocksolve producer-swap
+rows; they are Level 2 story checkpoints before FlashQLA is introduced.
 
 Formal `64K/H16`, GPU4/H200, same input artifact:
 
-| Variant | Commit | Correctness | Latency ms | Use |
-| --- | --- | --- | ---: | --- |
-| `local_initial_prefill_f147` | `f1472392` | pass | `11.1762` | first measurable serving prefill op |
-| `local_prepare_specialized_00a60` | `00a60b19` | pass | `10.8353` | local prepare specialization full-op node |
-| `local_h_tile_tuned_827` | `82707454` | fail | `10.1631` | diagnostic only |
-| `local_bthd_wall_d09c` | `d09c8f2d` | pass | `5.5566` | Level 2 local wall row |
+| Public label | Registry key | Commit | Correctness | Latency ms | Use |
+| --- | --- | --- | --- | ---: | --- |
+| initial correct prefill checkpoint | `local_initial_prefill_f147` | `f1472392` | pass | `11.1762` | first measurable serving prefill op |
+| local prepare-specialized checkpoint | `local_prepare_specialized_00a60` | `00a60b19` | pass | `10.8353` | local prepare specialization full-op node |
+| local h-tile diagnostic | `local_h_tile_tuned_827` | `82707454` | fail | `10.1631` | diagnostic only |
+| local BTHD wall checkpoint | `local_bthd_wall_d09c` | `d09c8f2d` | pass | `5.5566` | Level 2 local wall row |
 
 Source roots:
 
@@ -175,9 +178,10 @@ Decision: unavailable.  Keep as external/migration/lowering anchor.
 
 ### `tileops_owned_cp_generic_a`
 
-Status: implemented as an experiment-only V5 adapter.
+Status: implemented as an experiment-only generic-A CP bridge adapter.
 
-This is the critical V5 row.  The harness now builds a controlled full-op from:
+This is the critical generic-A CP bridge row. The harness now builds a
+controlled full-op from:
 
 ```text
 current repo generic exact/KKT-style fused_prepare_compute_w_u_tl
@@ -209,16 +213,16 @@ formal B=1,T=65536,H=16,DK=DV=128,chunk64,fp16: correctness pass
 A equivalence caveat: materialized generic A and PR1596 blocksolve A are
 compared in canonical BTHC layout.  The formal 64K/H16 comparison records
 `allclose=false`, `max_abs=0.117279`, `max_rel=20583.9` at
-`atol=rtol=5e-2`.  Full-op correctness against the FLA reference passes, so V5
-is accepted as a controlled full-op row, but the A-producer numerical delta must
-remain visible in summaries.
+`atol=rtol=5e-2`. Full-op correctness against the FLA reference passes, so the
+generic-A CP bridge is accepted as a controlled full-op row, but the A-producer
+numerical delta must remain visible in summaries.
 
-Decision: accept as V5 controlled causal row.  Do not substitute final dispatch
-or historical component rows for V5.
+Decision: accept as generic-A CP bridge controlled causal row. Do not
+substitute final dispatch or historical component rows for this bridge.
 
 ### `tileops_owned_cp_blocked_inverse_a`
 
-Status: implemented as an experiment-only V6 adapter.
+Status: implemented as an experiment-only blocked-inverse CP bridge adapter.
 
 Code pointer:
 
@@ -228,7 +232,7 @@ experiments/gated_deltanet_prefill_blog_ladder/variants.py::tileops_owned_cp_blo
 /home/ga/TileOPs-pr1596/tileops/kernels/gated_deltanet/gdn_prefill/fused_fwd.py::fused_gdr_fwd
 ```
 
-The harness now builds the pure V6 producer-swap row without calling the
+The harness now builds the producer-swap bridge row without calling the
 production dispatch wrapper:
 
 ```text
@@ -238,7 +242,7 @@ PR1596 blocksolve A with 16x16 diagonal Neumann-style solve
 -> PR1596 gdn_prefill.fused_gdr_fwd
 ```
 
-Recorded ABI matches V5:
+Recorded ABI matches the generic-A CP bridge:
 
 - A logical shape: `[B, T, H, chunk_size]`.
 - Physical layout: contiguous BTHC handoff.
@@ -259,14 +263,14 @@ smoke B=1,T=512,H=16,DK=DV=128,chunk64,fp16: correctness pass
 formal B=1,T=65536,H=16,DK=DV=128,chunk64,fp16: correctness pass
 ```
 
-A comparison caveat: V6 blocked-inverse A and V5 generic A are compared in
-canonical BTHC layout.  The formal 64K/H16 comparison records
+A comparison caveat: blocked-inverse A and generic A are compared in canonical
+BTHC layout. The formal 64K/H16 comparison records
 `allclose=false`, `max_abs=0.117279`, `max_rel=29546.4` at
 `atol=rtol=5e-2`.  This is expected producer-swap evidence, not a full-op
 correctness failure.
 
-Decision: accept as V6 controlled causal row.  Keep `tileops_final_dispatch`
-separate as final candidate.
+Decision: accept as blocked-inverse CP bridge controlled causal row. Keep
+`tileops_final_dispatch` separate as final candidate.
 
 ### `tileops_final_dispatch`
 
@@ -297,11 +301,12 @@ for `tileops_owned_cp_generic_a` or as a pure A-producer swap claim.
 
 ## A-Producer Swap Status
 
-The V5/V6 controlled swap is now available as experiment-only full-op rows:
+The generic-A/blocksolve controlled swap is now available as experiment-only
+full-op rows:
 
 | Check | Status |
 | --- | --- |
-| same A semantics | established; V5 generic exact/KKT vs V6 blocked-inverse |
+| same A semantics | established; generic exact/KKT vs blocked-inverse |
 | same A logical shape | both record `[B,T,H,chunk]` |
 | same physical layout/strides | both record contiguous BTHC |
 | same triangular convention | both record unit diagonal/lower inverse |
@@ -311,7 +316,7 @@ The V5/V6 controlled swap is now available as experiment-only full-op rows:
 | same materialization/handoff | both hand materialized A to CP preprocess |
 | same CP preprocess API | both use PR1596 `_prefill_partitioned_initial_state_bthd` |
 | same fused replay/output API | both use PR1596 `gdn_prefill.fused_gdr_fwd` |
-| A or downstream `w/u` comparison | V5/V6 A comparison collected; allclose=false |
+| A or downstream `w/u` comparison | generic-A/blocksolve A comparison collected; allclose=false |
 
 Remaining work:
 

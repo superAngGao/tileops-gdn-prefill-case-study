@@ -164,12 +164,12 @@ The evidence has three lanes:
 These rows are publication-eligible evidence rows and are marked
 `causal_ladder_eligible=true` in the harness output. That field name means they
 are allowed into the controlled experiment table; it does not mean every row is
-a headline narrative milestone. In particular, V5 is an intermediate
-FlashQLA-learning row used to hold the downstream ABI fixed for the V5/V6
-bridge comparison. All rows pass correctness against the same recorded
-vendored FLA reference.
+a headline narrative milestone. In particular, the generic-A CP bridge is an
+intermediate FlashQLA-learning row used to hold the downstream ABI fixed for the
+generic-A/blocksolve adapter comparison. All rows pass correctness against the
+same recorded vendored FLA reference.
 
-| Role | Variant | Blog meaning | `64K/H16` latency | Speedup vs previous | Perf vs recorded FLA (%) |
+| Role | Registry key | Blog meaning | `64K/H16` latency | Speedup vs previous | Perf vs recorded FLA (%) |
 | --- | --- | --- | ---: | ---: | ---: |
 | baseline | `generic_a_legacy` | current-repo generic A producer plus legacy replay/output baseline | `11.1906 ms` | `1.00x` | `71.7%` |
 | first CP adaptation | `tileops_owned_cp_generic_a` | early CP-downstream bridge with a conservative generic A producer; useful control row, not a headline FlashQLA result | `2.7674 ms` | `4.04x` | `290.0%` |
@@ -189,23 +189,25 @@ generic_a_legacy
   -> tileops_owned_cp_blocked_inverse_a
 ```
 
-The V5 row is the first correct TileOps-owned adaptation after studying
-FlashQLA. It moved into the CP-split downstream structure, but the conservative
-generic A producer and mixed bridge implementation kept the full-op latency far
-from FlashQLA. That is useful evidence: it shows the gap between adopting a
-schedule idea and reproducing a finished kernel.
+The generic-A CP bridge is the first correct TileOps-owned adaptation after
+studying FlashQLA. It moved into the CP-split downstream structure, but the
+conservative generic A producer and mixed bridge implementation kept the
+full-op latency far from FlashQLA. That is useful evidence: it shows the gap
+between adopting a schedule idea and reproducing a finished kernel.
 
-The V5/V6 jump is supporting bridge evidence under the same downstream
-contract: replacing the conservative generic A producer with the
-blocked-inverse / Neumann-style A producer gives the faster V6 adapter row.
-This is not the main Neumann prepare causal proof and not a pure ablation of the
-math alone; the cleaner A-producer evidence is the A/replay cross-ablation.
+The generic-A/blocksolve adapter jump is supporting bridge evidence under the
+same downstream contract: replacing the conservative generic A producer with
+the blocked-inverse / Neumann-style A producer gives the faster
+blocked-inverse adapter row. This is not the main Neumann prepare causal proof
+and not a pure ablation of the math alone; the cleaner A-producer evidence is
+the A/replay cross-ablation.
 
-The FlashQLA-alignment node is not V5. It is the A/replay cross-ablation:
-TL0.1.8 lowered FlashQLA KKT injected through an external launcher plus
-TileOps replay gives a measured `0.815029 ms` full path, faster than refreshed
-public FlashQLA full `1.306838 ms`; then TileOps blocksolve A plus the same
-replay family gives `0.695237 ms` in the same-input A-producer ablation row.
+The FlashQLA-alignment node is not the generic-A CP bridge. It is the A/replay
+cross-ablation: TL0.1.8 lowered FlashQLA KKT injected through an external
+launcher plus TileOps replay gives a measured `0.815029 ms` full path, faster
+than refreshed public FlashQLA full `1.306838 ms`; then TileOps blocksolve A
+plus the same replay family gives `0.695237 ms` in the same-input A-producer
+ablation row.
 
 This experiment-adapter table alone is not the complete FlashQLA attribution
 story. The A/replay cross-ablation below adds the missing split: with
@@ -214,8 +216,8 @@ the TL0.1.8-lowering external prepare row, cached TileOps replay is
 `0.542159 ms`; and the public FlashQLA replay anchor is `0.860569 ms`. That
 means the final story is not only "CP-split plus better A." On this tested
 shape, the TileOps-owned replay/output implementation also contributes an
-independent speedup. V5 is not a one-to-one FlashQLA reproduction; it is a
-generic-A bridge row rather than a public FlashQLA row.
+independent speedup. The generic-A CP bridge is not a one-to-one FlashQLA
+reproduction; it is a generic-A bridge row rather than a public FlashQLA row.
 
 Nearby numbers that appear in the article and evidence package have different
 meanings:
@@ -232,7 +234,7 @@ These rows are not mixed into the experiment-adapter rows. The `64K/H16`
 dispatch row is still useful as an anchor, but the broader production-surface
 sweep is the production claim.
 
-| Variant | Role | `64K/H16` latency | Correctness | Use in blog |
+| Registry key | Role | `64K/H16` latency | Correctness | Use in blog |
 | --- | --- | ---: | --- | --- |
 | `ref_fla_051` | recorded vendored FLA reference baseline | `8.02574 ms` | self/reference row | correctness oracle and FLA latency context, with version caveat |
 | `tileops_final_dispatch` | merged PR1596 dispatch wrapper / dispatch context | `0.692026 ms` historical anchor; `0.6951 ms` in the refreshed surface sweep | pass vs recorded FLA reference | production-surface row family, not an experiment-adapter step |
@@ -266,22 +268,22 @@ has bounded claim scope.
 | --- | --- | --- |
 | `tileops_owned_cp_generic_a` | experiment adapter using current-repo generic A producer plus PR1596 CP downstream | generic A module `fused_prepare_compute_w_u.py`; CP downstream module `gdn_prefill/fused_fwd.py`; `used_code_root.kind=mixed_experiment_roots` |
 | `tileops_owned_cp_blocked_inverse_a` | experiment adapter using PR1596 blocked-inverse / blocksolve A producer plus the same PR1596 CP downstream | blocksolve producer module `gated_deltanet_prefill.py`; CP downstream module `gdn_prefill/fused_fwd.py`; `used_code_root.kind=production_root_experiment_adapter` |
-| V5/V6 A comparison | same materialized A handoff shape/layout, different producer math / numerics | `A allclose=false`, `max_abs=0.117279`, V5 `max_rel=20583.9`, V6 `max_rel=29546.4` |
-| V6 adapter | explicit experiment row, not the final dispatch wrapper | `uses_production_dispatch_wrapper=false` |
+| generic-A/blocksolve A comparison | same materialized A handoff shape/layout, different producer math / numerics | `A allclose=false`, `max_abs=0.117279`, generic-A max-rel `20583.9`, blocksolve max-rel `29546.4` |
+| blocked-inverse adapter | explicit experiment row, not the final dispatch wrapper | `uses_production_dispatch_wrapper=false` |
 | final dispatch | dispatch wrapper merged through PR1596 | `uses_production_dispatch_wrapper=true` |
 
 Safe wording:
 
 ```text
-V5 and V6 use the same CP downstream ABI and materialized A handoff
-shape/layout, but they use different A producers. Both rows are full-op
-correct against the recorded FLA reference.
+The generic-A and blocksolve adapters use the same CP downstream ABI and
+materialized A handoff shape/layout, but they use different A producers. Both
+rows are full-op correct against the recorded FLA reference.
 ```
 
 Do not write:
 
 ```text
-V5 and V6 have numerically equivalent A tensors.
+The generic-A and blocksolve adapters have numerically equivalent A tensors.
 ```
 
 The FLA reference also needs a caveat. All formal rows record:
@@ -329,10 +331,11 @@ the historical `section11_*` prefix.
 | `TO/TO replay` | TileOps blocksolve A | TileOps PR1596 CP replay | replay-only | recorded vendored FLA reference | `0.542905 ms` |
 | `TO/TO full` | TileOps blocksolve A | TileOps PR1596 CP replay | include producers | public TL0.1.8 artifact | `0.695237 ms` |
 
-This changes the explanation. V5 is not a faithful FlashQLA reproduction. It is
-a controlled bridge row that keeps a conservative generic A producer while
-moving into the TileOps-owned CP downstream ABI. That is why it can be useful in
-the adapter table without being performance-near FlashQLA.
+This changes the explanation. The generic-A CP bridge is not a faithful
+FlashQLA reproduction. It is a controlled bridge row that keeps a conservative
+generic A producer while moving into the TileOps-owned CP downstream ABI. That
+is why it can be useful in the adapter table without being performance-near
+FlashQLA.
 
 The degradation is part of the evidence, not a result to hide. Together with
 the mixed TileOps-owned implementation path and conservative generic A producer,

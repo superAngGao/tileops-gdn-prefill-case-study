@@ -89,7 +89,8 @@ to persist tensors with `torch.save`.
 
 Public FlashQLA rows remain external anchors.  Component rows stay out of the
 full-op ladder.  `tileops_final_dispatch` is a final candidate/current
-production smoke row; it is not a substitute for the V5/V6 A-producer swap.
+production smoke row; it is not a substitute for the generic-A/blocksolve
+A-producer swap.
 
 Every row also carries:
 

@@ -12,9 +12,9 @@ This file is an evidence note for mechanism-level A/replay attribution. It does
 not replace the TileOps experiment-adapter rows in
 `blog_ladder_evidence_64k_h16.md`.
 
-Superseded diagnostic scope: this file retains older replay-side and V5 process
-numbers for attribution analysis. It is not the source for headline production
-surface numbers or the final same-input A-producer table.
+Superseded diagnostic scope: this file retains older replay-side and generic-A
+CP bridge process numbers for attribution analysis. It is not the source for
+headline production surface numbers or the final same-input A-producer table.
 
 July 1 refresh: the TileOps replay rows below were rerun under the same
 `warmup=5, repeat=20, trials=3` CUPTI/L2-flush timing contract as the public
@@ -64,13 +64,13 @@ First, the FlashQLA-learning evidence separates into three nodes:
 | Node | Evidence | Meaning |
 | --- | --- | --- |
 | local wall | direct fusion did not shorten the long replay dependency | local AKO needed an external schedule idea |
-| first correct adaptation | V5 `tileops_owned_cp_generic_a = 5.3912 ms` | TileOps adapted the CP idea, but this was not performance-near FlashQLA |
+| first correct adaptation | generic-A CP bridge: `5.3912 ms` | TileOps adapted the CP idea, but this was not performance-near FlashQLA |
 | replay/output breakthrough before Neumann | public FlashQLA producer `0.471943 ms` + TileOps replay `0.542807 ms` gives a `1.014750 ms` estimate, faster than public FlashQLA full `1.304489 ms` | with FlashQLA-style A/KKT still in place, TileOps replay/output was already faster than the public FlashQLA back half |
 
-1. The V5 `tileops_owned_cp_generic_a` row is not a faithful FlashQLA
-   reproduction row. It is a controlled bridge row: generic TileOps A producer
-   plus the TileOps-owned CP downstream ABI. Its `5.3912 ms` latency is not
-   evidence that "learning the FlashQLA schedule only gets this far."
+1. The generic-A CP bridge row is not a faithful FlashQLA reproduction row. It
+   is a controlled bridge row: generic TileOps A producer plus the TileOps-owned
+   CP downstream ABI. Its `5.3912 ms` latency is not evidence that "learning the
+   FlashQLA schedule only gets this far."
 
 2. With public FlashQLA TL0.1.8 A/g fixed, TileOps replay is substantially
    faster than public FlashQLA replay under this benchmark method:
@@ -153,7 +153,8 @@ external-launcher path plus TileOps replay, archived in
 
 ## What This Does Not Prove
 
-Do not claim that V5 is a full FlashQLA reproduction. It is not.
+Do not claim that the generic-A CP bridge is a full FlashQLA reproduction. It
+is not.
 
 In this older diagnostic file, do not claim that the `producer + replay` sum
 is a measured single fused full path. The producer part is measured in the

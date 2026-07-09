@@ -1,10 +1,10 @@
 # GDN Prefill Ladder Summary
 
-Archived diagnostic scope: this summary is retained for provenance of the V6
-experiment-adapter run. It is superseded for headline numbers by the refreshed
-formal/current summaries, the same-input A-producer ablation, and the production
-surface sweep. Do not use the V5/V6 adapter latencies here as headline
-performance rows.
+Archived diagnostic scope: this summary is retained for provenance of the
+blocked-inverse CP bridge experiment-adapter run. It is superseded for headline
+numbers by the refreshed formal/current summaries, the same-input A-producer
+ablation, and the production surface sweep. Do not use the generic-A/blocksolve
+adapter latencies here as headline performance rows.
 
 - Source JSONL: `experiments/gated_deltanet_prefill_blog_ladder/results/formal_64k_h16_v6_ladder.jsonl`
 - Rows: 5
@@ -61,8 +61,8 @@ performance rows.
 
 | variant | abi status | A comparison | A allclose | A max_abs | A max_rel | note |
 |---|---|---|---|---:|---:|---|
-| tileops_owned_cp_generic_a | collected | materialized canonical logical A | false | 0.117279 | 20583.9 | current generic fused_prepare_compute_w_u_tl also computes unused w/u; latency is a conservative V5 full-op row, not an A-only microbenchmark |
-| tileops_owned_cp_blocked_inverse_a | collected | materialized canonical logical A | false | 0.117279 | 29546.4 | explicit V6 adapter calls blocksolve A once and then the same CP downstream as V5 |
+| tileops_owned_cp_generic_a | collected | materialized canonical logical A | false | 0.117279 | 20583.9 | current generic fused_prepare_compute_w_u_tl also computes unused w/u; latency is a conservative generic-A bridge full-op row, not an A-only microbenchmark |
+| tileops_owned_cp_blocked_inverse_a | collected | materialized canonical logical A | false | 0.117279 | 29546.4 | explicit blocked-inverse adapter calls blocksolve A once and then the same CP downstream as the generic-A bridge |
 
 ## Warnings
 

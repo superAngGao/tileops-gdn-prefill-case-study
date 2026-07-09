@@ -58,8 +58,8 @@
 
 | variant | abi status | A comparison | A allclose | A max_abs | A max_rel | note |
 |---|---|---|---|---:|---:|---|
-| tileops_owned_cp_generic_a | collected | materialized canonical logical A | false | 0.117279 | 20583.9 | current generic fused_prepare_compute_w_u_tl also computes unused w/u; latency is a conservative V5 full-op row, not an A-only microbenchmark |
-| tileops_owned_cp_blocked_inverse_a | collected | materialized canonical logical A | false | 0.117279 | 29546.4 | explicit V6 adapter calls blocksolve A once and then the same CP downstream as V5 |
+| tileops_owned_cp_generic_a | collected | materialized canonical logical A | false | 0.117279 | 20583.9 | current generic fused_prepare_compute_w_u_tl also computes unused w/u; latency is a conservative generic-A bridge full-op row, not an A-only microbenchmark |
+| tileops_owned_cp_blocked_inverse_a | collected | materialized canonical logical A | false | 0.117279 | 29546.4 | explicit blocked-inverse adapter calls blocksolve A once and then the same CP downstream as the generic-A bridge |
 
 ## Warnings
 

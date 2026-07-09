@@ -1,9 +1,10 @@
 # GDN Prefill Ladder Summary
 
-Archived diagnostic scope: this summary is retained for provenance of the V5
-experiment-adapter run. It is superseded for headline numbers by the refreshed
-formal/current summaries, the same-input A-producer ablation, and the production
-surface sweep. Do not use the V5 latency here as a headline performance row.
+Archived diagnostic scope: this summary is retained for provenance of the
+generic-A CP bridge experiment-adapter run. It is superseded for headline
+numbers by the refreshed formal/current summaries, the same-input A-producer
+ablation, and the production surface sweep. Do not use the generic-A bridge
+latency here as a headline performance row.
 
 - Source JSONL: `experiments/gated_deltanet_prefill_blog_ladder/results/formal_64k_h16_v5_ladder.jsonl`
 - Rows: 4
@@ -57,7 +58,7 @@ surface sweep. Do not use the V5 latency here as a headline performance row.
 
 | variant | abi status | A comparison | A allclose | A max_abs | A max_rel | note |
 |---|---|---|---|---:|---:|---|
-| tileops_owned_cp_generic_a | collected | materialized canonical logical A | false | 0.117279 | 20583.9 | current generic fused_prepare_compute_w_u_tl also computes unused w/u; latency is a conservative V5 full-op row, not an A-only microbenchmark |
+| tileops_owned_cp_generic_a | collected | materialized canonical logical A | false | 0.117279 | 20583.9 | current generic fused_prepare_compute_w_u_tl also computes unused w/u; latency is a conservative generic-A bridge full-op row, not an A-only microbenchmark |
 
 ## Warnings
 

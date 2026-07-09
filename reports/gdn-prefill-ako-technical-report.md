@@ -15,7 +15,7 @@ Use the two documents together:
   diagnostics, and claim guardrails.
 
 The structure below is intentionally more detailed than the case study. It
-keeps variant names and evidence-lane distinctions visible so expert readers
+keeps registry keys and evidence-lane distinctions visible so expert readers
 can audit the claims.
 
 Report note: detailed raw artifacts live in
@@ -120,13 +120,13 @@ not enter the headline roadmap until they have a matching full-op row.
 
 The single-shape story rows share the same serving shape:
 `B=1,T=65536,H=16,DK=DV=128,chunk64,fp16,BTHD`, but they come from two evidence
-lanes. The early/local rows are end-to-end historical worktree checkpoints
-under the formal ladder harness. The Level 3 A-producer rows use the same-input
+lanes. The early/local rows are end-to-end archived local checkpoints under the
+formal ladder harness. The Level 3 A-producer rows use the same-input
 A-producer ablation, because that is where the TL0.1.8-lowering
 FlashQLA-style prepare row and the TileOps Neumann prepare row are directly
 paired. Component-only scale/store diagnostics are kept out of this headline
-table. The public-facing roadmap names story nodes, not internal variant IDs;
-the exact variant-to-code mapping is maintained in the supporting information
+table. The public-facing roadmap names story nodes, not internal registry keys;
+the exact row-to-code mapping is maintained in the supporting information
 and evidence inventory.
 
 **Controlled `64K/H16` story rows**
@@ -587,10 +587,10 @@ Historical diagnostic evidence:
 These are dated component diagnostics, not headline benchmark claims. They are
 kept here because they explain why the scale-placement candidate was accepted.
 
-**Picked variant for this node:** V-path scale placement, with historical
+**Picked local diagnostic for this node:** V-path scale placement, with historical
 replay component latency improving from `2.2725 ms` to `1.6277 ms`.
 
-| Variant | Replay component latency | Scope |
+| Candidate | Replay component latency | Scope |
 | --- | ---: | --- |
 | staged K-scale path | `2.2725 ms` | historical component diagnostic |
 | V-path scale placement | `1.6277 ms` | historical component diagnostic |
@@ -652,7 +652,7 @@ These are dated component diagnostics, not headline benchmark claims. They are
 kept here because they explain why the store path became a first-class tuning
 target.
 
-**Picked variant for this node:** swizzled async shared-copy store path, with
+**Picked local diagnostic for this node:** swizzled async shared-copy store path, with
 historical TileLang component latency improving from `0.46791766 ms` to
 `0.27223574 ms`.
 
@@ -722,9 +722,9 @@ End-to-end wall checkpoint:
 
 | Node | Accepted fixed-contract full-op evidence | `64K/H16` latency | Decision |
 | --- | --- | ---: | --- |
-| initial correct prefill | `local_initial_prefill_f147` historical worktree row | `11.1762 ms` | keep as the first measurable serving op |
-| local prepare specialization | `local_prepare_specialized_00a60` historical worktree row | `10.8353 ms` | local AKO gives a real full-op gain |
-| local wall | `local_bthd_wall_d09c` historical worktree row | `5.5566 ms` | local BTHD tuning helps, but replay remains a long fixed-contract path |
+| initial correct prefill | archived local checkpoint | `11.1762 ms` | keep as the first measurable serving op |
+| local prepare specialization | archived prepare-specialized checkpoint | `10.8353 ms` | local AKO gives a real full-op gain |
+| local wall | archived BTHD wall checkpoint | `5.5566 ms` | local BTHD tuning helps, but replay remains a long fixed-contract path |
 
 The rejected fusion candidates were useful because they clarified the boundary.
 Local fusion can improve the data path inside a schedule, but it does not
@@ -732,7 +732,7 @@ automatically change the schedule's dependency structure. A fused kernel can
 write fewer tensors and still be slow if it is replaying a long prefix as one
 chain.
 
-The same rerun measured `local_h_tile_tuned_827 = 10.1631 ms`, but it failed
+The same rerun measured a local h-tile diagnostic at `10.1631 ms`, but it failed
 the formal correctness gate, so it remains diagnostic rather than a positive
 story row.
 
@@ -806,7 +806,7 @@ Qwen FlashQLA supplied the serving-grade reference for attacking the long replay
 bottleneck. TileOps did not invent the CP-split replay schedule. The
 contribution was to study that schedule family, rebuild a TileOps-owned
 downstream implementation, and then test it under controlled and
-cross-ablation evidence. The formal V5 row below is not the performance
+cross-ablation evidence. The generic-A CP bridge below is not the performance
 reproduction of FlashQLA; it is a controlled bridge row with a conservative
 generic A producer.
 
@@ -893,22 +893,23 @@ experiment, not as a single pass/fail row.
 
 | Node | Evidence | Meaning |
 | --- | --- | --- |
-| local wall | local full-op rerun reached `local_bthd_wall_d09c = 5.5566 ms`, but the path still used long legacy replay | local AKO needed an external schedule idea |
-| first correct adaptation | V5 `tileops_owned_cp_generic_a = 2.7674 ms` | the FlashQLA CP idea had been adapted into TileOps, but the result was not performance-near FlashQLA |
+| local wall | archived BTHD wall checkpoint reached `5.5566 ms`, but the path still used long legacy replay | local AKO needed an external schedule idea |
+| first correct adaptation | generic-A CP bridge reached `2.7674 ms` | the FlashQLA CP idea had been adapted into TileOps, but the result was not performance-near FlashQLA |
 | no-Neumann prepare-A full row | TL0.1.8-lowering FlashQLA-style prepare A + TileOps replay/output full combined latency: `0.815029 ms` | the FlashQLA-style producer plus TileOps replay reaches the expected performance neighborhood |
 
 This third node is now filled with a measured external-lowering harness row.
-V5 was the first correct adaptation, not the finished schedule implementation.
-The `0.815029 ms` combined row shows how much of the gap is replay/output and
-how much is prepare-A before switching to the stronger TileOps producer.
+The generic-A CP bridge was the first correct adaptation, not the finished
+schedule implementation. The `0.815029 ms` combined row shows how much of the
+gap is replay/output and how much is prepare-A before switching to the stronger
+TileOps producer.
 
-That makes V5 useful rather than embarrassing. Its underperformance, together
-with the mixed TileOps-owned implementation path and conservative generic A
-producer, is evidence that this was an adaptation of a schedule idea rather than
-a finished-kernel reproduction. The more realistic agentic pattern is: borrow a
-schedule idea, build a TileOps-owned partial adaptation, observe that the first
-adaptation is still incomplete, then use the failure to ask sharper attribution
-questions.
+That makes the bridge row useful rather than embarrassing. Its
+underperformance, together with the mixed TileOps-owned implementation path and
+conservative generic A producer, is evidence that this was an adaptation of a
+schedule idea rather than a finished-kernel reproduction. The more realistic
+agentic pattern is: borrow a schedule idea, build a TileOps-owned partial
+adaptation, observe that the first adaptation is still incomplete, then use the
+failure to ask sharper attribution questions.
 
 Conceptually, the CP-split schedule explains the long-replay side of the
 production path. The other half of the production path is the A producer, whose
@@ -1095,7 +1096,7 @@ things:
 
 | Number | Evidence lane | Meaning |
 | ---: | --- | --- |
-| `0.715062 ms` | V5/V6 experiment-adapter bridge | Shows that the blocked-inverse producer can feed the same CP downstream ABI, but it is not the clean A-producer proof. |
+| `0.715062 ms` | generic-A/blocksolve adapter bridge | Shows that the blocked-inverse producer can feed the same CP downstream ABI, but it is not the clean A-producer proof. |
 | `0.695237 ms` | same-input A-producer ablation | The headline Neumann prepare comparison against the `0.815029 ms` TL0.1.8-lowering FlashQLA-style prepare row. |
 | `0.692026 ms` / `~0.6951 ms` | dispatch wrapper and refreshed production surface | Dispatch-context evidence that the optimized path survives wrapper/dispatch policy; not the same-input ablation proof. |
 
@@ -1134,9 +1135,9 @@ remain in the evidence note as diagnostics rather than headline A-producer
 claims. The caveat is that this row is an external TL0.1.8-lowering harness row,
 not a native current-TL KKT port.
 
-The V5/V6 adapter rows are supporting bridge evidence only. V5 and V6 use the
-same CP downstream ABI and materialized A handoff shape/layout, but they do not
-claim numerically equivalent intermediate A tensors. The supported claim is
+The generic-A/blocksolve adapter rows are supporting bridge evidence only. They
+use the same CP downstream ABI and materialized A handoff shape/layout, but do
+not claim numerically equivalent intermediate A tensors. The supported claim is
 therefore full-op correctness and compatibility under the same downstream
 contract, not equality of the intermediate A tensors and not a pure
 single-variable proof of the A mathematics.
@@ -1146,8 +1147,9 @@ Short version of why that is acceptable: the publication claim is not
 the same downstream CP replay/output ABI and pass the same full-op correctness
 gate for `o` and final state. The dtype, tolerance, input distribution/artifact,
 and reference path are recorded in SI. The mismatch is still reported because
-it limits the attribution: V5/V6 are compatibility and end-to-end evidence,
-while the cleaner A-producer comparison is the measured full combined row above.
+it limits the attribution: the generic-A/blocksolve adapter pair is
+compatibility and end-to-end evidence, while the cleaner A-producer comparison
+is the measured full combined row above.
 
 ### 4.3 Productionization: From A Fast Kernel To A Dispatchable Kernel Family
 
@@ -1199,8 +1201,8 @@ same-lowering attribution experiment.
 | `64K/H32` | `1.2238 ms` | `10.2402 ms` | `2.5942 ms` | `837%` | `212%` |
 | `64K/H64` | `2.3085 ms` | `18.9782 ms` | `6.7233 ms` | `822%` | `291%` |
 
-This table is the more meaningful production claim. The explicit `64K/H16` V6
-adapter row and the `tileops_final_dispatch` wrapper row remain useful
+This table is the more meaningful production claim. The explicit `64K/H16`
+blocked-inverse adapter row and the dispatch wrapper row remain useful
 cross-checks, but the important result is that the blocked-inverse CP path has
 become a dispatchable family whose selected rows pass correctness and stay ahead
 across this measured surface.

@@ -1,9 +1,9 @@
 # Section 11 A-Producer Ablation: GDN Prefill 64K/H16
 
 Purpose: provide the missing experiment for the blog's Section 11. This note
-replaces the incorrect shortcut of using the V5 `5.3912 ms` bridge row as if it
-were "FlashQLA-style A plus production replay." V5 is a first correct CP
-adaptation, not the controlled A-producer ablation.
+replaces the incorrect shortcut of using the older generic-A CP bridge row as
+if it were "FlashQLA-style A plus production replay." That bridge is a first
+correct CP adaptation, not the controlled A-producer ablation.
 
 ## Contract
 
@@ -151,7 +151,7 @@ Use this sequence in the blog:
 
 ```text
 local wall
--> V5 first correct CP adaptation, but still not FlashQLA-performance-near
+-> generic-A CP bridge, but still not FlashQLA-performance-near
 -> TL0.1.8-lowering FlashQLA-style prepare A + TileOps replay/output full
    row: 0.815029 ms
 -> TileOps blocksolve / Neumann-style A producer + TileOps replay/output full
@@ -174,8 +174,9 @@ the current-TL FlashQLA-style KKT producer failed correctness at `64K/H16`
 under `default`, `legacy`, and `wgmma` compatibility modes. Those failed rows
 are rejected diagnostics, not performance evidence.
 
-The V5 bridge row is not "FlashQLA-style A plus production replay." It uses a
-conservative generic TileOps A producer under a mixed experiment adapter.
+The generic-A CP bridge row is not "FlashQLA-style A plus production replay."
+It uses a conservative generic TileOps A producer under a mixed experiment
+adapter.
 
 Current-TL FlashQLA migration KKT rows produced non-finite outputs at this
 shape and are rejected for attribution.

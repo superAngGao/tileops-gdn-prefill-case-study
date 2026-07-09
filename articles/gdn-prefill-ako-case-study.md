@@ -415,7 +415,7 @@ To separate replay/output from prepare-A, the evidence package also runs
 TileOps replay on exported public FlashQLA `A/g` artifacts. That combination is
 not a full TileOps op, but it isolates the replay/output side of the schedule
 under a shared artifact. This is why the replay number below is lower than the
-`0.815029 ms` full row above: `0.542807 ms` times TileOps replay on an already
+`0.815029 ms` full row above: `0.542807 ms` is TileOps replay on an already
 exported FlashQLA `A/g` artifact, while `0.815029 ms` includes producing the
 TL0.1.8-lowered KKT `A/g` plus the TileOps replay path. In the corresponding
 full-row breakdown, cached-`A/g` TileOps replay is `0.542159 ms`.
