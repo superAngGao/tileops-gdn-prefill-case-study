@@ -60,7 +60,7 @@ The headline comparisons have different roles:
 | --- | --- |
 | TileOps scoped dispatch | The optimized TileOps GDN prefill path discussed in the case study. |
 | FLA `0.5.1` reference | Correctness oracle and latency context for the headline TileOps/FLA surface. |
-| Public FlashQLA TL0.1.8 anchor | Public-environment comparison and schedule reference; not same-lowering attribution. |
+| Public FlashQLA TL0.1.8 anchor | Public-environment comparison and schedule reference with lighter provenance metadata than the clean TileOps/FLA rerun; not same-lowering attribution. |
 
 The machine-readable source of truth for the headline surface is:
 

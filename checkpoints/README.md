@@ -3,8 +3,9 @@
 This directory maps each case-study checkpoint to the code and command needed to
 rerun it in a compatible H200/TileOps/FlashQLA environment.
 
-All checkpoints are intended to be rerunnable. The repository includes the
-harness, kernel source snapshots, and compressed full source roots for the
+All checkpoints are intended to be rerunnable with the dependency contracts and
+external artifacts listed in their checkpoint READMEs. The repository includes
+the harness, kernel source snapshots, and compressed full source roots for the
 historical TileOps checkpoints. Some rows still require external benchmark
 artifacts, such as the exported FlashQLA TL0.1.8 artifact used by the
 same-shape A-producer ablation.

@@ -59,7 +59,8 @@ Benchmark scope for the headline table:
   is a public-environment comparison.
 - Provenance: these headline TileOps/FLA rows are clean merge-commit reruns
   with `dirty=false` recorded in JSONL. The FlashQLA rows remain public
-  external-anchor measurements under their own public environment.
+  external-anchor measurements under their own public environment, with lighter
+  provenance metadata than the clean TileOps/FLA rerun.
 
 | Shape | TileOps scoped synthetic dispatch | FLA 0.5.1 reference | Public FlashQLA TL0.1.8 anchor | Speedup vs FLA 0.5.1 | Throughput ratio vs public FlashQLA anchor |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -418,7 +419,9 @@ FlashQLA row is external context; the attribution comparison is the two
 TileOps-replay rows. The middle row uses the FlashQLA TL0.1.8-lowered KKT
 producer through an external launcher, then feeds its produced `A/g` tensors
 into the TileOps PR1596 replay path. It is not a native current-TileLang KKT
-port and not a direct call to the full FlashQLA forward path.
+port and not a direct call to the full FlashQLA forward path. This Section 11
+ablation uses the exported public TL0.1.8 artifact as its fixed reference
+context; the headline surface correctness gate uses FLA `0.5.1`.
 
 | Row | Prepare-A producer | Replay/output | `64K/H16` latency | Meaning |
 | --- | --- | --- | ---: | --- |
