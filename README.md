@@ -6,7 +6,7 @@ optimization for Gated DeltaNet prefill.
 Gated DeltaNet prefill is a useful stress test: it wants long-context
 parallelism, but it must still produce the same recurrent state as sequential
 decode. The case study follows how TileOps turned that scheduling problem into
-a scoped serving dispatch path using three ingredients:
+a scoped synthetic serving dispatch path using three ingredients:
 
 - local agentic kernel optimization under fixed correctness and benchmark
   gates;
@@ -51,7 +51,7 @@ kernel source snapshot, and the rerun command.
 
 ## Headline Scope
 
-The main article reports a five-shape H200 production-surface sweep for
+The main article reports a five-shape H200 scoped synthetic serving-surface sweep for
 synthetic BTHD fp16 inputs with `B=1`, `DK=DV=128`, and `chunk64`.
 
 The headline comparisons have different roles:
@@ -115,4 +115,6 @@ status and known caveats.
 ## License / Reuse
 
 This repository is public for reading, review, and citation. No open reuse
-license is granted by default; see [`LICENSE.md`](LICENSE.md).
+license is granted by default; see [`LICENSE.md`](LICENSE.md). Third-party
+source snapshots keep their original notices; see
+[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).

@@ -6,11 +6,12 @@ produce the same recurrent state as sequential decode. That makes it harder
 than optimizing a standalone GEMM.
 
 In this case study, TileOps turns that recurrent operator into a scoped
-serving dispatch path. The path has merged into TileOps main via
+synthetic serving dispatch path. The path has merged into TileOps main via
 [PR1596](https://github.com/tile-ai/TileOPs/pull/1596). Under the dependency
 contract below, the clean PR1596 merge-commit rerun measured `3.9-6.3x` faster
-than the FLA `0.5.1` reference used as the correctness oracle, and `1.36-2.68x`
-faster than a public-environment FlashQLA TL0.1.8 anchor.
+than the FLA `0.5.1` reference used as the correctness oracle, with a
+`1.36-2.68x` public-environment throughput ratio relative to a FlashQLA
+TL0.1.8 anchor.
 
 The useful lesson is narrower than "an agent invented a kernel." The repeatable
 pattern was: fix the operator contract, let agents search local implementation
@@ -52,15 +53,15 @@ Benchmark scope for the headline table:
   `2.10.0+cu129`, and FLA `0.5.1`.
 - Reference roles: FLA `0.5.1` is the correctness/latency reference for this
   clean surface rerun; FlashQLA is a public TL0.1.8 anchor.
-- Claim role: this table supports the production serving-surface claim. It does
-  not support same-lowering attribution claims about FlashQLA replay or KKT
-  lowering. The entire `Speedup vs public FlashQLA anchor` column is a
-  public-environment comparison.
+- Claim role: this table supports the scoped synthetic serving-surface claim.
+  It does not support same-lowering attribution claims about FlashQLA replay or
+  KKT lowering. The entire `Throughput ratio vs public FlashQLA anchor` column
+  is a public-environment comparison.
 - Provenance: these headline TileOps/FLA rows are clean merge-commit reruns
   with `dirty=false` recorded in JSONL. The FlashQLA rows remain public
   external-anchor measurements under their own public environment.
 
-| Shape | TileOps scoped production dispatch | FLA 0.5.1 reference | Public FlashQLA TL0.1.8 anchor | Speedup vs FLA 0.5.1 | Throughput ratio vs public FlashQLA anchor |
+| Shape | TileOps scoped synthetic dispatch | FLA 0.5.1 reference | Public FlashQLA TL0.1.8 anchor | Speedup vs FLA 0.5.1 | Throughput ratio vs public FlashQLA anchor |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | `32K/H16` | `0.3990 ms` | `2.1303 ms` | `0.5440 ms` | `5.34x` | `1.36x` |
 | `64K/H16` | `0.7498 ms` | `4.2416 ms` | `1.3073 ms` | `5.66x` | `1.74x` |
@@ -85,7 +86,7 @@ are labeled separately in the evidence bundle.
 
 Credit boundary:
 
-> FlashQLA supplied the serving-grade CP-split replay schedule family.
+> FlashQLA supplied the CP-split replay schedule family.
 > TileOps rebuilt, validated, tuned, dispatched, and combined that schedule
 > with an owned blocked-inverse A producer and a scoped dispatch surface.
 
@@ -164,12 +165,14 @@ contract. Each candidate needed four gates:
    tolerance. For fp16 rows, the gate uses `torch.allclose` at
    `atol=rtol=5e-2`; `max_abs` and `max_rel` are diagnostics, and large
    relative error near zero is interpreted together with absolute error and
-   final-state checks. The SI records p99 absolute error and L2 norm-relative
-   error for the headline surface rows; in the refreshed five-shape correctness
-   sweep, output `p99_abs` is `6.104e-05`, output `max_abs` stays within
-   `0.002502`, and final-state checks pass under the same contract. This
-   tolerance is scoped to fp16 long-sequence recurrent accumulation and requires
-   both output and final-state checks, not only a single output tensor.
+   final-state checks. The SI records sampled p99 absolute error, L2
+   norm-relative error, and nonfinite counts for the headline surface rows; in
+   the refreshed five-shape correctness sweep, sampled output `p99_abs` is
+   `6.104e-05`, output `max_abs` stays within `0.002502`, output L2 relative
+   error stays within `0.003501`, nonfinite counts are zero, and final-state
+   checks pass under the same contract. This tolerance is scoped to fp16
+   long-sequence recurrent accumulation and requires both output and
+   final-state checks, not only a single output tensor.
 2. **Benchmark gate.** Use the TileOps benchmark infrastructure and preserve
    metadata: GPU, timer, warmup/repeat/trials, commit, layout, seed, and input
    artifact.
@@ -181,7 +184,7 @@ contract. Each candidate needed four gates:
 
 How to read the rest:
 
-- the production dispatch sweep is the headline serving result;
+- the scoped dispatch sweep is the headline serving result;
 - same-input A/replay ablations explain prepare-A and replay/output
   attribution;
 - historical local diagnostics explain why a candidate was pursued or rejected;
@@ -233,7 +236,7 @@ The kernel effect was not cosmetic. Scaling `k` creates an extra staged key
 tile. Scaling `v_new` applies the per-token factor on the value path that
 already feeds the state update. Historical component diagnostics improved from
 `2.2725 ms` to `1.6277 ms`; those numbers explain the local decision, not a
-headline production claim.
+headline scoped-surface claim.
 
 The second local lesson was the store path. The prepare subcomponent looks like
 a simple GEMM:
@@ -348,7 +351,10 @@ U &= A R_V .
 
 The exact beta/gate placement is ABI-dependent. This formula shows the
 operator-level interaction; the production path may split factors between the A
-producer and the replay/output kernel.
+producer and the replay/output kernel. In the headline CP dispatch path, the
+materialized `A` is not a complete gate-folded logical `A`: TileOps constructs
+it with a `g_zero` convention and passes chunk-local `g_cum` separately into
+replay.
 
 The beta index is also convention-dependent. Some derivations place the write
 strength on the earlier token or fold it into the key/value write tensors. These
@@ -463,7 +469,7 @@ TileOps productionization included:
 - correctness validation against the recorded FLA reference;
 - benchmark metadata that records the actual dispatch path.
 
-The production-surface table at the top is the main result. The `64K/H16`
+The scoped-surface table at the top is the main result. The `64K/H16`
 algorithm ladder is useful for explanation, but the engineering claim is that
 the selected scoped serving path passes correctness and stays fast across this
 measured surface.

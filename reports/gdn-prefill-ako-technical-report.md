@@ -76,7 +76,7 @@ In this project, the agent was useful in three different roles:
 
 3. **Implement and tune a new search space once external input changes it.**
    Human mathematical analysis reframed the prepare stage as a blocked
-   inverse / Neumann-style producer. Qwen's FlashQLA showed the serving-grade
+   inverse / Neumann-style producer. Qwen's FlashQLA showed the CP-split
    CP-split scheduling pattern for corrected h-state segment starts in long
    prefill. TileOps then studied, adapted, tuned, dispatched, benchmarked, and
    productionized that scheduling idea in an owned implementation.
@@ -174,7 +174,7 @@ This article compares TileOps, FLA, and FlashQLA in three different roles:
 | GDN | Gated DeltaNet, a recurrent linear-attention-style operator with decay gates and delta-rule residual writes. |
 | FLA | Flash Linear Attention. The headline surface uses `flash-linear-attention==0.5.1`; older diagnostics may use recorded vendored FLA snapshots and keep their own caveats. |
 | FlashQLA | Qwen's FlashQLA project. The source-level reference for the h-state / corrected-segment-start CP-split schedule that TileOps later adapted and productionized. |
-| TileOps | The scoped production dispatch surface discussed here: TileLang-owned BTHD prefill path, dispatch, validation, and benchmark integration. |
+| TileOps | The scoped synthetic dispatch surface discussed here: TileLang-owned BTHD prefill path, dispatch, validation, and benchmark integration. |
 | AKO | Agentic Kernel Optimization: a gated loop of hypothesis, implementation, correctness, benchmark, lowering inspection, and decision logging. |
 | BTHD | `[batch, time, heads, dim]`, the main serving layout used in the FLA/Qwen-style path discussed here. |
 | chunk | A fixed token block. The production path discussed in this work uses `chunk64` for the benchmark rows. |
@@ -744,7 +744,7 @@ begins.
 ## 4. Level 3 - External Input Changes The Search Space
 
 Level 3 is where the search space changes. FlashQLA supplied the
-serving-grade CP-split replay schedule family; human mathematical analysis
+CP-split replay schedule family; human mathematical analysis
 supplied the blocked-inverse / Neumann-style prepare producer. The TileOps work
 then became an adaptation, implementation, tuning, and productionization story
 inside those expanded spaces.
@@ -762,7 +762,7 @@ problems:
 Those changes did not come from unconstrained local AKO. They came from
 external input that reshaped the search space:
 
-- Qwen FlashQLA provided the serving-grade CP-split replay schedule for corrected
+- Qwen FlashQLA provided the CP-split replay schedule for corrected
   h-state segment starts;
 - human mathematical analysis reframed prepare as a blocked inverse /
   Neumann-style producer.
@@ -802,7 +802,7 @@ one-to-one reproduction of a finished FlashQLA kernel.
 
 ### 4.1 Expert Reference: FlashQLA CP-Split Replay
 
-Qwen FlashQLA supplied the serving-grade reference for attacking the long replay
+Qwen FlashQLA supplied the CP-split reference for attacking the long replay
 bottleneck. TileOps did not invent the CP-split replay schedule. The
 contribution was to study that schedule family, rebuild a TileOps-owned
 downstream implementation, and then test it under controlled and
@@ -1156,14 +1156,14 @@ is the measured full combined row above.
 ### 4.3 Productionization: From A Fast Kernel To A Dispatchable Kernel Family
 
 After the blocked-inverse prepare landed, the next optimization target was no
-longer one more algebraic trick on the `64K/H16` kernel. It was the production
+longer one more algebraic trick on the `64K/H16` kernel. It was the scoped
 surface: can the same optimized mechanism be selected, parameterized, validated,
 and timed across the shapes a serving system actually routes through?
 
 That is a different kind of optimization. A point kernel proves that the
-mechanism can be fast. A production dispatch surface proves that the mechanism
+mechanism can be fast. A scoped dispatch surface proves that the mechanism
 survives shape changes, head-count changes, and wrapper policy without falling
-back to a slow or incorrect path. TileOps' productionization work therefore
+back to a slow or incorrect path. TileOps' integration work therefore
 included:
 
 - owned BTHD kernels rather than depending on an external FlashQLA call path;
@@ -1187,7 +1187,7 @@ flowchart LR
     Shape --> Policy --> Params --> Kernel --> Metadata
 ```
 
-The table below is the production-surface check, not another single-step row in
+The table below is the scoped-surface check, not another single-step row in
 the `64K/H16` algorithm ladder. TileOps and FLA rows use a clean PR1596 merge
 commit on GPU4/H200 with TileLang `0.1.11`, FLA `0.5.1`,
 `B=1,DK=DV=128,chunk64,fp16,BTHD`, `warmup=5,repeat=20,trials=3`, and
@@ -1195,15 +1195,15 @@ correctness checked against the FLA `0.5.1` reference. FlashQLA rows are public
 TL0.1.8 measurements under their own public environment; they remain a
 public-environment comparison, not a same-lowering attribution experiment.
 
-| Shape | TileOps scoped production dispatch | FLA 0.5.1 reference | Public FlashQLA TL0.1.8 | TileOps vs FLA 0.5.1 (%) | TileOps vs public FlashQLA anchor (%) |
+| Shape | TileOps scoped synthetic dispatch | FLA 0.5.1 reference | Public FlashQLA TL0.1.8 | TileOps vs FLA 0.5.1 (%) | TileOps vs public FlashQLA anchor (%) |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | `32K/H16` | `0.3990 ms` | `2.1303 ms` | `0.5440 ms` | `534%` | `136%` |
 | `64K/H16` | `0.7498 ms` | `4.2416 ms` | `1.3073 ms` | `566%` | `174%` |
 | `128K/H16` | `1.3404 ms` | `8.4520 ms` | `2.6055 ms` | `631%` | `194%` |
-| `64K/H32` | `1.3193 ms` | `5.4120 ms` | `2.5942 ms` | `410%` | `194%` |
+| `64K/H32` | `1.3193 ms` | `5.4120 ms` | `2.5942 ms` | `410%` | `197%` |
 | `64K/H64` | `2.5086 ms` | `9.8426 ms` | `6.7233 ms` | `392%` | `268%` |
 
-This table is the more meaningful production claim. The explicit `64K/H16`
+This table is the broader scoped-surface claim. The explicit `64K/H16`
 blocked-inverse adapter row and the dispatch wrapper row remain useful
 cross-checks, but the important result is that the blocked-inverse CP path has
 become a dispatchable family whose selected rows pass correctness and stay ahead
@@ -1233,7 +1233,7 @@ lanes kept component diagnostics, failed rows, public-environment anchors, and
 same-run TileOps rows from collapsing into one misleading ladder.
 
 That is why failed-correctness timings stay out of the performance story, why
-FlashQLA public rows are marked as external anchors, and why production-surface
+FlashQLA public rows are marked as external anchors, and why scoped-surface
 claims cite the five-shape dispatch sweep instead of a single wrapper delta. An
 agent can search quickly, but only an auditable loop can tell whether the search
 is making progress.
@@ -1274,7 +1274,7 @@ benchmark metadata, and rerunnable when the TileOps main/release commit,
 TileLang wheel, docker/runtime, GPU, or benchmark method changes.
 
 That is why the production section reports a five-shape scoped dispatch sweep. The
-single `64K/H16` wrapper row is useful as an anchor, but the production claim is
+single `64K/H16` wrapper row is useful as an anchor, but the scoped-surface claim is
 that the blocked-inverse CP path survives dispatch across `32K-128K` and
 `H16-H64` in the measured surface.
 

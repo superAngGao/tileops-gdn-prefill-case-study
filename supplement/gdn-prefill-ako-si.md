@@ -22,7 +22,7 @@ than the spine of the story.
 Code status: the scoped serving path discussed by the main article entered TileOps
 main through [tile-ai/TileOps#1596](https://github.com/tile-ai/TileOPs/pull/1596),
 merge commit `79469fc0ddae584537df03e35d935575870574f6`. The headline
-production-surface TileOps/FLA rows were refreshed on that clean merge commit
+scoped-surface TileOps/FLA rows were refreshed on that clean merge commit
 with TileLang `0.1.11` and FLA `0.5.1`. Some older archived JSONL rows below
 still record pre-merge or dirty local worktree metadata; those rows are retained
 as historical diagnostics under their recorded metadata, not as clean-commit
@@ -181,7 +181,7 @@ performance claims.
 ### SI.3 Formal `64K/H16` Evidence Snapshot
 
 This section is the formal `64K/H16` evidence package, not the complete
-production-surface table. It records one scoped serving shape:
+scoped-surface table. It records one scoped serving shape:
 
 ```text
 B=1, T=65536, H=16, DK=DV=128, chunk64, fp16, BTHD
@@ -270,13 +270,13 @@ meanings:
 #### SI.3.2 External And Final Anchors
 
 These rows are not mixed into the experiment-adapter rows. The `64K/H16`
-dispatch row is still useful as an anchor, but the broader production-surface
-sweep is the production claim.
+dispatch row is still useful as an anchor, but the broader scoped-surface sweep
+is the dispatch-surface claim.
 
 | Registry key | Role | `64K/H16` latency | Correctness | Use in case study |
 | --- | --- | ---: | --- | --- |
 | `ref_fla_051` | FLA reference baseline | `4.2416 ms` in clean refreshed surface sweep; `8.02574 ms` older historical anchor | self/reference row | FLA `0.5.1` for the refreshed surface; older vendored rows keep their caveat |
-| `tileops_final_dispatch` | merged PR1596 dispatch wrapper / dispatch context | `0.692026 ms` historical anchor; `0.7498 ms` in the clean refreshed surface sweep | pass vs FLA reference | production-surface row family, not an experiment-adapter step |
+| `tileops_final_dispatch` | merged PR1596 dispatch wrapper / dispatch context | `0.692026 ms` historical anchor; `0.7498 ms` in the clean refreshed surface sweep | pass vs FLA reference | scoped-surface row family, not an experiment-adapter step |
 
 Write `tileops_final_dispatch` as a dispatch wrapper / dispatch-context
 observation, not as an additional algorithmic improvement after the
@@ -454,7 +454,7 @@ publication state for the no-Neumann combined row is now measured.
 The supported narrative is therefore:
 
 ```text
-FlashQLA supplied the serving-grade CP-split schedule family.
+FlashQLA supplied the CP-split schedule family.
 TileOps improved two implementation axes under that schedule family:
   1. the replay/output implementation;
   2. the A producer via the blocked-inverse / Neumann-style path.
@@ -577,13 +577,13 @@ prepare-A producer, because interaction construction is a separate stage.
 
 #### SI.3.5 Evidence Refresh Conditions
 
-The formal `64K/H16` package and the five-shape production-surface sweep replace
+The formal `64K/H16` package and the five-shape scoped-surface sweep replace
 the old mixed historical speed ladder as the main evidence spine. They still
 need to be refreshed if the benchmark contract changes:
 
 | Refresh / verification item | Why it matters |
 | --- | --- |
-| production-surface sweep refresh | rerun if TileOps main/release commit, TileLang wheel, docker/runtime, dispatch heuristic, benchmark timer, GPU, or FlashQLA/FLA environment changes |
+| scoped-surface sweep refresh | rerun if TileOps main/release commit, TileLang wheel, docker/runtime, dispatch heuristic, benchmark timer, GPU, or FlashQLA/FLA environment changes |
 | generated-code archive for TMA/WGMMA claims | needed before making low-level lowering claims |
 | verified FLA package identity | needed before saying externally verified FLA 0.5.1 without caveat |
 
@@ -591,14 +591,14 @@ need to be refreshed if the benchmark contract changes:
 
 The main article keeps the correctness contract short: fp16 rows compare output
 and final state with `torch.allclose(..., atol=5e-2, rtol=5e-2)`, while
-`max_abs` and `max_rel` are diagnostics. The production-surface correctness
+`max_abs` and `max_rel` are diagnostics. The scoped-surface correctness
 refresh adds distribution-level diagnostics for the five headline shapes:
 p95/p99 absolute error, mean absolute error, L2 norm-relative error, nonfinite
 counts, and input hashes.
 
 | Evidence | Files |
 | --- | --- |
-| production-surface correctness metrics | [`production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.md`](../evidence/ladder/summaries/production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.md), [`production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.jsonl`](../evidence/ladder/results/production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.jsonl) |
+| scoped-surface correctness metrics | [`production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.md`](../evidence/ladder/summaries/production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.md), [`production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.jsonl`](../evidence/ladder/results/production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.jsonl) |
 
 Large max-relative values are interpreted with absolute error and final-state
 checks because near-zero reference values can inflate relative error. For very
@@ -661,10 +661,10 @@ ladder.
 
 The A/replay cross-ablation uses a specialized external-lowering launcher. Its
 archived machine-readable result is listed above; rerun it only in the
-TL0.1.8-lowering environment used for that experiment. The production-surface
-sweep is also archived as raw JSONL. The single `run_ladder.py` command above
-reproduces the formal `64K/H16` harness rows; it is not the reproduction command
-for the five-shape TileOps/FlashQLA surface sweep.
+TL0.1.8-lowering environment used for that experiment. The scoped-surface sweep
+is also archived as raw JSONL; checkpoint 08 contains the five-shape TileOps/FLA
+latency loop and correctness command. The single `run_ladder.py` command above
+reproduces the formal `64K/H16` harness rows.
 
 ### SI.4 Claim And Update Guardrails
 

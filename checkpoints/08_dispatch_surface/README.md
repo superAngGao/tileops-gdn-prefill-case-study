@@ -35,6 +35,35 @@ python "$GDN_HARNESS/run_ladder.py" \
   --output "$CASE_STUDY_ROOT/evidence/ladder/results/rerun_dispatch_64k_h16.jsonl"
 ```
 
+Rerun the five-shape latency sweep:
+
+```bash
+# Same dependency contract as above.
+cd "$TILEOPS_ROOT"
+export OUT="$CASE_STUDY_ROOT/evidence/ladder/results/rerun_production_surface_tileops_vs_fla.jsonl"
+: > "$OUT"
+for spec in \
+  "32768 16 32K_H16" \
+  "65536 16 64K_H16" \
+  "131072 16 128K_H16" \
+  "65536 32 64K_H32" \
+  "65536 64 64K_H64"
+do
+  set -- $spec
+  T="$1"
+  H="$2"
+  PYTHONPATH="$TILEOPS_ROOT:$GDN_HARNESS:$PYTHONPATH" \
+  python "$GDN_HARNESS/run_ladder.py" \
+    --variant ref_fla_051 \
+    --variant tileops_final_dispatch \
+    --seq-len "$T" --heads "$H" --dim-k 128 --dim-v 128 --chunk-size 64 \
+    --dtype fp16 --seed 20260630 --warmup 5 --repeat 20 --trials 3 \
+    --gpu-contract GPU4/H200 \
+    --production-root "$TILEOPS_GDN_PR1596_ROOT" \
+    --output "$OUT"
+done
+```
+
 Rerun correctness metrics for the five-shape surface:
 
 ```bash

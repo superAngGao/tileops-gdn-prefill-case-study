@@ -19,14 +19,24 @@ FlashQLA-style KKT prepare-A feeding TileOps PR1596 replay.
 Rerun:
 
 ```bash
+export FQ_TL018_ARTIFACT=/workspace/gdn-bench/results/flashqla_cross_ablation/artifacts/fq_tl018_64k_h16_seed20260630.pt
+export TILELANG_TL018_HEADERS=/workspace/gdn-bench/tilelang_tl018_headers
+export FLASHQLA_MIGRATION_SRC=/workspace/gdn-bench/FlashQLA-tl019-migration-src
+
 cd "$TILEOPS_ROOT"
 PYTHONPATH="$TILEOPS_ROOT:$GDN_HARNESS:$PYTHONPATH" \
 python "$GDN_HARNESS/run_section11_tileops_benchmark.py" \
-  --input-artifact /path/to/fq_tl018_64k_h16_seed20260630.pt \
+  --input-artifact "$FQ_TL018_ARTIFACT" \
   --production-root "$TILEOPS_GDN_PR1596_ROOT" \
   --tl018-device-kernel "$CASE_STUDY_ROOT/evidence/kernel_sources/flashqla_tl018_lowered/device_kernel.cu" \
-  --tl018-headers /path/to/tilelang_tl018_headers \
-  --flashqla-src /path/to/FlashQLA-tl019-migration-src \
+  --tl018-headers "$TILELANG_TL018_HEADERS" \
+  --flashqla-src "$FLASHQLA_MIGRATION_SRC" \
   --warmup 5 --repeat 20 --trials 3 \
   --output "$CASE_STUDY_ROOT/evidence/ladder/results/rerun_section11_ext_vs_neumann_pr1596_tl011_gpu4.jsonl"
 ```
+
+This checkpoint requires the external TL0.1.8 artifact/header bundle used by
+the Section 11 rerun. The expected artifact hash is
+`sha256:4ba1e0c0c92ade7cd415b04f57f7f8ab93ba4781437daa6f81ac899184053810`;
+the repo stores the harness, launcher, and lowered device kernel needed to
+audit the run.

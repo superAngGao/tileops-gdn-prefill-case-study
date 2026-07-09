@@ -13,7 +13,7 @@ This repository packages the current GDN prefill AKO case study as three layers:
 
 - Main single-shape story: `64K/H16`, BTHD, fp16, H200, archived under
   `evidence/ladder/`.
-- Production dispatch surface: five serving shapes, with TileOps/FLA and public
+- Scoped synthetic dispatch surface: five serving shapes, with TileOps/FLA and public
   FlashQLA anchors archived as JSONL. The TileOps GDN prefill path entered
   TileOps main through
   [tile-ai/TileOps#1596](https://github.com/tile-ai/TileOPs/pull/1596), merge
@@ -22,7 +22,7 @@ This repository packages the current GDN prefill AKO case study as three layers:
   `evidence/ladder/results/section11_*`.
 - Correctness reference: `flash-linear-attention==0.5.1` for the headline
   clean PR1596 surface; older diagnostics may use recorded vendored FLA source
-  snapshots and keep that caveat in metadata. The five-shape production surface has an
+  snapshots and keep that caveat in metadata. The five-shape scoped surface has an
   archived correctness-metrics refresh with p95/p99 absolute error, mean
   absolute error, L2 norm-relative error, nonfinite counts, and input hashes:
   `evidence/ladder/summaries/production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.md`.
@@ -44,4 +44,5 @@ This repository packages the current GDN prefill AKO case study as three layers:
 This package is published for reading, review, and citation. No open reuse
 license is granted by default; see [`LICENSE.md`](LICENSE.md). Contact the
 author before reusing substantial text, figures, benchmark data, or code outside
-normal quotation/citation.
+normal quotation/citation. Third-party source snapshots keep their original
+notices; see [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
