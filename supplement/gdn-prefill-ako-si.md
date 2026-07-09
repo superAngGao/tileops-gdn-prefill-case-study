@@ -355,7 +355,7 @@ The replay side does show an independent improvement. Holding public FlashQLA
 `A/g` fixed, TileOps replay is faster than public FlashQLA replay:
 
 ```text
-0.860569 ms / 0.542159 ms = 1.59x
+0.860569 ms / 0.542807 ms = 1.59x
 ```
 
 The same TileOps replay latency appears with public FlashQLA `A/g` and with

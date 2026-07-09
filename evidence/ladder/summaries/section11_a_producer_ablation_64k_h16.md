@@ -113,7 +113,7 @@ TileOps replay is faster than the public FlashQLA replay component on this
 shape:
 
 ```text
-0.860569 ms / 0.542159 ms = 1.59x
+0.860569 ms / 0.542807 ms = 1.59x
 ```
 
 The TileOps replay latency is essentially unchanged when driven by public
