@@ -571,18 +571,19 @@ element count. A broader external benchmark can still add more seeds or real
 model activation distributions, but the headline synthetic-input surface now
 has archived p99 and norm-relative diagnostics.
 
-#### SI.3.7 Reproduce The Headline Rows
+#### SI.3.7 Archived Evidence And Scoped Rerun Commands
 
 The archived evidence files are the publication source of truth:
 
 | Evidence target | Archived files |
 | --- | --- |
 | Main `64K/H16` ladder and evidence summary | [`case_study_ladder_evidence_64k_h16.md`](../evidence/ladder/summaries/case_study_ladder_evidence_64k_h16.md), [`formal_64k_h16_current_gpu4_rerun.jsonl`](../evidence/ladder/results/formal_64k_h16_current_gpu4_rerun.jsonl), [`formal_64k_h16_historical_local.jsonl`](../evidence/ladder/results/formal_64k_h16_historical_local.jsonl) |
-| A/replay cross-ablation | [`section11_a_producer_ablation_64k_h16.md`](../evidence/ladder/summaries/section11_a_producer_ablation_64k_h16.md), [`a_replay_cross_ablation_64k_h16.md`](../evidence/ladder/summaries/a_replay_cross_ablation_64k_h16.md), [`section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl`](../evidence/ladder/results/section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl), [`section11_a_producer_ablation_64k_h16_fq18_to_replay.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq18_to_replay.jsonl), [`section11_a_producer_ablation_64k_h16_to_to_replay.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_to_to_replay.jsonl), [`section11_a_producer_ablation_64k_h16_to_to_full.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_to_to_full.jsonl), [`section11_a_producer_ablation_64k_h16_fq_current_to_full.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq_current_to_full.jsonl), [`section11_a_producer_ablation_64k_h16_fq_current_to_full_legacy.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq_current_to_full_legacy.jsonl), [`section11_a_producer_ablation_64k_h16_fq_current_to_full_wgmma.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq_current_to_full_wgmma.jsonl) |
+| A/replay cross-ablation | [`section11_a_producer_ablation_64k_h16.md`](../evidence/ladder/summaries/section11_a_producer_ablation_64k_h16.md), legacy diagnostic [`a_replay_cross_ablation_64k_h16.md`](../evidence/ladder/summaries/a_replay_cross_ablation_64k_h16.md), [`section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl`](../evidence/ladder/results/section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl), [`section11_a_producer_ablation_64k_h16_fq18_to_replay.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq18_to_replay.jsonl), [`section11_a_producer_ablation_64k_h16_to_to_replay.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_to_to_replay.jsonl), [`section11_a_producer_ablation_64k_h16_to_to_full.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_to_to_full.jsonl), [`section11_a_producer_ablation_64k_h16_fq_current_to_full.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq_current_to_full.jsonl), [`section11_a_producer_ablation_64k_h16_fq_current_to_full_legacy.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq_current_to_full_legacy.jsonl), [`section11_a_producer_ablation_64k_h16_fq_current_to_full_wgmma.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq_current_to_full_wgmma.jsonl) |
 | Production dispatch surface | [`production_surface_tileops_vs_fla_20260701.jsonl`](../evidence/ladder/results/production_surface_tileops_vs_fla_20260701.jsonl), [`production_surface_flashqla_20260701.jsonl`](../evidence/ladder/results/production_surface_flashqla_20260701.jsonl) |
 | Production-surface correctness metrics | [`production_surface_correctness_metrics_20260708.md`](../evidence/ladder/summaries/production_surface_correctness_metrics_20260708.md), [`production_surface_correctness_metrics_20260708.jsonl`](../evidence/ladder/results/production_surface_correctness_metrics_20260708.jsonl) |
 
-To rerun the current `64K/H16` harness rows from the TileOps repository root:
+For maintainers with the archived TileOps roots and tensor artifacts, the
+original scoped `64K/H16` harness command was:
 
 ```bash
 export GDN_PREFILL_EVIDENCE_HARNESS="$TILEOPS_ROOT/experiments/gated_deltanet_prefill_blog_ladder"
