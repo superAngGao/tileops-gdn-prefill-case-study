@@ -276,14 +276,14 @@ def _mixed_v5_source_identity(
     downstream_module: str | None,
     production_root: Path,
 ) -> dict[str, Any]:
-    producer_match = _under(producer_module, REPO_ROOT)
+    producer_match = _under(producer_module, production_root)
     downstream_match = _under(downstream_module, production_root)
     return {
         "kind": "mixed_experiment_roots",
         "path": str(Path(__file__).resolve()),
         "exists": True,
-        "commit": _git_commit(REPO_ROOT),
-        "dirty": _git_dirty(REPO_ROOT),
+        "commit": _git_commit(production_root),
+        "dirty": _git_dirty(production_root),
         "module_file": str(Path(__file__).resolve()),
         "import_mode": "current_repo_generic_a_plus_pr1596_cp_downstream",
         "root_match": bool(producer_match and downstream_match),
@@ -293,7 +293,7 @@ def _mixed_v5_source_identity(
         },
         "generic_a_producer_root": {
             "kind": "tileops_repo",
-            **_path_meta(REPO_ROOT),
+            **_path_meta(production_root),
             "module_file": producer_module,
         },
         "cp_downstream_root": {
@@ -1054,7 +1054,7 @@ def make_callable(
             },
             "generic_a_comparison_root": {
                 "kind": "tileops_repo",
-                **_path_meta(REPO_ROOT),
+                **_path_meta(root),
                 "module_file": generic_module,
             },
             "cp_downstream_root": {
