@@ -1,4 +1,10 @@
-# A/Replay Cross-Ablation: GDN Prefill 64K/H16
+# Legacy A/Replay Cross-Ablation Diagnostic: GDN Prefill 64K/H16
+
+Status: legacy diagnostic. This file is retained to explain the replay-side
+investigation history, but it is not the source of truth for the current
+publication-facing Section 11 A-producer table. Use
+`section11_a_producer_ablation_64k_h16.md` for the current headline
+`0.815029 ms -> 0.695237 ms` full-row comparison.
 
 Purpose: answer the case-study evidence question:
 

@@ -312,15 +312,18 @@ The follow-up cross-ablation answers that more cleanly. It exports public
 FlashQLA TL0.1.8 tensors, including `A`, `g_cum`, `o`, and `final_state`, and
 then runs TileOps replay on the same `A/g` artifact.
 
-Evidence notes:
-[`section11_a_producer_ablation_64k_h16.md`](../evidence/ladder/summaries/section11_a_producer_ablation_64k_h16.md)
-and
-[`a_replay_cross_ablation_64k_h16.md`](../evidence/ladder/summaries/a_replay_cross_ablation_64k_h16.md).
+Evidence note:
+[`section11_a_producer_ablation_64k_h16.md`](../evidence/ladder/summaries/section11_a_producer_ablation_64k_h16.md).
 The full external-lowering and Neumann rows use
 `benchmarks.benchmark_base.bench_kernel`. The machine-readable evidence is
 split across the archived same-input A-producer ablation JSONL files listed in
 SI.3.7 rather than a single combined JSONL file. Several filenames still use
 the historical `section11_*` prefix.
+
+The older replay-side diagnostic
+[`a_replay_cross_ablation_64k_h16.md`](../evidence/ladder/summaries/a_replay_cross_ablation_64k_h16.md)
+is retained as legacy context only; it is not the source for the current
+headline Section 11 table.
 
 | Row | A producer | Replay/output path | Timing scope | Correctness reference | Latency |
 | --- | --- | --- | --- | --- | ---: |

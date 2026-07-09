@@ -11,7 +11,7 @@ machine-readable source of truth.
 | Main `64K/H16` story and evidence summary | [`ladder/summaries/case_study_ladder_evidence_64k_h16.md`](ladder/summaries/case_study_ladder_evidence_64k_h16.md) |
 | Variant inventory and claim roles | [`ladder/docs/variant_inventory.md`](ladder/docs/variant_inventory.md) |
 | Same-input A-producer ablation | [`ladder/summaries/section11_a_producer_ablation_64k_h16.md`](ladder/summaries/section11_a_producer_ablation_64k_h16.md) |
-| Replay-side diagnostics | [`ladder/summaries/a_replay_cross_ablation_64k_h16.md`](ladder/summaries/a_replay_cross_ablation_64k_h16.md) |
+| Legacy replay-side diagnostics | [`ladder/summaries/a_replay_cross_ablation_64k_h16.md`](ladder/summaries/a_replay_cross_ablation_64k_h16.md) |
 | Production dispatch surface, TileOps vs FLA | [`ladder/results/production_surface_tileops_vs_fla_20260701.jsonl`](ladder/results/production_surface_tileops_vs_fla_20260701.jsonl) |
 | Production dispatch surface, public FlashQLA | [`ladder/results/production_surface_flashqla_20260701.jsonl`](ladder/results/production_surface_flashqla_20260701.jsonl) |
 | Production-surface correctness diagnostics | [`ladder/summaries/production_surface_correctness_metrics_20260708.md`](ladder/summaries/production_surface_correctness_metrics_20260708.md), [`ladder/results/production_surface_correctness_metrics_20260708.jsonl`](ladder/results/production_surface_correctness_metrics_20260708.jsonl) |
