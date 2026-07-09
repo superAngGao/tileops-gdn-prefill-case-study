@@ -71,7 +71,7 @@ B=1, T=65536, H=16, DK=DV=128, chunk64, fp16, BTHD, GPU4/H200, scale=1.0
 Final sweep rows:
 
 ```text
-32K/H16, 64K/H16, 128K/H16, 128K/H32
+32K/H16, 64K/H16, 128K/H16, 64K/H32, 64K/H64
 ```
 
 Input distributions are recorded in each JSONL row:

@@ -45,10 +45,13 @@ Benchmark scope for the headline table:
   FlashQLA is a public TL0.1.8 anchor.
 - Claim role: this table supports the production serving-surface claim. It does
   not support same-lowering attribution claims about FlashQLA replay or KKT
-  lowering. The entire `TileOps / public FlashQLA anchor` column is a
+  lowering. The entire `Speedup vs public FlashQLA anchor` column is a
   public-environment comparison.
+- Provenance: these headline rows are archived pre-merge PR1596 worktree
+  measurements under the recorded contract, not a rerun on merge commit
+  `79469fc0ddae584537df03e35d935575870574f6` or current upstream `main`.
 
-| Shape | TileOps scoped production dispatch | Recorded FLA reference | Public FlashQLA TL0.1.8 anchor | TileOps / recorded FLA ref | TileOps / public FlashQLA anchor |
+| Shape | TileOps scoped production dispatch | Recorded FLA reference | Public FlashQLA TL0.1.8 anchor | Speedup vs recorded FLA ref | Speedup vs public FlashQLA anchor |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | `32K/H16` | `0.3723 ms` | `3.7964 ms` | `0.5440 ms` | `10.20x` | `1.46x` |
 | `64K/H16` | `0.6951 ms` | `7.9840 ms` | `1.3073 ms` | `11.49x` | `1.88x` |
@@ -152,9 +155,11 @@ contract. Each candidate needed four gates:
    `atol=rtol=5e-2`; `max_abs` and `max_rel` are diagnostics, and large
    relative error near zero is interpreted together with absolute error and
    final-state checks. The SI records p99 absolute error and L2 norm-relative
-   error for the headline surface rows. This tolerance is scoped to fp16
-   long-sequence recurrent accumulation and requires both output and final-state
-   checks, not only a single output tensor.
+   error for the headline surface rows; in the refreshed five-shape correctness
+   sweep, output `p99_abs` is `6.104e-05`, output `max_abs` stays within
+   `0.002502`, and final-state checks pass under the same contract. This
+   tolerance is scoped to fp16 long-sequence recurrent accumulation and requires
+   both output and final-state checks, not only a single output tensor.
 2. **Benchmark gate.** Use the TileOps benchmark infrastructure and preserve
    metadata: GPU, timer, warmup/repeat/trials, commit, layout, seed, and input
    artifact.
@@ -392,12 +397,12 @@ it is a more parallel backend-friendly shape. The win is therefore a scheduling
 and backend-shape win, not a claim that the mathematical operator became cheaper
 in the abstract. SI gives the full MAC accounting.
 
-The prepare-A claim rests on the following same-scope rows. The public FlashQLA
-row is context; the attribution comparison is the two TileOps-replay rows. The
-middle row uses the FlashQLA TL0.1.8-lowered KKT producer through an external
-launcher, then feeds its produced `A/g` tensors into the TileOps PR1596 replay
-path. It is not a native current-TileLang KKT port and not a direct call to the
-full FlashQLA forward path.
+The prepare-A claim rests on the following same-shape context rows. The public
+FlashQLA row is external context; the attribution comparison is the two
+TileOps-replay rows. The middle row uses the FlashQLA TL0.1.8-lowered KKT
+producer through an external launcher, then feeds its produced `A/g` tensors
+into the TileOps PR1596 replay path. It is not a native current-TileLang KKT
+port and not a direct call to the full FlashQLA forward path.
 
 | Row | Prepare-A producer | Replay/output | `64K/H16` latency | Meaning |
 | --- | --- | --- | ---: | --- |
