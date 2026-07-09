@@ -23,7 +23,11 @@ Code status: the scoped serving path discussed by the main article entered TileO
 main through [tile-ai/TileOps#1596](https://github.com/tile-ai/TileOPs/pull/1596),
 merge commit `79469fc0ddae584537df03e35d935575870574f6`. Some archived JSONL
 rows below still record the pre-merge PR worktree path because that is where the
-benchmark artifacts were collected.
+benchmark artifacts were collected. Some of those archived rows also record
+`dirty=true` for the local TileOps or PR1596 worktree; they are archived
+evidence under the recorded metadata, not clean-commit reproduction claims. The
+evidence-generation harness and adapters are snapshotted in
+[`evidence/ladder/harness/`](../evidence/ladder/harness/).
 
 ### SI.1 Source Similarity Is Not Performance Equality
 

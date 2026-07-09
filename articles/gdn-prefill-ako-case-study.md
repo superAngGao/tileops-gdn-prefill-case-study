@@ -63,6 +63,8 @@ Source of truth: the table uses the archived
 [`TileOps/FLA JSONL`](../evidence/ladder/results/production_surface_tileops_vs_fla_20260701.jsonl)
 and
 [`FlashQLA JSONL`](../evidence/ladder/results/production_surface_flashqla_20260701.jsonl).
+The evidence-harness code snapshot is archived in
+[`evidence/ladder/harness/`](../evidence/ladder/harness/).
 PR1596's body contains an earlier concise table under a different archived
 benchmark/reference package; the optimized path later merged at commit
 `79469fc0ddae584537df03e35d935575870574f6`.
