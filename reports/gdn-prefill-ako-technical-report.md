@@ -90,11 +90,11 @@ FlashQLA kernel: the TileOps path includes an owned BTHD production
 implementation, a faster specialized A producer, shape-aware dispatch,
 correctness validation, and production benchmark integration.
 
-This article therefore uses a three-level structure rather than a chronological
-round diary. The performance story should also be read as a sequence of
-milestones, control rows, and anchors, not as disconnected per-section tables.
+This report uses a capability/evidence structure rather than a chronological
+experiment log. The performance story is a sequence of milestones, control
+rows, and anchors, not a set of disconnected per-section tables.
 
-The rewritten structure is:
+The report structure is:
 
 | Part | Purpose |
 | --- | --- |
@@ -131,7 +131,7 @@ and evidence inventory.
 
 **Controlled `64K/H16` story rows**
 
-| Story node | Blog meaning | Latency | Perf vs recorded FLA ref (%) | Perf vs public FlashQLA anchor (%) |
+| Story node | Case-study meaning | Latency | Perf vs recorded FLA ref (%) | Perf vs public FlashQLA anchor (%) |
 | --- | --- | ---: | ---: | ---: |
 | initial correctness | the first serving prefill op is correct and measurable | `11.1762 ms` | `71.8%` | `11.7%` |
 | local prepare specialization | local AKO improves the fixed-contract path, but does not change replay depth | `10.8353 ms` | `74.1%` | `12.1%` |
@@ -477,7 +477,7 @@ hypothesis -> TileLang edit -> correctness gate -> benchmark/lowering evidence
 ```
 
 Two examples make the agentic part less abstract. Evidence pointers:
-[`blog_ladder_evidence_64k_h16.md`](../evidence/ladder/summaries/blog_ladder_evidence_64k_h16.md)
+[`64K/H16 evidence summary`](../evidence/ladder/summaries/case_study_ladder_evidence_64k_h16.md)
 and
 [`variant_inventory.md`](../evidence/ladder/docs/variant_inventory.md).
 
@@ -596,7 +596,7 @@ replay component latency improving from `2.2725 ms` to `1.6277 ms`.
 | V-path scale placement | `1.6277 ms` | historical component diagnostic |
 
 These rows show why the scale-placement rewrite mattered, but they are
-trajectory evidence, not final public benchmark claims.
+trajectory evidence, not headline benchmark claims.
 
 ### 3.2 Local Diagnostic: The Store Path Was The Bottleneck
 
@@ -923,7 +923,7 @@ the effective writes `w` and `u`. In the FlashQLA-style flow, `A` is one of
 the inputs to the CP-split replay/output path. Strengthening this producer
 helps the same schedule family; it is not a different replay algorithm.
 
-Before this point, `build_chunk_local_A` was a logical placeholder: a
+Before this point, `build_chunk_local_A` was a logical abstraction: a
 chunk-local triangular/KKT-like solve that the rest of the pipeline consumed.
 The human insight was to stop treating prepare as merely "write the same
 triangular solve in TileLang." For a `chunk64` block, the problem can be
@@ -1124,10 +1124,11 @@ remain diagnostics in the evidence files only; their latencies are not reported
 because failed-correctness timings are not performance evidence.
 
 The July 1 revalidation tried a source-parity migration of the current-TL KKT
-producer. The smoke row passed, but the formal 64K/H16 row still failed. The
-direct diagnostic stayed producer-local: `g_cum` matched exactly, while
-current-TL `A` contained hundreds of nonfinite values and saturated near fp16
-limits; the exported TL0.1.8 `A` stayed finite in `[-0.269287109375, 1.0]`.
+producer. The small-shape validation row passed, but the formal `64K/H16` row
+still failed. The direct diagnostic stayed producer-local: `g_cum` matched
+exactly, while current-TL `A` contained hundreds of nonfinite values and
+saturated near fp16 limits; the exported TL0.1.8 `A` stayed finite in
+`[-0.269287109375, 1.0]`.
 
 The filled no-Neumann row is the cleanest available measured comparison against
 the `0.695237 ms` TileOps prepare-A row. Replay-only and component diagnostics

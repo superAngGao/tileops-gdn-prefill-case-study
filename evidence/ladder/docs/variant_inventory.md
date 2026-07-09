@@ -2,8 +2,9 @@
 
 Date: 2026-06-30
 
-Scope: controlled GDN prefill evidence ladder for the blog plan.  This inventory
-does not modify `tutorial_v3.md` and does not change production dispatch.
+Scope: controlled GDN prefill evidence ladder for the case-study evidence
+package. This inventory is an audit document and does not change production
+dispatch.
 
 Publication note: this inventory was created before
 [tile-ai/TileOps#1596](https://github.com/tile-ai/TileOPs/pull/1596) merged.
@@ -31,7 +32,7 @@ column in article/report prose.
 | `flashqla_port_current_tl` | current-TileLang FlashQLA-style port | external_anchor | migration_lowering_anchor | no | schedule notes exist, no clean runnable adapter found | unavailable |
 | `tileops_owned_cp_generic_a` | generic-A CP bridge | controlled_full_op | causal_ladder_row | yes | experiment-only adapter implemented; smoke/formal full-op correctness pass | accept with ABI caveat |
 | `tileops_owned_cp_blocked_inverse_a` | blocked-inverse CP bridge | controlled_full_op | causal_ladder_row | yes | experiment-only adapter implemented; smoke/formal full-op correctness pass | accept as producer-swap bridge row |
-| `tileops_final_dispatch` | scoped dispatch path | controlled_full_op | final_candidate | no | archived pre-merge run from `/home/ga/TileOPs-pr1596`; production path now merged | accept as final/current production-dispatch context |
+| `tileops_final_dispatch` | scoped dispatch path | controlled_full_op | dispatch_context | no | archived pre-merge run from `/home/ga/TileOPs-pr1596`; production path now merged | accept as scoped dispatch-context evidence |
 
 ## Audit Notes
 
@@ -39,7 +40,7 @@ column in article/report prose.
 
 Status: implemented as detached worktree adapters.
 
-These rows were added after the blog roadmap was tightened to use only
+These rows were added after the evidence roadmap was tightened to use only
 end-to-end rows. They are not controlled generic-A/blocksolve producer-swap
 rows; they are Level 2 story checkpoints before FlashQLA is introduced.
 
@@ -97,8 +98,8 @@ Evidence found:
 ```
 
 Historical local-AKO component and full-op logs exist, including scale/store and
-resource-shape sweeps.  I did not find a clean current source-level variant that
-can be selected as an end-to-end generic-A full-op row under the fixed contract.
+resource-shape sweeps. No clean current source-level registry key was found for
+an end-to-end generic-A full-op row under the fixed contract.
 
 Decision: unavailable for now.  It may enter the controlled ladder only after a
 specific end-to-end full-op implementation is revived and rerun with correctness
@@ -135,7 +136,7 @@ Decision: diagnostic_only.
 
 Status: external environment required.
 
-The plan requires public FlashQLA TL0.1.8 as an external anchor.  That anchor is
+The evidence package uses public FlashQLA TL0.1.8 as an external anchor.  That anchor is
 not a controlled TileOps row because repository, TileLang version, lowering,
 wrapper, runtime environment, and producer implementation all change together.
 
@@ -144,7 +145,7 @@ external_anchor only.
 
 ## Reference Identity Note
 
-`ref_fla_051` remains the plan's intended FLA 0.5.1 reference row, but the
+`ref_fla_051` remains the requested FLA 0.5.1 reference row, but the
 current smoke environment does not expose installed FLA package metadata.  The
 harness therefore records:
 
@@ -270,7 +271,7 @@ BTHC layout. The formal 64K/H16 comparison records
 correctness failure.
 
 Decision: accept as blocked-inverse CP bridge controlled causal row. Keep
-`tileops_final_dispatch` separate as final candidate.
+`tileops_final_dispatch` separate as the scoped dispatch-context row.
 
 ### `tileops_final_dispatch`
 
@@ -284,16 +285,16 @@ Code pointer:
 ```
 
 The pre-merge handoff identified `prepare008` in PR1596 as the accepted
-production node. This row can be used as the archived final/current dispatch
-smoke row:
+production node. This row can be used as archived scoped dispatch-context
+evidence:
 
 ```bash
-python experiments/gated_deltanet_prefill_blog_ladder/run_ladder.py \
+python "$GDN_PREFILL_EVIDENCE_HARNESS/run_ladder.py" \
   --variant tileops_final_dispatch \
   --production-root /home/ga/TileOPs-pr1596
 ```
 
-Decision: accepted only as final/current production-dispatch context.
+Decision: accepted only as scoped production-dispatch context.
 Machine-readable
 metadata sets `publication_role="final_candidate"` and
 `causal_ladder_eligible=false`; scripts must not use this row as a replacement

@@ -1,32 +1,38 @@
-# GDN Prefill Blog Ladder Harness
+# GDN Prefill Case-Study Evidence Harness
 
-Experiment-only harness for the controlled evidence ladder described in
-`/home/ga/2026-06-15/gdn-prefill-ai-assisted-blog/drafts/gdn_prefill_blog_experiment_plan_20260630.md`.
+Experiment-only harness for the controlled evidence ladder used by the GDN
+prefill case-study evidence package.
 
 This directory is intentionally separate from production dispatch.  Every run
 must name a variant explicitly:
 
 ```bash
-python experiments/gated_deltanet_prefill_blog_ladder/run_ladder.py \
+export GDN_PREFILL_EVIDENCE_HARNESS="$TILEOPS_ROOT/experiments/gated_deltanet_prefill_blog_ladder"
+
+python "$GDN_PREFILL_EVIDENCE_HARNESS/run_ladder.py" \
   --variant ref_fla_051 \
   --variant tileops_final_dispatch \
   --seq-len 65536 --heads 16 --dim-k 128 --dim-v 128 --chunk-size 64 \
   --dtype fp16 \
-  --output experiments/gated_deltanet_prefill_blog_ladder/results/ladder_64k_h16.jsonl
+  --output "$GDN_PREFILL_EVIDENCE_HARNESS/results/ladder_64k_h16.jsonl"
 ```
 
 For a quick compile/runtime smoke:
 
 ```bash
-python experiments/gated_deltanet_prefill_blog_ladder/run_ladder.py \
+python "$GDN_PREFILL_EVIDENCE_HARNESS/run_ladder.py" \
   --smoke \
   --variant ref_fla_051 \
   --variant generic_a_legacy \
   --variant tileops_final_dispatch \
-  --output experiments/gated_deltanet_prefill_blog_ladder/results/smoke_ladder.jsonl
+  --output "$GDN_PREFILL_EVIDENCE_HARNESS/results/smoke_ladder.jsonl"
 ```
 
-`--smoke` uses `--smoke-shape blog` by default:
+The archived TileOps harness directory still carries its original development
+name; this publication package treats it as the evidence-harness path.
+
+`--smoke` uses the scoped case-study shape by default. In the archived harness
+CLI this is still named `--smoke-shape blog`:
 
 ```text
 B=1, T=512, H=16, DK=DV=128, chunk64, fp16
@@ -88,9 +94,8 @@ to persist tensors with `torch.save`.
 - `negative_diagnostic`: failed candidates and rejected directions.
 
 Public FlashQLA rows remain external anchors.  Component rows stay out of the
-full-op ladder.  `tileops_final_dispatch` is a final candidate/current
-production smoke row; it is not a substitute for the generic-A/blocksolve
-A-producer swap.
+full-op ladder.  `tileops_final_dispatch` is a scoped dispatch-context row; it
+is not a substitute for the generic-A/blocksolve A-producer swap.
 
 Every row also carries:
 
@@ -128,8 +133,8 @@ row.
 - `run_ladder.py`: full-op correctness/latency JSONL runner.
 - `summarize_ladder.py`: markdown summary and table-filter generator for
   publication, controlled causal, final-candidate, and external-anchor rows.
-- `collect_component_breakdown.py`: placeholder component JSONL writer until
-  event boundaries are wired.
+- `collect_component_breakdown.py`: component JSONL writer for archived
+  diagnostics; event-boundary coverage is partial.
 - `results/`: JSONL outputs.
 - `generated_code/`: future lowering/PTX/SASS archive.
 - `summaries/`: future markdown summaries derived from JSONL.

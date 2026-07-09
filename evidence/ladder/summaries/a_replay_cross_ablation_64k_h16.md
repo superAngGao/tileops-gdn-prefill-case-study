@@ -1,6 +1,6 @@
 # A/Replay Cross-Ablation: GDN Prefill 64K/H16
 
-Purpose: answer the blog-review question:
+Purpose: answer the case-study evidence question:
 
 ```text
 If TileOps learned from the FlashQLA CP-split schedule, why does the generic-A
@@ -10,7 +10,7 @@ replay side or the A-producer side improve?
 
 This file is an evidence note for mechanism-level A/replay attribution. It does
 not replace the TileOps experiment-adapter rows in
-`blog_ladder_evidence_64k_h16.md`.
+the main `64K/H16` evidence summary.
 
 Superseded diagnostic scope: this file retains older replay-side and generic-A
 CP bridge process numbers for attribution analysis. It is not the source for
@@ -57,7 +57,7 @@ Neumann row.
 
 ## Immediate Interpretation
 
-The old explanation was under-specified. The data says two things at once:
+The replay-side attribution requires two separate readings:
 
 First, the FlashQLA-learning evidence separates into three nodes:
 

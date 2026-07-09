@@ -1,6 +1,6 @@
 # Section 11 A-Producer Ablation: GDN Prefill 64K/H16
 
-Purpose: provide the missing experiment for the blog's Section 11. This note
+Purpose: provide the same-input A-producer ablation for the case study. This note
 replaces the incorrect shortcut of using the older generic-A CP bridge row as
 if it were "FlashQLA-style A plus production replay." That bridge is a first
 correct CP adaptation, not the controlled A-producer ablation.
@@ -147,7 +147,7 @@ but their event boundaries are not a strict additive decomposition.
 
 ## Supported Narrative
 
-Use this sequence in the blog:
+Use this sequence in the case study:
 
 ```text
 local wall

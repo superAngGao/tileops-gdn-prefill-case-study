@@ -140,9 +140,8 @@ performance claims.
 
 ### SI.3 Formal `64K/H16` Evidence Snapshot
 
-This section is the first formal evidence package for the rewrite, not the
-complete publication table. It refreshes the main evidence table for one scoped
-serving shape:
+This section is the formal `64K/H16` evidence package, not the complete
+production-surface table. It records one scoped serving shape:
 
 ```text
 B=1, T=65536, H=16, DK=DV=128, chunk64, fp16, BTHD
@@ -169,7 +168,7 @@ intermediate FlashQLA-learning row used to hold the downstream ABI fixed for the
 generic-A/blocksolve adapter comparison. All rows pass correctness against the
 same recorded vendored FLA reference.
 
-| Role | Registry key | Blog meaning | `64K/H16` latency | Speedup vs previous | Perf vs recorded FLA (%) |
+| Role | Registry key | Case-study meaning | `64K/H16` latency | Speedup vs previous | Perf vs recorded FLA (%) |
 | --- | --- | --- | ---: | ---: | ---: |
 | baseline | `generic_a_legacy` | current-repo generic A producer plus legacy replay/output baseline | `11.1906 ms` | `1.00x` | `71.7%` |
 | first CP adaptation | `tileops_owned_cp_generic_a` | early CP-downstream bridge with a conservative generic A producer; useful control row, not a headline FlashQLA result | `2.7674 ms` | `4.04x` | `290.0%` |
@@ -234,7 +233,7 @@ These rows are not mixed into the experiment-adapter rows. The `64K/H16`
 dispatch row is still useful as an anchor, but the broader production-surface
 sweep is the production claim.
 
-| Registry key | Role | `64K/H16` latency | Correctness | Use in blog |
+| Registry key | Role | `64K/H16` latency | Correctness | Use in case study |
 | --- | --- | ---: | --- | --- |
 | `ref_fla_051` | recorded vendored FLA reference baseline | `8.02574 ms` | self/reference row | correctness oracle and FLA latency context, with version caveat |
 | `tileops_final_dispatch` | merged PR1596 dispatch wrapper / dispatch context | `0.692026 ms` historical anchor; `0.6951 ms` in the refreshed surface sweep | pass vs recorded FLA reference | production-surface row family, not an experiment-adapter step |
@@ -261,7 +260,7 @@ same-lowering replay attribution experiment.
 
 #### SI.3.3 Source, ABI, And Correctness Caveats
 
-The formal evidence package is clean enough for the scoped blog claim, but it
+The formal evidence package is clean enough for the scoped case-study claim, but it
 has bounded claim scope.
 
 | Pair / row | ABI/source fact | Evidence |
@@ -568,7 +567,7 @@ The archived evidence files are the publication source of truth:
 
 | Evidence target | Archived files |
 | --- | --- |
-| Main `64K/H16` ladder and writing summary | [`blog_ladder_evidence_64k_h16.md`](../evidence/ladder/summaries/blog_ladder_evidence_64k_h16.md), [`formal_64k_h16_current_gpu4_rerun.jsonl`](../evidence/ladder/results/formal_64k_h16_current_gpu4_rerun.jsonl), [`formal_64k_h16_historical_local.jsonl`](../evidence/ladder/results/formal_64k_h16_historical_local.jsonl) |
+| Main `64K/H16` ladder and evidence summary | [`case_study_ladder_evidence_64k_h16.md`](../evidence/ladder/summaries/case_study_ladder_evidence_64k_h16.md), [`formal_64k_h16_current_gpu4_rerun.jsonl`](../evidence/ladder/results/formal_64k_h16_current_gpu4_rerun.jsonl), [`formal_64k_h16_historical_local.jsonl`](../evidence/ladder/results/formal_64k_h16_historical_local.jsonl) |
 | A/replay cross-ablation | [`section11_a_producer_ablation_64k_h16.md`](../evidence/ladder/summaries/section11_a_producer_ablation_64k_h16.md), [`a_replay_cross_ablation_64k_h16.md`](../evidence/ladder/summaries/a_replay_cross_ablation_64k_h16.md), [`section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl`](../evidence/ladder/results/section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl), [`section11_a_producer_ablation_64k_h16_fq18_to_replay.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq18_to_replay.jsonl), [`section11_a_producer_ablation_64k_h16_to_to_replay.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_to_to_replay.jsonl), [`section11_a_producer_ablation_64k_h16_to_to_full.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_to_to_full.jsonl), [`section11_a_producer_ablation_64k_h16_fq_current_to_full.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq_current_to_full.jsonl), [`section11_a_producer_ablation_64k_h16_fq_current_to_full_legacy.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq_current_to_full_legacy.jsonl), [`section11_a_producer_ablation_64k_h16_fq_current_to_full_wgmma.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq_current_to_full_wgmma.jsonl) |
 | Production dispatch surface | [`production_surface_tileops_vs_fla_20260701.jsonl`](../evidence/ladder/results/production_surface_tileops_vs_fla_20260701.jsonl), [`production_surface_flashqla_20260701.jsonl`](../evidence/ladder/results/production_surface_flashqla_20260701.jsonl) |
 | Production-surface correctness metrics | [`production_surface_correctness_metrics_20260708.md`](../evidence/ladder/summaries/production_surface_correctness_metrics_20260708.md), [`production_surface_correctness_metrics_20260708.jsonl`](../evidence/ladder/results/production_surface_correctness_metrics_20260708.jsonl) |
@@ -576,7 +575,9 @@ The archived evidence files are the publication source of truth:
 To rerun the current `64K/H16` harness rows from the TileOps repository root:
 
 ```bash
-python experiments/gated_deltanet_prefill_blog_ladder/run_ladder.py \
+export GDN_PREFILL_EVIDENCE_HARNESS="$TILEOPS_ROOT/experiments/gated_deltanet_prefill_blog_ladder"
+
+python "$GDN_PREFILL_EVIDENCE_HARNESS/run_ladder.py" \
   --variant ref_fla_051 \
   --variant generic_a_legacy \
   --variant tileops_owned_cp_generic_a \
@@ -586,13 +587,16 @@ python experiments/gated_deltanet_prefill_blog_ladder/run_ladder.py \
   --dtype fp16 --seed 20260630 --warmup 10 --repeat 50 --trials 3 \
   --gpu-contract GPU4/H200 \
   --production-root /home/ga/TileOPs-pr1596 \
-  --artifact experiments/gated_deltanet_prefill_blog_ladder/results/artifacts/formal_64k_h16_seed20260630.pt \
-  --output experiments/gated_deltanet_prefill_blog_ladder/results/formal_64k_h16_reproduce.jsonl
+  --artifact "$GDN_PREFILL_EVIDENCE_HARNESS/results/artifacts/formal_64k_h16_seed20260630.pt" \
+  --output "$GDN_PREFILL_EVIDENCE_HARNESS/results/formal_64k_h16_reproduce.jsonl"
 
-python experiments/gated_deltanet_prefill_blog_ladder/summarize_ladder.py \
-  --input experiments/gated_deltanet_prefill_blog_ladder/results/formal_64k_h16_reproduce.jsonl \
-  --output experiments/gated_deltanet_prefill_blog_ladder/summaries/formal_64k_h16_reproduce.md
+python "$GDN_PREFILL_EVIDENCE_HARNESS/summarize_ladder.py" \
+  --input "$GDN_PREFILL_EVIDENCE_HARNESS/results/formal_64k_h16_reproduce.jsonl" \
+  --output "$GDN_PREFILL_EVIDENCE_HARNESS/summaries/formal_64k_h16_reproduce.md"
 ```
+
+The archived TileOps harness directory still carries its original development
+name; this publication package treats it as the evidence-harness path.
 
 Expected shape/contract:
 

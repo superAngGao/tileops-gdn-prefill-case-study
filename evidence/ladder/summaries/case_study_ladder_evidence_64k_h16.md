@@ -1,8 +1,8 @@
-# Blog Ladder Evidence: GDN Prefill 64K/H16
+# Case-Study Ladder Evidence: GDN Prefill 64K/H16
 
 Purpose: evidence package for the GDN prefill case study. This file
-separates experiment-adapter rows from final/external anchors so the
-blog does not mix attribution lanes.
+separates experiment-adapter rows from dispatch/external anchors so the
+case-study narrative does not mix attribution lanes.
 
 Source evidence:
 
@@ -31,7 +31,7 @@ These rows were rerun from archived local checkpoints under the same `64K/H16`
 input artifact. They are story checkpoints for Level 2, not
 generic-A/blocksolve controlled producer-swap rows.
 
-| Role | Public label | Blog meaning | Latency ms | Correctness | Use |
+| Role | Public label | Case-study meaning | Latency ms | Correctness | Use |
 | --- | --- | --- | ---: | --- | --- |
 | initial correctness | initial correct prefill checkpoint | first serving prefill op checkpoint | 11.1762 | pass | first measurable end-to-end op |
 | local prepare specialization | local prepare-specialized checkpoint | fixed-contract prepare specialization | 10.8353 | pass | local AKO positive full-op node |
@@ -45,7 +45,7 @@ recorded FLA reference, and are marked `causal_ladder_eligible=true` in the
 harness. That machine-readable field means they are allowed into the controlled
 experiment table; it does not mean every row is a headline narrative milestone.
 
-| Role | Public label | Blog meaning | Latency ms | Speedup vs previous | Use |
+| Role | Public label | Case-study meaning | Latency ms | Speedup vs previous | Use |
 | --- | --- | --- | ---: | ---: | --- |
 | baseline | `generic_a_legacy` | Current-repo generic A producer plus legacy replay/output baseline. | 11.1906 | 1.00x | Starting point for controlled TileOps producer comparison. |
 | first CP adaptation | generic-A CP bridge | Same generic A producer class moved under the PR1596 CP downstream ABI and fused replay/output schedule. | 2.7674 | 4.04x | First correct TileOps-owned adaptation after studying FlashQLA; useful for generic-A/blocksolve comparison, not a claim that TileOps reproduced FlashQLA performance. |
@@ -65,8 +65,8 @@ generic_a_legacy
   -> tileops_owned_cp_blocked_inverse_a
 ```
 
-Do not insert `tileops_final_dispatch` into this chain. It is a final candidate
-/ production wrapper anchor, not a separate algorithmic step. Also do not write
+Do not insert `tileops_final_dispatch` into this chain. It is a dispatch-context
+anchor, not a separate algorithmic step. Also do not write
 the generic-A CP bridge as "TileOps matched FlashQLA." It is the first correct
 adaptation; the A/replay cross-ablation is the evidence for replay alignment
 and A-producer attribution.
@@ -125,7 +125,7 @@ Merge note: PR1596 has since entered TileOps main at merge commit
 `/home/ga/TileOps-pr1596` below are archived pre-merge provenance for the
 benchmark artifacts.
 
-| Registry key | Role | Latency ms | Correctness | Use in blog |
+| Registry key | Role | Latency ms | Correctness | Use in case study |
 | --- | --- | ---: | --- | --- |
 | `ref_fla_051` | External correctness oracle and FLA latency baseline. | 8.02574 | self/reference row | May be reported as the recorded vendored FLA reference baseline, with version caveat. |
 | `tileops_final_dispatch` | Merged PR1596 production wrapper / dispatch context. | 0.692026 historical anchor; 0.6951 in refreshed surface sweep | pass vs FLA reference | May be reported as the production dispatch surface, not as an experiment-adapter step. |
@@ -160,7 +160,7 @@ same-lowering replay attribution experiment.
 
 ## Source / ABI Caveats
 
-The safest blog wording is:
+Safe case-study wording:
 
 ```text
 The generic-A and blocked-inverse adapters use the same CP downstream ABI and
