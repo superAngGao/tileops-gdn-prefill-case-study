@@ -24,6 +24,15 @@ correct CP adaptation, not the controlled A-producer ablation.
 ## Main Full End-To-End Rows
 
 These are the main full end-to-end rows for the A-producer comparison.
+The publication-facing `0.815029 ms -> 0.695237 ms` comparison comes from the
+aggregated same-benchmark JSONL
+`section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl`, whose
+nested latency fields are `tl018_lowering_prepare_plus_tileops_replay` and
+`tileops_neumann_prepare_plus_tileops_replay`. The separate
+`section11_a_producer_ablation_64k_h16_to_to_full.jsonl` row is retained as an
+older recorded-FLA diagnostic with a different correctness/reference boundary
+and reports `0.691642 ms`; it is not the publication number for the clean
+Section 11 prepare-A comparison.
 
 | Row | Prepare-A producer | Replay/output | Timing scope | Correctness | Latency ms | Use |
 | --- | --- | --- | --- | --- | ---: | --- |
@@ -195,7 +204,7 @@ shape and are rejected for attribution.
   `evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq18_to_replay.jsonl`
 - Refreshed TileOps A/g + TileOps replay:
   `evidence/ladder/results/section11_a_producer_ablation_64k_h16_to_to_replay.jsonl`
-- Refreshed TileOps full row:
+- Older recorded-FLA diagnostic TileOps full row:
   `evidence/ladder/results/section11_a_producer_ablation_64k_h16_to_to_full.jsonl`
 - Rejected measured current-TL FlashQLA-style producer + TileOps replay rows:
   `evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq_current_to_full.jsonl`
