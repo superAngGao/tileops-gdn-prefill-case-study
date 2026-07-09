@@ -7,7 +7,9 @@ The snapshots make the evidence package self-auditing: each checkpoint can
 point to concrete source files inside this repository. For the four historical
 local checkpoints, compressed full source roots are also archived in
 `runnable_roots/` so the rerun root can be reconstructed without relying on a
-private local path.
+private local path. Those roots retain the historical checkpoint code, with a
+small TileLang `0.1.11` lowering-compatibility fix that stores the recurrence
+scalars `g_last` / `g_last_val` in one-element local buffers before use.
 
 ## Layout
 
@@ -23,4 +25,5 @@ private local path.
 
 Each historical directory includes a `SOURCE_FILES.txt` list generated when the
 snapshot was created. The corresponding `runnable_roots/*.tar.gz` archive
-contains the full source root used for rerun setup.
+contains the full source root used for rerun setup under
+`ghcr.io/tile-ai/tileops-runner:65dbc98-torch2.10`.

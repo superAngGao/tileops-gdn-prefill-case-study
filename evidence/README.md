@@ -9,6 +9,7 @@ machine-readable source of truth.
 | Evidence target | Files |
 | --- | --- |
 | Main `64K/H16` story and evidence summary | [`ladder/summaries/case_study_ladder_evidence_64k_h16.md`](ladder/summaries/case_study_ladder_evidence_64k_h16.md) |
+| Historical `64K/H16` rerun under TileLang `0.1.11` | [`ladder/results/rerun_011_formal_64k_h16_historical_local.jsonl`](ladder/results/rerun_011_formal_64k_h16_historical_local.jsonl) |
 | Variant inventory and claim roles | [`ladder/docs/variant_inventory.md`](ladder/docs/variant_inventory.md) |
 | Same-input A-producer ablation | [`ladder/summaries/section11_a_producer_ablation_64k_h16.md`](ladder/summaries/section11_a_producer_ablation_64k_h16.md) |
 | Legacy replay-side diagnostics | [`ladder/summaries/a_replay_cross_ablation_64k_h16.md`](ladder/summaries/a_replay_cross_ablation_64k_h16.md) |

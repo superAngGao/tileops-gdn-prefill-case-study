@@ -9,20 +9,22 @@ historical TileOps checkpoints. Some rows still require external benchmark
 artifacts, such as the exported FlashQLA TL0.1.8 artifact used by the
 same-shape A-producer ablation.
 
-Runtime split:
+Runtime contract:
 
-- Historical local checkpoints (`01`-`04`) were collected with the TileLang
-  `0.1.9` runner lineage. The local rerun-verified image is
-  `tileops-runner:nightly-tl019-fullstack-no-tileops-ldfix`.
-- Current/merged TileOps rows (`05`, `07`, `08`) rerun under the TileOpsGov CI
-  image `ghcr.io/tile-ai/tileops-runner:65dbc98-torch2.10`.
+- Historical local checkpoints (`01`-`04`) now rerun under the same TileOpsGov
+  CI image used by the current TileOps rows:
+  `ghcr.io/tile-ai/tileops-runner:65dbc98-torch2.10`. Their archived source
+  roots keep the historical checkpoint code, plus a TileLang `0.1.11`
+  lowering-compatibility fix for the scalar `g_last` / `g_last_val`
+  recurrence values.
+- Current/merged TileOps rows (`05`, `07`, `08`) use the same TileOpsGov CI
+  image.
 - The FlashQLA-style prepare-A row (`06`) also needs the exported TL0.1.8
   artifact and launcher inputs recorded in its checkpoint README.
 
 | Checkpoints | Runtime image | nvcc | Torch | TileLang |
 | --- | --- | --- | --- | --- |
-| `01`-`04` | `tileops-runner:nightly-tl019-fullstack-no-tileops-ldfix` | `12.9` (`Build cuda_12.9.r12.9/compiler.36037853_0`) | `2.10.0+cu128` (`torch.version.cuda=12.8`) | `0.1.9` |
-| `05`, `08` | `ghcr.io/tile-ai/tileops-runner:65dbc98-torch2.10` | `12.9` (`Build cuda_12.9.r12.9/compiler.36037853_0`) | `2.10.0+cu129` (`torch.version.cuda=12.9`) | `0.1.11+cu129.git65dbc983` |
+| `01`-`05`, `08` | `ghcr.io/tile-ai/tileops-runner:65dbc98-torch2.10` | `12.9` (`Build cuda_12.9.r12.9/compiler.36037853_0`) | `2.10.0+cu129` (`torch.version.cuda=12.9`) | `0.1.11+cu129.git65dbc983` |
 | `06`, `07` | `ghcr.io/tile-ai/tileops-runner:65dbc98-torch2.10` for TileOps replay; TL0.1.8 artifact/toolchain for FlashQLA-style prepare-A | `12.9` in the TileOps replay runner | `2.10.0+cu129` (`torch.version.cuda=12.9`) for TileOps replay | `0.1.11+cu129.git65dbc983` for TileOps replay; TL0.1.8 for external prepare-A artifact |
 
 Environment pieces:
@@ -50,6 +52,15 @@ can be reconstructed from:
 | FlashQLA-style prepare-A ablation | `06_flashqla_style_prepare/` | rerunnable with TL0.1.8 artifact/environment and TileOps PR1596 root |
 | Blocked-inverse / Neumann prepare | `07_neumann_prepare/` | rerunnable with TileOps PR1596 root and Section 11 artifact |
 | Scoped dispatch surface | `08_dispatch_surface/` | rerunnable with TileOps PR1596 or merged-main root |
+
+The current TileLang `0.1.11` historical checkpoint rerun is archived at:
+
+```text
+../evidence/ladder/results/rerun_011_formal_64k_h16_historical_local.jsonl
+```
+
+The older `formal_64k_h16_historical_local.jsonl` file is retained as dated
+historical archive evidence from the original runtime lineage.
 
 Common environment variables used by the commands:
 

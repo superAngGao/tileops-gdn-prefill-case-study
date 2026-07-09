@@ -4,16 +4,19 @@ Purpose: first full-op correct TileOps GDN prefill checkpoint.
 
 | Item | Value |
 | --- | --- |
-| Runtime image | `tileops-runner:nightly-tl019-fullstack-no-tileops-ldfix` |
+| Runtime image | `ghcr.io/tile-ai/tileops-runner:65dbc98-torch2.10` |
 | nvcc | `12.9` (`Build cuda_12.9.r12.9/compiler.36037853_0`) |
-| Torch | `2.10.0+cu128` (`torch.version.cuda=12.8`) |
-| TileLang | `0.1.9` |
+| Torch | `2.10.0+cu129` (`torch.version.cuda=12.9`) |
+| TileLang | `0.1.11+cu129.git65dbc983` |
 | Variant | `local_initial_prefill_f147` |
 | Public label | initial correct prefill checkpoint |
-| Expected evidence | `../../evidence/ladder/results/formal_64k_h16_historical_local.jsonl` |
-| Expected latency in archive | `11.1762 ms` at `64K/H16` |
+| Current 0.1.11 rerun evidence | `../../evidence/ladder/results/rerun_011_formal_64k_h16_historical_local.jsonl` |
+| Current 0.1.11 rerun latency | `5.5318 ms` at `64K/H16` |
+| Historical archive evidence | `../../evidence/ladder/results/formal_64k_h16_historical_local.jsonl` |
+| Historical archive latency | `11.1762 ms` at `64K/H16` |
 | Kernel source snapshot | `../../evidence/kernel_sources/historical/initial-f1472392/` |
 | Historical commit | `f1472392b5d41e21c689a2a870f1d451768a082b` |
+| Rerun source note | Historical checkpoint source with a TileLang `0.1.11` scalar-lowering compatibility fix for `g_last` / `g_last_val`. |
 
 Rerun:
 

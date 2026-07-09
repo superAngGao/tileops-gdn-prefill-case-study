@@ -41,27 +41,27 @@ code saved in this repository.
 
 | Checkpoint | Public source snapshot | Rerun entry | Evidence |
 | --- | --- | --- | --- |
-| Initial correct prefill | [`historical/initial-f1472392`](../evidence/kernel_sources/historical/initial-f1472392/) | [`01_initial_correctness`](../checkpoints/01_initial_correctness/) | `formal_64k_h16_historical_local.jsonl` |
-| Local prepare-specialized AKO | [`historical/prepare-00a60b19`](../evidence/kernel_sources/historical/prepare-00a60b19/) | [`02_local_prepare_specialized`](../checkpoints/02_local_prepare_specialized/) | `formal_64k_h16_historical_local.jsonl` |
-| Local h-tile diagnostic | [`historical/htile-82707454`](../evidence/kernel_sources/historical/htile-82707454/) | [`03_local_h_tile_diagnostic`](../checkpoints/03_local_h_tile_diagnostic/) | `formal_64k_h16_historical_local.jsonl` |
-| Local BTHD wall | [`historical/bthdwall-d09c8f2d`](../evidence/kernel_sources/historical/bthdwall-d09c8f2d/) | [`04_local_wall`](../checkpoints/04_local_wall/) | `formal_64k_h16_historical_local.jsonl` |
+| Initial correct prefill | [`historical/initial-f1472392`](../evidence/kernel_sources/historical/initial-f1472392/) | [`01_initial_correctness`](../checkpoints/01_initial_correctness/) | `rerun_011_formal_64k_h16_historical_local.jsonl`; older archive: `formal_64k_h16_historical_local.jsonl` |
+| Local prepare-specialized AKO | [`historical/prepare-00a60b19`](../evidence/kernel_sources/historical/prepare-00a60b19/) | [`02_local_prepare_specialized`](../checkpoints/02_local_prepare_specialized/) | `rerun_011_formal_64k_h16_historical_local.jsonl`; older archive: `formal_64k_h16_historical_local.jsonl` |
+| Local h-tile diagnostic | [`historical/htile-82707454`](../evidence/kernel_sources/historical/htile-82707454/) | [`03_local_h_tile_diagnostic`](../checkpoints/03_local_h_tile_diagnostic/) | `rerun_011_formal_64k_h16_historical_local.jsonl`; older archive: `formal_64k_h16_historical_local.jsonl` |
+| Local BTHD wall | [`historical/bthdwall-d09c8f2d`](../evidence/kernel_sources/historical/bthdwall-d09c8f2d/) | [`04_local_wall`](../checkpoints/04_local_wall/) | `rerun_011_formal_64k_h16_historical_local.jsonl`; older archive: `formal_64k_h16_historical_local.jsonl` |
 | CP-split bridge | [`tileops_pr1596`](../evidence/kernel_sources/tileops_pr1596/) plus [`harness`](../evidence/ladder/harness/) | [`05_cp_split_bridge`](../checkpoints/05_cp_split_bridge/) | `formal_64k_h16_v5_ladder.jsonl` |
 | FlashQLA-style prepare-A + TileOps replay | [`flashqla_tl018_lowered`](../evidence/kernel_sources/flashqla_tl018_lowered/) plus [`tl018_fq_prepare_launcher.cu`](../evidence/ladder/harness/tl018_fq_prepare_launcher.cu) | [`06_flashqla_style_prepare`](../checkpoints/06_flashqla_style_prepare/) | `section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl` |
 | Blocked-inverse / Neumann prepare | [`tileops_pr1596`](../evidence/kernel_sources/tileops_pr1596/) plus [`harness`](../evidence/ladder/harness/) | [`07_neumann_prepare`](../checkpoints/07_neumann_prepare/) | `section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl` |
 | Scoped dispatch surface | [`tileops_pr1596`](../evidence/kernel_sources/tileops_pr1596/) | [`08_dispatch_surface`](../checkpoints/08_dispatch_surface/) | `production_surface_tileops_vs_fla_20260701.jsonl` |
 
 The source snapshots are included for audit and rerun setup. Historical rows
-should be rerun with the TileLang `0.1.9` runner lineage; the local
-rerun-verified image is
-`tileops-runner:nightly-tl019-fullstack-no-tileops-ldfix`. Current TileOps rows
-rerun under `ghcr.io/tile-ai/tileops-runner:65dbc98-torch2.10`.
+now rerun under the same TileOpsGov CI image as the current TileOps rows:
+`ghcr.io/tile-ai/tileops-runner:65dbc98-torch2.10`. The historical source roots
+retain the checkpoint code, with a small TileLang `0.1.11`
+lowering-compatibility fix for the scalar `g_last` / `g_last_val` recurrence
+values.
 
 Runtime matrix:
 
 | Checkpoints | Runtime image | nvcc | Torch | TileLang |
 | --- | --- | --- | --- | --- |
-| `01`-`04` | `tileops-runner:nightly-tl019-fullstack-no-tileops-ldfix` | `12.9` (`Build cuda_12.9.r12.9/compiler.36037853_0`) | `2.10.0+cu128` (`torch.version.cuda=12.8`) | `0.1.9` |
-| `05`, `08` | `ghcr.io/tile-ai/tileops-runner:65dbc98-torch2.10` | `12.9` (`Build cuda_12.9.r12.9/compiler.36037853_0`) | `2.10.0+cu129` (`torch.version.cuda=12.9`) | `0.1.11+cu129.git65dbc983` |
+| `01`-`05`, `08` | `ghcr.io/tile-ai/tileops-runner:65dbc98-torch2.10` | `12.9` (`Build cuda_12.9.r12.9/compiler.36037853_0`) | `2.10.0+cu129` (`torch.version.cuda=12.9`) | `0.1.11+cu129.git65dbc983` |
 | `06`, `07` | `ghcr.io/tile-ai/tileops-runner:65dbc98-torch2.10` for TileOps replay; TL0.1.8 artifact/toolchain for FlashQLA-style prepare-A | `12.9` in the TileOps replay runner | `2.10.0+cu129` (`torch.version.cuda=12.9`) for TileOps replay | `0.1.11+cu129.git65dbc983` for TileOps replay; TL0.1.8 for external prepare-A artifact |
 
 ### SI.1 Source Similarity Is Not Performance Equality
@@ -612,7 +612,7 @@ The archived evidence files are the publication source of truth:
 
 | Evidence target | Archived files |
 | --- | --- |
-| Main `64K/H16` ladder and evidence summary | [`case_study_ladder_evidence_64k_h16.md`](../evidence/ladder/summaries/case_study_ladder_evidence_64k_h16.md), [`formal_64k_h16_current_gpu4_rerun.jsonl`](../evidence/ladder/results/formal_64k_h16_current_gpu4_rerun.jsonl), [`formal_64k_h16_historical_local.jsonl`](../evidence/ladder/results/formal_64k_h16_historical_local.jsonl) |
+| Main `64K/H16` ladder and evidence summary | [`case_study_ladder_evidence_64k_h16.md`](../evidence/ladder/summaries/case_study_ladder_evidence_64k_h16.md), [`formal_64k_h16_current_gpu4_rerun.jsonl`](../evidence/ladder/results/formal_64k_h16_current_gpu4_rerun.jsonl), current TileLang `0.1.11` historical rerun [`rerun_011_formal_64k_h16_historical_local.jsonl`](../evidence/ladder/results/rerun_011_formal_64k_h16_historical_local.jsonl), older historical archive [`formal_64k_h16_historical_local.jsonl`](../evidence/ladder/results/formal_64k_h16_historical_local.jsonl) |
 | A/replay cross-ablation | [`section11_a_producer_ablation_64k_h16.md`](../evidence/ladder/summaries/section11_a_producer_ablation_64k_h16.md), legacy diagnostic [`a_replay_cross_ablation_64k_h16.md`](../evidence/ladder/summaries/a_replay_cross_ablation_64k_h16.md), [`section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl`](../evidence/ladder/results/section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl), [`section11_a_producer_ablation_64k_h16_fq18_to_replay.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq18_to_replay.jsonl), [`section11_a_producer_ablation_64k_h16_to_to_replay.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_to_to_replay.jsonl), [`section11_a_producer_ablation_64k_h16_to_to_full.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_to_to_full.jsonl), [`section11_a_producer_ablation_64k_h16_fq_current_to_full.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq_current_to_full.jsonl), [`section11_a_producer_ablation_64k_h16_fq_current_to_full_legacy.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq_current_to_full_legacy.jsonl), [`section11_a_producer_ablation_64k_h16_fq_current_to_full_wgmma.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq_current_to_full_wgmma.jsonl) |
 | Production dispatch surface | [`production_surface_tileops_vs_fla_20260701.jsonl`](../evidence/ladder/results/production_surface_tileops_vs_fla_20260701.jsonl), [`production_surface_flashqla_20260701.jsonl`](../evidence/ladder/results/production_surface_flashqla_20260701.jsonl) |
 | Production-surface correctness metrics | [`production_surface_correctness_metrics_20260708.md`](../evidence/ladder/summaries/production_surface_correctness_metrics_20260708.md), [`production_surface_correctness_metrics_20260708.jsonl`](../evidence/ladder/results/production_surface_correctness_metrics_20260708.jsonl) |
