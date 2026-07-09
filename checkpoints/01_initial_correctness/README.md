@@ -4,6 +4,10 @@ Purpose: first full-op correct TileOps GDN prefill checkpoint.
 
 | Item | Value |
 | --- | --- |
+| Runtime image | `tileops-runner:nightly-tl019-fullstack-no-tileops-ldfix` |
+| nvcc | `12.9` (`Build cuda_12.9.r12.9/compiler.36037853_0`) |
+| Torch | `2.10.0+cu128` (`torch.version.cuda=12.8`) |
+| TileLang | `0.1.9` |
 | Variant | `local_initial_prefill_f147` |
 | Public label | initial correct prefill checkpoint |
 | Expected evidence | `../../evidence/ladder/results/formal_64k_h16_historical_local.jsonl` |

@@ -56,6 +56,14 @@ rerun-verified image is
 `tileops-runner:nightly-tl019-fullstack-no-tileops-ldfix`. Current TileOps rows
 rerun under `ghcr.io/tile-ai/tileops-runner:65dbc98-torch2.10`.
 
+Runtime matrix:
+
+| Checkpoints | Runtime image | nvcc | Torch | TileLang |
+| --- | --- | --- | --- | --- |
+| `01`-`04` | `tileops-runner:nightly-tl019-fullstack-no-tileops-ldfix` | `12.9` (`Build cuda_12.9.r12.9/compiler.36037853_0`) | `2.10.0+cu128` (`torch.version.cuda=12.8`) | `0.1.9` |
+| `05`, `08` | `ghcr.io/tile-ai/tileops-runner:65dbc98-torch2.10` | `12.9` (`Build cuda_12.9.r12.9/compiler.36037853_0`) | `2.10.0+cu129` (`torch.version.cuda=12.9`) | `0.1.11+cu129.git65dbc983` |
+| `06`, `07` | `ghcr.io/tile-ai/tileops-runner:65dbc98-torch2.10` for TileOps replay; TL0.1.8 artifact/toolchain for FlashQLA-style prepare-A | `12.9` in the TileOps replay runner | `2.10.0+cu129` (`torch.version.cuda=12.9`) for TileOps replay | `0.1.11+cu129.git65dbc983` for TileOps replay; TL0.1.8 for external prepare-A artifact |
+
 ### SI.1 Source Similarity Is Not Performance Equality
 
 Studying FlashQLA was a source-level adaptation of a schedule idea, not a

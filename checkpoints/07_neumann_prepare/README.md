@@ -5,6 +5,10 @@ Neumann-style prepare-A feeding the same TileOps PR1596 replay.
 
 | Item | Value |
 | --- | --- |
+| Runtime image | `ghcr.io/tile-ai/tileops-runner:65dbc98-torch2.10` for TileOps replay; TL0.1.8 artifact for FlashQLA-style prepare-A |
+| nvcc | `12.9` in the TileOps replay runner; TL0.1.8 prepare-A uses recorded exported artifact/toolchain |
+| Torch | `2.10.0+cu129` (`torch.version.cuda=12.9`) for TileOps replay |
+| TileLang | `0.1.11+cu129.git65dbc983` for TileOps replay; TL0.1.8 for the external prepare-A artifact |
 | Row | `TO/TO full` in the Section 11 benchmark |
 | Expected evidence | `../../evidence/ladder/results/section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl` |
 | Expected latency in archive | `0.695237 ms` at `64K/H16` |

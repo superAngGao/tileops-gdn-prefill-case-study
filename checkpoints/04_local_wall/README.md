@@ -5,6 +5,10 @@ local implementation work helped but did not solve the long replay dependency.
 
 | Item | Value |
 | --- | --- |
+| Runtime image | `tileops-runner:nightly-tl019-fullstack-no-tileops-ldfix` |
+| nvcc | `12.9` (`Build cuda_12.9.r12.9/compiler.36037853_0`) |
+| Torch | `2.10.0+cu128` (`torch.version.cuda=12.8`) |
+| TileLang | `0.1.9` |
 | Variant | `local_bthd_wall_d09c` |
 | Public label | local BTHD wall checkpoint |
 | Expected evidence | `../../evidence/ladder/results/formal_64k_h16_historical_local.jsonl` |
