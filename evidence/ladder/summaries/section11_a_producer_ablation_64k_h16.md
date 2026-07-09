@@ -21,6 +21,11 @@ correct CP adaptation, not the controlled A-producer ablation.
 - Artifact hash:
   `sha256:4ba1e0c0c92ade7cd415b04f57f7f8ab93ba4781437daa6f81ac899184053810`
 
+This is the fixed artifact for the Section 11 A/replay ablation. It contains
+the exported public FlashQLA TL0.1.8 tensors used by the Section 11 rows and is
+not the same file as the formal ladder artifact with hash
+`sha256:a8987a2c6d16c658a1cb8ed95e409d973a3f736e2019d8719b143f18b4741513`.
+
 ## Main Full End-To-End Rows
 
 These are the main full end-to-end rows for the A-producer comparison.

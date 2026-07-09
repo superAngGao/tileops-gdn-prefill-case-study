@@ -33,7 +33,10 @@ Key terms:
   environment; useful as performance context, but not valid for same-lowering
   attribution claims.
 - **same-input ablation**: a controlled comparison that reuses the same input
-  artifact and fixes the side of the pipeline not being studied.
+  artifact and fixes the side of the pipeline not being studied. The Section 11
+  A/replay ablation uses its own exported FlashQLA TL0.1.8 artifact; that
+  artifact is fixed within the ablation but is not the same file as the formal
+  ladder artifact.
 
 Benchmark scope for the headline table:
 

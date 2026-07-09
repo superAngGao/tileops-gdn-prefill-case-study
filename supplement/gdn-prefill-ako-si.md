@@ -311,6 +311,9 @@ land near FlashQLA, and why did the final TileOps row later exceed FlashQLA?
 The follow-up cross-ablation answers that more cleanly. It exports public
 FlashQLA TL0.1.8 tensors, including `A`, `g_cum`, `o`, and `final_state`, and
 then runs TileOps replay on the same `A/g` artifact.
+This "same input" scope is local to the Section 11 exported FlashQLA artifact;
+it is separate from the formal ladder artifact used by the earlier `64K/H16`
+rows.
 
 Evidence note:
 [`section11_a_producer_ablation_64k_h16.md`](../evidence/ladder/summaries/section11_a_producer_ablation_64k_h16.md).
