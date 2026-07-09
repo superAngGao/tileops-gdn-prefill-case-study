@@ -229,6 +229,30 @@ def _activate_tileops_root(root: Path, *, competing_roots: tuple[Path, ...]) -> 
     _clear_tileops_modules()
 
 
+def _install_tileops_gdn_shims(root: Path) -> None:
+    """Expose only the TileOps packages needed by historical GDN checkpoints.
+
+    Older TileOps trees import every op/kernel from ``tileops.ops.__init__`` and
+    ``tileops.kernels.__init__``.  That pulls in unrelated attention kernels
+    whose TileLang imports are not compatible with the current Docker runner.
+    The GDN checkpoint itself only needs the package paths below, so install
+    minimal package shells and let Python load the requested GDN modules from
+    disk without executing those broad package initializers.
+    """
+    root = root.resolve()
+    package_paths = {
+        "tileops": root / "tileops",
+        "tileops.ops": root / "tileops/ops",
+        "tileops.kernels": root / "tileops/kernels",
+    }
+    for name, path in package_paths.items():
+        package = types.ModuleType(name)
+        package.__path__ = [str(path)]
+        package.__file__ = str(path / "__init__.py")
+        package.__package__ = name
+        sys.modules[name] = package
+
+
 def _tileops_source_identity(
     *,
     kind: str,
@@ -640,8 +664,9 @@ def make_callable(
         if not (root / "tileops/ops/gated_deltanet.py").exists():
             raise VariantUnavailable(f"historical worktree not found or invalid: {root}")
         _activate_external_root(root)
-        ops = importlib.import_module("tileops.ops")
-        op_cls = getattr(ops, "GatedDeltaNetPrefillFwdOp")
+        _install_tileops_gdn_shims(root)
+        ops_gdn = importlib.import_module("tileops.ops.gated_deltanet")
+        op_cls = getattr(ops_gdn, "GatedDeltaNetPrefillFwdOp")
         try:
             op = op_cls(
                 batch,
