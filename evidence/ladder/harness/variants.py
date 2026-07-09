@@ -561,8 +561,8 @@ def _activate_external_root(root: Path) -> None:
 
 
 def _activate_current_root(production_root: Path | None) -> None:
-    competing = (production_root or DEFAULT_PR1596_ROOT,)
-    _activate_tileops_root(REPO_ROOT, competing_roots=competing)
+    root = production_root or DEFAULT_PR1596_ROOT
+    _activate_tileops_root(root, competing_roots=(REPO_ROOT, DEFAULT_PR1596_ROOT))
 
 
 def _import_fla_chunk_rule() -> tuple[Callable[..., Any], dict[str, Any]]:
@@ -631,6 +631,7 @@ def make_callable(
         return _attach_used_code_root(run_ref, fla_source)
 
     if variant_id == "generic_a_legacy":
+        root = production_root or DEFAULT_PR1596_ROOT
         _activate_current_root(production_root)
         from tileops.ops import GatedDeltaNetFwdOp
 
@@ -653,7 +654,7 @@ def make_callable(
             run_legacy,
             _tileops_source_identity(
                 kind="tileops_repo",
-                root=REPO_ROOT,
+                root=root,
                 obj=GatedDeltaNetFwdOp,
                 import_mode="explicit_current_repo_activation",
             ),
