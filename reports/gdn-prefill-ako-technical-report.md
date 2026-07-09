@@ -107,6 +107,11 @@ The rewritten structure is:
 
 ### 0.1 Representative Roadmap
 
+This roadmap is for audit readers who want to see the evidence lanes before
+the full operator explanation. Readers coming from the case-study article can
+skip to Section 1 and return here after the terminology and measurement
+contract are familiar.
+
 Relative performance is reported as throughput relative to a reference:
 `reference_latency / variant_latency * 100%`. `100%` means parity with the
 reference; values above `100%` mean the variant has higher throughput than the
@@ -139,13 +144,13 @@ and evidence inventory.
 | Anchor | Role | Latency | Perf vs recorded FLA ref (%) | Perf vs public FlashQLA anchor (%) |
 | --- | --- | ---: | ---: | ---: |
 | recorded FLA reference | behavioral correctness reference and FLA baseline | `8.02574 ms` | `100.0%` | `16.3%` |
-| public FlashQLA TL0.1.8 anchor | public environment anchor for the CP-split schedule family | `1.306838 ms` | `614.1%` public-env | `100.0%` |
+| public FlashQLA TL0.1.8 anchor | public-environment anchor for the CP-split schedule family | `1.306838 ms` | `614.1%` | `100.0%` |
 
 **Production dispatch surface**
 
 | Surface | Role | Latency range | Perf vs recorded FLA ref (%) | Perf vs public FlashQLA anchor (%) |
 | --- | --- | ---: | ---: | ---: |
-| five serving shapes | the optimized path becomes a dispatchable kernel family across shape space | `0.3723-2.3085 ms` | `822%-1330%` | `146%-291%` public-env |
+| five serving shapes | the optimized path becomes a dispatchable kernel family across shape space | `0.3723-2.3085 ms` | `822%-1330%` | `146%-291%` |
 
 The local rerun also measured an h-tile diagnostic at `10.1631 ms`, but that row
 failed the formal `atol=rtol=5e-2` correctness gate, so it stays out of the

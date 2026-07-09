@@ -1,8 +1,8 @@
 # A Case Study in Agentic Kernel Optimization: Gated DeltaNet Prefill in TileLang
 
-Long-context Gated DeltaNet prefill is hard because it asks for two things at
-once: expose parallelism across tens of thousands of tokens, and still produce
-the same recurrent final state as token-by-token decode. That makes it harder
+Long-context Gated DeltaNet prefill faces a scheduling conflict: fast prefill
+needs to process thousands of tokens in parallel, but the operator must still
+produce the same recurrent state as sequential decode. That makes it harder
 than optimizing a standalone GEMM.
 
 In this case study, TileOps turns that recurrent operator into a scoped
@@ -22,6 +22,19 @@ attribution gates. The final path combines three ingredients:
 3. an expert blocked-inverse / Neumann-style prepare-A producer implemented in
    TileOps.
 
+Key terms:
+
+- **prepare-A**: chunk-local construction of the correction matrix and effective
+  writes consumed by replay.
+- **replay/output**: the state replay that produces `o` and `final_state`.
+- **CP split**: compute corrected segment starts, then replay shorter local
+  segments.
+- **public anchor**: an external baseline measured in its own public
+  environment; useful as performance context, but not valid for same-lowering
+  attribution claims.
+- **same-input ablation**: a controlled comparison that reuses the same input
+  artifact and fixes the side of the pipeline not being studied.
+
 Benchmark scope for the headline table:
 
 - Shape/input: synthetic inputs with `B=1`, `DK=DV=128`, `chunk64`, `fp16`,
@@ -32,15 +45,16 @@ Benchmark scope for the headline table:
   FlashQLA is a public TL0.1.8 anchor.
 - Claim role: this table supports the production serving-surface claim. It does
   not support same-lowering attribution claims about FlashQLA replay or KKT
-  lowering.
+  lowering. The entire `TileOps / public FlashQLA anchor` column is a
+  public-environment comparison.
 
 | Shape | TileOps scoped production dispatch | Recorded FLA reference | Public FlashQLA TL0.1.8 anchor | TileOps / recorded FLA ref | TileOps / public FlashQLA anchor |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| `32K/H16` | `0.3723 ms` | `3.7964 ms` | `0.5440 ms` | `10.20x` | `1.46x` public-env |
-| `64K/H16` | `0.6951 ms` | `7.9840 ms` | `1.3073 ms` | `11.49x` | `1.88x` public-env |
-| `128K/H16` | `1.2284 ms` | `16.3385 ms` | `2.6055 ms` | `13.30x` | `2.12x` public-env |
-| `64K/H32` | `1.2238 ms` | `10.2402 ms` | `2.5942 ms` | `8.37x` | `2.12x` public-env |
-| `64K/H64` | `2.3085 ms` | `18.9782 ms` | `6.7233 ms` | `8.22x` | `2.91x` public-env |
+| `32K/H16` | `0.3723 ms` | `3.7964 ms` | `0.5440 ms` | `10.20x` | `1.46x` |
+| `64K/H16` | `0.6951 ms` | `7.9840 ms` | `1.3073 ms` | `11.49x` | `1.88x` |
+| `128K/H16` | `1.2284 ms` | `16.3385 ms` | `2.6055 ms` | `13.30x` | `2.12x` |
+| `64K/H32` | `1.2238 ms` | `10.2402 ms` | `2.5942 ms` | `8.37x` | `2.12x` |
+| `64K/H64` | `2.3085 ms` | `18.9782 ms` | `6.7233 ms` | `8.22x` | `2.91x` |
 
 Source of truth: the table uses the archived
 [`TileOps/FLA JSONL`](../evidence/ladder/results/production_surface_tileops_vs_fla_20260701.jsonl)
@@ -64,16 +78,9 @@ Credit boundary:
 
 ## 1. The Operator: Recurrent Memory Meets Long Prefill
 
-Terms used below:
-
-- **prepare-A**: chunk-local construction of the correction matrix and effective
-  writes consumed by replay.
-- **replay/output**: the state replay that produces `o` and `final_state`.
-- **CP split**: compute corrected segment starts, then replay shorter local
-  segments.
-- **public anchor**: an external baseline measured in its own public environment.
-- **same-input ablation**: a controlled comparison that reuses the same input
-  artifact and fixes the side of the pipeline not being studied.
+The scheduling tension comes from the operator's recurrent structure. Before
+describing the optimization, it helps to see what prefill must preserve from
+token-by-token decode.
 
 For one `(batch, head)` stream, a Gated DeltaNet decode step can be viewed as a
 recurrent memory update:
@@ -175,7 +182,7 @@ Representative gated episodes:
 | Stage | Agent-assisted action | Human / external input | Accepted evidence | Rejected or bounded evidence | Gate |
 | --- | --- | --- | --- | --- | --- |
 | Local AKO | Try scale-placement and store-path variants. | Fixed GDN recurrence and output contract. | Scale/store diagnostics kept as local wins. | Direct fusion reached the replay wall. | Correctness + component/full-op latency. |
-| CP replay | Adapt the CP-split idea into TileOps. | Qwen FlashQLA schedule family. | TileOps CP bridge and replay ablation. | Bridge rows are not FlashQLA reproduction claims. | Same-input replay + public-env caveat. |
+| CP replay | Adapt the CP-split idea into TileOps. | Qwen FlashQLA schedule family. | TileOps CP bridge and replay ablation. | Bridge rows are not FlashQLA reproduction claims. | Same-input replay + public-environment caveat. |
 | Prepare-A | Implement benchmarkable producer variants. | Human blocked-inverse / Neumann derivation. | `0.815029 ms -> 0.695237 ms` prepare-A comparison. | Current-TL KKT nonfinite rows stay diagnostic. | Full-op correctness + A/replay ablation. |
 
 ## 3. Local AKO: Useful Wins And The Wall
@@ -230,9 +237,9 @@ T.copy(out_frag, out_s)
 T.copy(out_s, global_out_tile)
 ```
 
-That is a typical local-AKO result: the agent did not invent new GDN math, but
-it found a data path that preserved the operator and improved the measured
-component.
+That is a typical result from local agentic kernel optimization (AKO): the
+agent did not invent new GDN math, but it found a data path that preserved the
+operator and improved the measured component.
 
 Then local fusion hit a wall. Removing some intermediate stores did not shorten
 the replay dependency. A direct-fusion candidate can write fewer global
@@ -243,7 +250,8 @@ less materialization != shorter recurrence
 ```
 
 That failure is useful. It shows where local search stops and where the search
-space itself has to change.
+space itself has to change. The next two sections describe the two external
+inputs that changed it.
 
 ## 4. Search-Space Expansion I: FlashQLA CP-Split Replay
 
@@ -385,12 +393,16 @@ and backend-shape win, not a claim that the mathematical operator became cheaper
 in the abstract. SI gives the full MAC accounting.
 
 The prepare-A claim rests on the following same-scope rows. The public FlashQLA
-row is context; the attribution comparison is the two TileOps-replay rows.
+row is context; the attribution comparison is the two TileOps-replay rows. The
+middle row uses the FlashQLA TL0.1.8-lowered KKT producer through an external
+launcher, then feeds its produced `A/g` tensors into the TileOps PR1596 replay
+path. It is not a native current-TileLang KKT port and not a direct call to the
+full FlashQLA forward path.
 
 | Row | Prepare-A producer | Replay/output | `64K/H16` latency | Meaning |
 | --- | --- | --- | ---: | --- |
 | public FlashQLA full | public FlashQLA TL0.1.8 KKT | public FlashQLA TL0.1.8 CP replay | `1.306838 ms` | external baseline |
-| FlashQLA-style prepare A + TileOps replay | TL0.1.8-lowering KKT via external launcher | TileOps CP replay | `0.815029 ms` | no-Neumann combined row |
+| FlashQLA-style prepare A + TileOps replay | TL0.1.8-lowered KKT producer via external launcher | TileOps CP replay | `0.815029 ms` | no-Neumann combined row |
 | TileOps prepare A + TileOps replay | blocked-inverse / Neumann-style A | TileOps CP replay | `0.695237 ms` | headline prepare-A comparison |
 
 Nearby wrapper and bridge numbers are separated in the SI so the A-producer
@@ -399,12 +411,21 @@ one misleading speedup ladder.
 
 ### Final Attribution Split
 
+To separate replay/output from prepare-A, the evidence package also runs
+TileOps replay on exported public FlashQLA `A/g` artifacts. That combination is
+not a full TileOps op, but it isolates the replay/output side of the schedule
+under a shared artifact. This is why the replay number below is lower than the
+`0.815029 ms` full row above: `0.542807 ms` times TileOps replay on an already
+exported FlashQLA `A/g` artifact, while `0.815029 ms` includes producing the
+TL0.1.8-lowered KKT `A/g` plus the TileOps replay path. In the corresponding
+full-row breakdown, cached-`A/g` TileOps replay is `0.542159 ms`.
+
 The attribution split is:
 
 | Axis | Evidence | Meaning |
 | --- | --- | --- |
 | CP-split schedule | FlashQLA source and public anchor | FlashQLA supplied the schedule family that breaks the long replay wall. |
-| Replay/output implementation | public FlashQLA `A/g` + TileOps replay: `0.542807 ms`; public FlashQLA replay anchor: `0.860569 ms` | TileOps replay/output contributes an independent speedup under this benchmark method. |
+| Replay/output implementation | replay-only: exported public FlashQLA `A/g` + TileOps replay: `0.542807 ms`; public FlashQLA replay anchor: `0.860569 ms` | TileOps replay/output contributes an independent speedup under this benchmark method. |
 | Prepare-A producer | FlashQLA-style prepare + TileOps replay: `0.815029 ms`; TileOps prepare + TileOps replay: `0.695237 ms` | blocked-inverse / Neumann-style prepare improves the same replay family. |
 
 The native current-TL FlashQLA-style KKT producer remains a rejected diagnostic
@@ -434,8 +455,11 @@ measured surface.
 
 ## 7. What Kernel Engineers Can Reuse
 
-The most reusable part of this story is not a single TileLang trick. It is the
-workflow:
+The publishable unit is not an agent-generated kernel. It is an auditable
+optimization loop: fixed correctness contract, reproducible benchmark metadata,
+explicit attribution lanes, and clear credit boundaries.
+
+The reusable workflow has six parts:
 
 1. **Separate evidence lanes.** A public anchor, a same-input ablation, a
    historical diagnostic, and a production sweep answer different questions.
@@ -451,14 +475,10 @@ workflow:
 6. **Benchmark the dispatch surface.** Serving kernels are selected by shape and
    policy, not by a single isolated latency number.
 
-The broader lesson is simple: agentic kernel optimization is most credible
-when it is auditable. The agent can move quickly, but correctness gates,
-benchmark metadata, evidence lanes, and attribution boundaries determine
-which results are safe to publish.
-
-The publishable unit is not an agent-generated kernel. It is an auditable
-optimization loop: fixed correctness contract, reproducible benchmark metadata,
-explicit attribution lanes, and clear credit boundaries.
+The broader lesson returns to the opening scheduling conflict. Agents can move
+quickly inside a measured search space, but correctness gates, benchmark
+metadata, evidence lanes, and attribution boundaries determine which results
+are safe to publish.
 
 ## References
 
