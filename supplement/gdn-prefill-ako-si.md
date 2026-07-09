@@ -32,8 +32,12 @@ evidence-generation harness and adapters are snapshotted in
 ### SI.0 Checkpoint Code Map
 
 Each checkpoint has a public source snapshot and a rerun entry under
-[`checkpoints/`](../checkpoints/). The table below maps the main evidence nodes
-to the complete kernel or harness code saved in this repository.
+[`checkpoints/`](../checkpoints/). Historical checkpoints also have compressed
+full source roots under
+[`evidence/kernel_sources/runnable_roots/`](../evidence/kernel_sources/runnable_roots/),
+so the public package contains the code needed to reconstruct the rerun root.
+The table below maps the main evidence nodes to the complete kernel or harness
+code saved in this repository.
 
 | Checkpoint | Public source snapshot | Rerun entry | Evidence |
 | --- | --- | --- | --- |
@@ -46,9 +50,11 @@ to the complete kernel or harness code saved in this repository.
 | Blocked-inverse / Neumann prepare | [`tileops_pr1596`](../evidence/kernel_sources/tileops_pr1596/) plus [`harness`](../evidence/ladder/harness/) | [`07_neumann_prepare`](../checkpoints/07_neumann_prepare/) | `section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl` |
 | Scoped dispatch surface | [`tileops_pr1596`](../evidence/kernel_sources/tileops_pr1596/) | [`08_dispatch_surface`](../checkpoints/08_dispatch_surface/) | `production_surface_tileops_vs_fla_20260701.jsonl` |
 
-The source snapshots are included for audit and rerun setup. For performance
-reruns, use a full TileOps checkout at the listed commit or reconstruct an
-equivalent root from the snapshot and normal TileOps tree.
+The source snapshots are included for audit and rerun setup. Historical rows
+should be rerun with the TileLang `0.1.9` runner lineage; the local
+rerun-verified image is
+`tileops-runner:nightly-tl019-fullstack-no-tileops-ldfix`. Current TileOps rows
+rerun under `ghcr.io/tile-ai/tileops-runner:65dbc98-torch2.10`.
 
 ### SI.1 Source Similarity Is Not Performance Equality
 
