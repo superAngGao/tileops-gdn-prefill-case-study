@@ -120,8 +120,8 @@ not enter the headline roadmap until they have a matching full-op row.
 
 The single-shape story rows share the same serving shape:
 `B=1,T=65536,H=16,DK=DV=128,chunk64,fp16,BTHD`, but they come from two evidence
-lanes. The early/local rows are end-to-end archived local checkpoints under the
-formal ladder harness. The Level 3 A-producer rows use the same-input
+lanes. The early/local rows are end-to-end historical checkpoints rerun under
+the current TileLang `0.1.11` Docker contract. The Level 3 A-producer rows use the same-input
 A-producer ablation, because that is where the TL0.1.8-lowering
 FlashQLA-style prepare row and the TileOps Neumann prepare row are directly
 paired. Component-only scale/store diagnostics are kept out of this headline
@@ -133,9 +133,9 @@ and evidence inventory.
 
 | Story node | Case-study meaning | Latency | Perf vs recorded FLA ref (%) | Perf vs public FlashQLA anchor (%) |
 | --- | --- | ---: | ---: | ---: |
-| initial correctness | the first serving prefill op is correct and measurable | `11.1762 ms` | `71.8%` | `11.7%` |
-| local prepare specialization | local AKO improves the fixed-contract path, but does not change replay depth | `10.8353 ms` | `74.1%` | `12.1%` |
-| local wall | BTHD/local tuning helps a lot, but the path is still a long legacy replay | `5.5566 ms` | `144.4%` | `23.5%` |
+| initial correctness | the first serving prefill op is correct and measurable | `5.5318 ms` | `145.1%` | `23.6%` |
+| local prepare specialization | local AKO improves the fixed-contract path, but does not change replay depth | `5.3652 ms` | `149.6%` | `24.4%` |
+| local wall | BTHD/local tuning helps a lot, but the path is still a long legacy replay | `2.9267 ms` | `274.2%` | `44.7%` |
 | FlashQLA-style A + TileOps replay | after studying FlashQLA and improving replay/output, TileOps reaches the public FlashQLA performance neighborhood before Neumann | `0.815029 ms` | `984.7%` | `160.3%` |
 | Neumann prepare | human expert insight provides the blocked-inverse / Neumann-style prepare algorithm | `0.695237 ms` | `1154.4%` | `188.0%` |
 
@@ -152,7 +152,7 @@ and evidence inventory.
 | --- | --- | ---: | ---: | ---: |
 | five serving shapes | the optimized path becomes a dispatchable kernel family across shape space | `0.3723-2.3085 ms` | `822%-1330%` | `146%-291%` |
 
-The local rerun also measured an h-tile diagnostic at `10.1631 ms`, but that row
+The local rerun also measured an h-tile diagnostic at `5.0852 ms`, but that row
 failed the formal `atol=rtol=5e-2` correctness gate, so it stays out of the
 positive roadmap. The first correct CP adaptation after studying FlashQLA was
 `2.7674 ms`; it is useful as process evidence, but not performance-near
@@ -722,9 +722,9 @@ End-to-end wall checkpoint:
 
 | Node | Accepted fixed-contract full-op evidence | `64K/H16` latency | Decision |
 | --- | --- | ---: | --- |
-| initial correct prefill | archived local checkpoint | `11.1762 ms` | keep as the first measurable serving op |
-| local prepare specialization | archived prepare-specialized checkpoint | `10.8353 ms` | local AKO gives a real full-op gain |
-| local wall | archived BTHD wall checkpoint | `5.5566 ms` | local BTHD tuning helps, but replay remains a long fixed-contract path |
+| initial correct prefill | current 0.1.11 historical checkpoint rerun | `5.5318 ms` | keep as the first measurable serving op |
+| local prepare specialization | current 0.1.11 prepare-specialized rerun | `5.3652 ms` | local AKO gives a real full-op gain |
+| local wall | current 0.1.11 BTHD wall rerun | `2.9267 ms` | local BTHD tuning helps, but replay remains a long fixed-contract path |
 
 The rejected fusion candidates were useful because they clarified the boundary.
 Local fusion can improve the data path inside a schedule, but it does not
@@ -732,7 +732,7 @@ automatically change the schedule's dependency structure. A fused kernel can
 write fewer tensors and still be slow if it is replaying a long prefix as one
 chain.
 
-The same rerun measured a local h-tile diagnostic at `10.1631 ms`, but it failed
+The same rerun measured a local h-tile diagnostic at `5.0852 ms`, but it failed
 the formal correctness gate, so it remains diagnostic rather than a positive
 story row.
 
@@ -893,7 +893,7 @@ experiment, not as a single pass/fail row.
 
 | Node | Evidence | Meaning |
 | --- | --- | --- |
-| local wall | archived BTHD wall checkpoint reached `5.5566 ms`, but the path still used long legacy replay | local AKO needed an external schedule idea |
+| local wall | current 0.1.11 BTHD wall rerun reached `2.9267 ms`, but the path still used long legacy replay | local AKO needed an external schedule idea |
 | first correct adaptation | generic-A CP bridge reached `2.7674 ms` | the FlashQLA CP idea had been adapted into TileOps, but the result was not performance-near FlashQLA |
 | no-Neumann prepare-A full row | TL0.1.8-lowering FlashQLA-style prepare A + TileOps replay/output full combined latency: `0.815029 ms` | the FlashQLA-style producer plus TileOps replay reaches the expected performance neighborhood |
 

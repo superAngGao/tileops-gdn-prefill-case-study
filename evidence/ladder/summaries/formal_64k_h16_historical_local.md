@@ -1,5 +1,10 @@
 # GDN Prefill Ladder Summary
 
+This is the dated TileLang `0.1.9` historical archive summary. Current public
+reruns of the same historical checkpoints use TileLang `0.1.11` and are stored
+in `evidence/ladder/results/rerun_011_formal_64k_h16_historical_local.jsonl`.
+Use this file only when auditing the original runtime lineage.
+
 - Source JSONL: `experiments/gated_deltanet_prefill_blog_ladder/results/formal_64k_h16_historical_local.jsonl`
 - Rows: 5
 - Publication-eligible evidence rows: 4

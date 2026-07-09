@@ -44,14 +44,16 @@ These rows were added after the evidence roadmap was tightened to use only
 end-to-end rows. They are not controlled generic-A/blocksolve producer-swap
 rows; they are Level 2 story checkpoints before FlashQLA is introduced.
 
-Formal `64K/H16`, GPU4/H200, same input artifact:
+Current rerun: formal `64K/H16`, TileLang `0.1.11`, same input artifact.
+The older TileLang `0.1.9` archive is retained separately as dated trajectory
+evidence.
 
 | Public label | Registry key | Commit | Correctness | Latency ms | Use |
 | --- | --- | --- | --- | ---: | --- |
-| initial correct prefill checkpoint | `local_initial_prefill_f147` | `f1472392` | pass | `11.1762` | first measurable serving prefill op |
-| local prepare-specialized checkpoint | `local_prepare_specialized_00a60` | `00a60b19` | pass | `10.8353` | local prepare specialization full-op node |
-| local h-tile diagnostic | `local_h_tile_tuned_827` | `82707454` | fail | `10.1631` | diagnostic only |
-| local BTHD wall checkpoint | `local_bthd_wall_d09c` | `d09c8f2d` | pass | `5.5566` | Level 2 local wall row |
+| initial correct prefill checkpoint | `local_initial_prefill_f147` | `f1472392` | pass | `5.5318` | first measurable serving prefill op |
+| local prepare-specialized checkpoint | `local_prepare_specialized_00a60` | `00a60b19` | pass | `5.3652` | local prepare specialization full-op node |
+| local h-tile diagnostic | `local_h_tile_tuned_827` | `82707454` | fail | `5.0852` | diagnostic only |
+| local BTHD wall checkpoint | `local_bthd_wall_d09c` | `d09c8f2d` | pass | `2.9267` | Level 2 local wall row |
 
 Source roots:
 

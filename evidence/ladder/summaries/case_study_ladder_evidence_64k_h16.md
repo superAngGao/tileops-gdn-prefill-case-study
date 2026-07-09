@@ -6,37 +6,43 @@ case-study narrative does not mix attribution lanes.
 
 Source evidence:
 
-- Historical local summary:
+- Historical local rerun:
+  `evidence/ladder/summaries/rerun_011_formal_64k_h16_historical_local.md`
+- Historical local rerun JSONL:
+  `evidence/ladder/results/rerun_011_formal_64k_h16_historical_local.jsonl`
+- Older historical local archive:
   `evidence/ladder/summaries/formal_64k_h16_historical_local.md`
 - Current TileOps summary:
   `evidence/ladder/summaries/formal_64k_h16_current_gpu4_rerun.md`
 - Section 11 ablation:
   `evidence/ladder/summaries/section11_a_producer_ablation_64k_h16.md`
-- Historical local JSONL:
+- Older historical local JSONL:
   `evidence/ladder/results/formal_64k_h16_historical_local.jsonl`
 - Current TileOps JSONL:
   `evidence/ladder/results/formal_64k_h16_current_gpu4_rerun.jsonl`
 - Shape: `B=1,T=65536,H=16,DK=128,DV=128,chunk=64,fp16,BTHD`
-- Input artifact: local harness artifact
+- Input identity: local harness seed/hash
   `experiments/gated_deltanet_prefill_blog_ladder/results/artifacts/formal_64k_h16_seed20260630.pt`
-  (large tensor artifact not mirrored into this repo; use the hash below for
-  identity)
+  for the archived local ladder lineage; the current `0.1.11` rerun records the
+  same input hash directly in JSONL. The large tensor artifact is not mirrored
+  into this repo; use the hash below for identity.
 - Input hash: `sha256:a8987a2c6d16c658a1cb8ed95e409d973a3f736e2019d8719b143f18b4741513`
 - Timer: CUPTI kernel-only with CUDA-event fallback; warmup `10`, repeat `50`, trials `3`
-- GPU contract: H200 / GPU4
+- GPU contract: H200; per-row GPU labels are recorded in the JSONL metadata.
 
 ## Historical Local Full-Op Rows
 
-These rows were rerun from archived local checkpoints under the same `64K/H16`
-input artifact. They are story checkpoints for Level 2, not
-generic-A/blocksolve controlled producer-swap rows.
+These rows were rerun from archived local checkpoints under TileLang `0.1.11`
+and the same `64K/H16` input artifact. They are story checkpoints for Level 2,
+not generic-A/blocksolve controlled producer-swap rows. The older TileLang
+`0.1.9` archive remains available as dated trajectory evidence.
 
 | Role | Public label | Case-study meaning | Latency ms | Correctness | Use |
 | --- | --- | --- | ---: | --- | --- |
-| initial correctness | initial correct prefill checkpoint | first serving prefill op checkpoint | 11.1762 | pass | first measurable end-to-end op |
-| local prepare specialization | local prepare-specialized checkpoint | fixed-contract prepare specialization | 10.8353 | pass | local AKO positive full-op node |
-| local h-tile diagnostic | local h-tile diagnostic | h tile tuning checkpoint | 10.1631 | fail | diagnostic only, not a positive story row |
-| local wall | local BTHD wall checkpoint | optimized BTHD/local pre-CP path | 5.5566 | pass | closes Level 2 at the long-replay wall |
+| initial correctness | initial correct prefill checkpoint | first serving prefill op checkpoint | 5.5318 | pass | first measurable end-to-end op |
+| local prepare specialization | local prepare-specialized checkpoint | fixed-contract prepare specialization | 5.3652 | pass | local AKO positive full-op node |
+| local h-tile diagnostic | local h-tile diagnostic | h tile tuning checkpoint | 5.0852 | fail | diagnostic only, not a positive story row |
+| local wall | local BTHD wall checkpoint | optimized BTHD/local pre-CP path | 2.9267 | pass | closes Level 2 at the long-replay wall |
 
 ## Controlled Producer-Comparison Rows
 
