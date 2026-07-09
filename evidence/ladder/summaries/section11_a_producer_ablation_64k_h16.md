@@ -29,21 +29,22 @@ not the same file as the formal ladder artifact with hash
 ## Main Full End-To-End Rows
 
 These are the main full end-to-end rows for the A-producer comparison.
-The publication-facing `0.815029 ms -> 0.695237 ms` comparison comes from the
-aggregated same-benchmark JSONL
-`section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl`, whose
-nested latency fields are `tl018_lowering_prepare_plus_tileops_replay` and
-`tileops_neumann_prepare_plus_tileops_replay`. The separate
-`section11_a_producer_ablation_64k_h16_to_to_full.jsonl` row is retained as an
+The current case-study comparison is the refreshed PR1596 / TileLang `0.1.11`
+rerun: `0.824524 ms -> 0.747375 ms`, recorded in
+`rerun_section11_ext_vs_neumann_pr1596_tl011_gpu4.jsonl`.
+
+The older archived July 1 row remains useful provenance. It reported
+`0.815029 ms -> 0.695237 ms` in
+`section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl`. The
+separate `section11_a_producer_ablation_64k_h16_to_to_full.jsonl` row is an
 older recorded-FLA diagnostic with a different correctness/reference boundary
-and reports `0.691642 ms`; it is not the publication number for the clean
-Section 11 prepare-A comparison.
+and reports `0.691642 ms`; it is not the current case-study number.
 
 | Row | Prepare-A producer | Replay/output | Timing scope | Correctness | Latency ms | Use |
 | --- | --- | --- | --- | --- | ---: | --- |
 | public FlashQLA full | public FlashQLA TL0.1.8 KKT | public FlashQLA TL0.1.8 CP replay | full public op | pass / public anchor | 1.306838 | external baseline |
-| FlashQLA-style prepare A + TileOps replay | TL0.1.8 lowered FlashQLA KKT via external launcher | TileOps PR1596 CP replay | full combined row | pass vs public TL0.1.8 artifact | 0.815029 | measured no-Neumann combined row |
-| TileOps prepare A + TileOps replay | TileOps blocksolve / Neumann-style A | TileOps PR1596 CP replay | full combined row | pass vs public TL0.1.8 artifact | 0.695237 | same benchmark-scope TileOps row |
+| FlashQLA-style prepare A + TileOps replay | TL0.1.8 lowered FlashQLA KKT via external launcher | TileOps PR1596 CP replay | full combined row | pass vs public TL0.1.8 artifact | 0.824524 | refreshed no-Neumann combined row |
+| TileOps prepare A + TileOps replay | TileOps blocksolve / Neumann-style A | TileOps PR1596 CP replay | full combined row | pass vs public TL0.1.8 artifact | 0.747375 | refreshed same-run TileOps row |
 
 The middle row is now filled with a measured, non-Neumann FlashQLA-style
 prepare path. Instead of relying on the broken current-TL KKT migration, the
@@ -58,12 +59,12 @@ unchanged TileOps PR1596 replay path.
 | public FlashQLA full | public FlashQLA TL0.1.8 KKT | public FlashQLA TL0.1.8 CP replay | full public op | public FlashQLA self row | 1.306838 |
 | public FlashQLA producer | public FlashQLA TL0.1.8 KKT | producer only | `chunk_local_cumsum + kkt_solve` | component timing only | 0.471233 |
 | public FlashQLA replay | exported public FlashQLA A/g | public FlashQLA TL0.1.8 CP replay | `cp_preprocess + fused_gdr_fwd` | component timing only | 0.860569 |
-| TL0.1.8-lowering external prepare | TL0.1.8 lowered KKT via external launcher | producer only | current `chunk_local_cumsum` + external `kkt_solve` | exact `A/g` vs public artifact | 0.470905 |
-| TL0.1.8-lowering external full | TL0.1.8 lowered KKT via external launcher | TileOps PR1596 CP replay | full combined row | pass vs public TL0.1.8 artifact | 0.815029 |
+| TL0.1.8-lowering external prepare | TL0.1.8 lowered KKT via external launcher | producer only | current `chunk_local_cumsum` + external `kkt_solve` | exact `A/g` vs public artifact | 0.269292 |
+| TL0.1.8-lowering external full | TL0.1.8 lowered KKT via external launcher | TileOps PR1596 CP replay | full combined row | pass vs public TL0.1.8 artifact | 0.824524 |
 | `FQ18/TO` | exported public FlashQLA TL0.1.8 A/g | TileOps PR1596 CP replay | replay only | recorded vendored FLA reference | 0.542807 |
 | `TO/TO replay` | TileOps blocksolve A | TileOps PR1596 CP replay | replay only | recorded vendored FLA reference | 0.542905 |
-| TileOps Neumann prepare | TileOps blocksolve A | producer only | current `chunk_local_cumsum` + blocksolve A | component timing only | 0.238202 |
-| `TO/TO full` | TileOps blocksolve A | TileOps PR1596 CP replay | include producers | pass vs public TL0.1.8 artifact | 0.695237 |
+| TileOps Neumann prepare | TileOps blocksolve A | producer only | current `chunk_local_cumsum` + blocksolve A | component timing only | 0.195602 |
+| `TO/TO full` | TileOps blocksolve A | TileOps PR1596 CP replay | include producers | pass vs public TL0.1.8 artifact | 0.747375 |
 
 The external-lowering rows pass against the public TL0.1.8 artifact; the older
 replay-only TileOps diagnostics pass against the recorded vendored FLA
@@ -128,31 +129,31 @@ TileOps A/g + TileOps replay: 0.542905 ms
 This supports the claim that the replay/output implementation itself improved;
 it is not merely faster because the A producer changed.
 
-The measured TL0.1.8-lowering prepare row is effectively tied with, and very
-slightly faster than, the refreshed public FlashQLA producer component:
+The measured TL0.1.8-lowering prepare row is faster than the refreshed public
+FlashQLA producer component in the refreshed TileOps harness:
 
 ```text
-0.471233 ms / 0.470905 ms = 1.0007x
+0.471233 ms / 0.269292 ms = 1.75x
 ```
 
 The measured TL0.1.8-lowering prepare plus TileOps replay full path is faster
 than the refreshed public FlashQLA full path:
 
 ```text
-1.306838 ms / 0.815029 ms = 1.60x
+1.306838 ms / 0.824524 ms = 1.59x
 ```
 
 The TileOps blocksolve producer plus the same replay family is faster again:
 
 ```text
-0.815029 ms / 0.695237 ms = 1.17x
+0.824524 ms / 0.747375 ms = 1.10x
 ```
 
 The paired producer-only component rows show the prepare-side difference
 without mixing in replay timing boundaries:
 
 ```text
-0.470905 ms / 0.238202 ms = 1.98x
+0.269292 ms / 0.195602 ms = 1.38x
 ```
 
 Do not derive a producer cost by subtracting the replay-only diagnostic from
@@ -167,9 +168,9 @@ Use this sequence in the case study:
 local wall
 -> generic-A CP bridge, but still not FlashQLA-performance-near
 -> TL0.1.8-lowering FlashQLA-style prepare A + TileOps replay/output full
-   row: 0.815029 ms
+   row: 0.824524 ms
 -> TileOps blocksolve / Neumann-style A producer + TileOps replay/output full
-   row: 0.695237 ms
+   row: 0.747375 ms
 ```
 
 This keeps Section 11 on full end-to-end rows. The replay-only and
@@ -202,6 +203,8 @@ shape and are rejected for attribution.
 - Refreshed public FlashQLA TL0.1.8 same-GPU anchor:
   `/home/ga/Documents/gdn_kernel_bench_2026-06-18/results/flashqla_cross_ablation/tmp_rerun_gpu3_fq_tl018_64k_h16.jsonl`
 - Measured TL0.1.8-lowering external prepare + TileOps replay full row:
+  `evidence/ladder/results/rerun_section11_ext_vs_neumann_pr1596_tl011_gpu4.jsonl`
+- Older archived same-run row:
   `evidence/ladder/results/section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl`
 - Direct-profiler diagnostic for TL0.1.8-lowering external row:
   `evidence/ladder/results/section11_tl018_lowering_ext_prepare_to_tileops_replay_64k_h16_gpu3.jsonl`

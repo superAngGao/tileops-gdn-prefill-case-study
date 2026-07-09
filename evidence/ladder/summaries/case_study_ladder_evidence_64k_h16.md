@@ -90,7 +90,7 @@ The FlashQLA-learning sequence is:
 local wall
   -> generic-A CP bridge, still not performance-near FlashQLA
   -> TL0.1.8-lowering FlashQLA-style prepare A + TileOps replay/output full
-     row: 0.815029 ms
+     row: 0.824524 ms
   -> TileOps blocksolve / Neumann-style A producer full row: measured
 ```
 
@@ -99,8 +99,8 @@ The clean A-producer table uses full end-to-end rows:
 | Evidence | Latency ms | Meaning |
 | --- | ---: | --- |
 | public FlashQLA full | 1.306838 | external TL0.1.8 anchor, refreshed on GPU3 |
-| FlashQLA-style prepare A + TileOps replay/output full row | 0.815029 | measured TL0.1.8 lowered KKT injected via external launcher plus TileOps replay |
-| TileOps blocksolve A + TileOps replay/output full row | 0.695237 | same-scope measured TileOps prepare-A row |
+| FlashQLA-style prepare A + TileOps replay/output full row | 0.824524 | refreshed TL0.1.8 lowered KKT injected via external launcher plus TileOps replay |
+| TileOps blocksolve A + TileOps replay/output full row | 0.747375 | refreshed same-run TileOps prepare-A row |
 
 Replay-only and component-sum rows can stay in supporting diagnostics, but
 they do not replace the headline A-producer rows. The native current-TL KKT port
@@ -230,8 +230,8 @@ Supported:
   FlashQLA A/g fixed, TileOps replay is `0.542807 ms`; with TL0.1.8-lowering
   external A/g, TileOps replay is `0.542159 ms`; with TileOps A/g fixed, the
   same replay is `0.542905 ms`. Under the same TileOps `bench_kernel` timing
-  path, TL0.1.8-lowering prepare plus TileOps replay is `0.815029 ms`, and
-  TileOps full producer plus replay is `0.695237 ms`.
+  path, TL0.1.8-lowering prepare plus TileOps replay is `0.824524 ms`, and
+  TileOps full producer plus replay is `0.747375 ms`.
 - `tileops_owned_cp_generic_a -> tileops_owned_cp_blocked_inverse_a` supports
   only a generic-A/blocksolve experiment-adapter bridge under the same CP
   downstream ABI; it should not be presented as the main A-producer ablation.

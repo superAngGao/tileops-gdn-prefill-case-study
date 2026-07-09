@@ -10,8 +10,8 @@ FlashQLA-style KKT prepare-A feeding TileOps PR1596 replay.
 | Torch | `2.10.0+cu129` (`torch.version.cuda=12.9`) for TileOps replay |
 | TileLang | `0.1.11+cu129.git65dbc983` for TileOps replay; TL0.1.8 for the external prepare-A artifact |
 | Row | `TL018-lowering/TO full` |
-| Expected evidence | `../../evidence/ladder/results/section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl` |
-| Expected latency in archive | `0.815029 ms` at `64K/H16` |
+| Expected evidence | `../../evidence/ladder/results/rerun_section11_ext_vs_neumann_pr1596_tl011_gpu4.jsonl` |
+| Expected latency | `0.8245 ms` at `64K/H16`; older archive: `0.815029 ms` |
 | Lowered KKT device kernel | `../../evidence/kernel_sources/flashqla_tl018_lowered/device_kernel.cu` |
 | External launcher | `../../evidence/ladder/harness/tl018_fq_prepare_launcher.cu` |
 | TileOps replay source | `../../evidence/kernel_sources/tileops_pr1596/tileops/kernels/gated_deltanet/gdn_prefill/fused_fwd.py` |
@@ -28,5 +28,5 @@ python "$GDN_HARNESS/run_section11_tileops_benchmark.py" \
   --tl018-headers /path/to/tilelang_tl018_headers \
   --flashqla-src /path/to/FlashQLA-tl019-migration-src \
   --warmup 5 --repeat 20 --trials 3 \
-  --output "$CASE_STUDY_ROOT/evidence/ladder/results/rerun_section11_ext_vs_neumann.jsonl"
+  --output "$CASE_STUDY_ROOT/evidence/ladder/results/rerun_section11_ext_vs_neumann_pr1596_tl011_gpu4.jsonl"
 ```

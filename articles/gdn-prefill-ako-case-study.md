@@ -198,7 +198,7 @@ Representative gated episodes:
 | --- | --- | --- | --- | --- | --- |
 | Local AKO | Try scale-placement and store-path variants. | Fixed GDN recurrence and output contract. | Scale/store diagnostics kept as local wins. | Direct fusion reached the replay wall. | Correctness + component/full-op latency. |
 | CP replay | Adapt the CP-split idea into TileOps. | Qwen FlashQLA schedule family. | TileOps CP bridge and replay ablation. | Bridge rows are not FlashQLA reproduction claims. | Same-input replay + public-environment caveat. |
-| Prepare-A | Implement benchmarkable producer variants. | Human blocked-inverse / Neumann derivation. | `0.815029 ms -> 0.695237 ms` prepare-A comparison. | Current-TL KKT nonfinite rows stay diagnostic. | Full-op correctness + A/replay ablation. |
+| Prepare-A | Implement benchmarkable producer variants. | Human blocked-inverse / Neumann derivation. | `0.8245 ms -> 0.7474 ms` same-run prepare-A comparison. | Current-TL KKT nonfinite rows stay diagnostic. | Full-op correctness + A/replay ablation. |
 
 ## 3. Local AKO: Useful Wins And The Wall
 
@@ -417,8 +417,8 @@ port and not a direct call to the full FlashQLA forward path.
 | Row | Prepare-A producer | Replay/output | `64K/H16` latency | Meaning |
 | --- | --- | --- | ---: | --- |
 | public FlashQLA full | public FlashQLA TL0.1.8 KKT | public FlashQLA TL0.1.8 CP replay | `1.306838 ms` | external baseline |
-| FlashQLA-style prepare A + TileOps replay | TL0.1.8-lowered KKT producer via external launcher | TileOps CP replay | `0.815029 ms` | no-Neumann combined row |
-| TileOps prepare A + TileOps replay | blocked-inverse / Neumann-style A | TileOps CP replay | `0.695237 ms` | headline prepare-A comparison |
+| FlashQLA-style prepare A + TileOps replay | TL0.1.8-lowered KKT producer via external launcher | TileOps CP replay | `0.8245 ms` | refreshed no-Neumann combined row |
+| TileOps prepare A + TileOps replay | blocked-inverse / Neumann-style A | TileOps CP replay | `0.7474 ms` | refreshed same-run Neumann combined row |
 
 Nearby wrapper and bridge numbers are separated in the SI so the A-producer
 attribution, replay attribution, and scoped-dispatch claim do not collapse into
@@ -430,8 +430,8 @@ To separate replay/output from prepare-A, the evidence package also runs
 TileOps replay on exported public FlashQLA `A/g` artifacts. That combination is
 not a full TileOps op, but it isolates the replay/output side of the schedule
 under a shared artifact. This is why the replay number below is lower than the
-`0.815029 ms` full row above: `0.542807 ms` is TileOps replay on an already
-exported FlashQLA `A/g` artifact, while `0.815029 ms` includes producing the
+`0.8245 ms` full row above: `0.542807 ms` is TileOps replay on an already
+exported FlashQLA `A/g` artifact, while `0.8245 ms` includes producing the
 TL0.1.8-lowered KKT `A/g` plus the TileOps replay path. In the corresponding
 full-row breakdown, cached-`A/g` TileOps replay is `0.542159 ms`.
 
@@ -441,7 +441,7 @@ The attribution split is:
 | --- | --- | --- |
 | CP-split schedule | FlashQLA source and public anchor | FlashQLA supplied the schedule family that breaks the long replay wall. |
 | Replay/output implementation | replay-only: exported public FlashQLA `A/g` + TileOps replay: `0.542807 ms`; public FlashQLA replay anchor: `0.860569 ms` | TileOps replay/output contributes an independent speedup under this benchmark method. |
-| Prepare-A producer | FlashQLA-style prepare + TileOps replay: `0.815029 ms`; TileOps prepare + TileOps replay: `0.695237 ms` | blocked-inverse / Neumann-style prepare improves the same replay family. |
+| Prepare-A producer | FlashQLA-style prepare + TileOps replay: `0.8245 ms`; TileOps prepare + TileOps replay: `0.7474 ms` | blocked-inverse / Neumann-style prepare improves the same replay family in the refreshed same-run measurement. |
 
 The native current-TL FlashQLA-style KKT producer remains a rejected diagnostic
 at `64K/H16`; the no-Neumann row above uses the TL0.1.8-lowering harness.

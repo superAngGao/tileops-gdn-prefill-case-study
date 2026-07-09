@@ -39,16 +39,16 @@ so the public package contains the code needed to reconstruct the rerun root.
 The table below maps the main evidence nodes to the complete kernel or harness
 code saved in this repository.
 
-| Checkpoint | Public source snapshot | Rerun entry | Evidence |
-| --- | --- | --- | --- |
-| Initial correct prefill | [`historical/initial-f1472392`](../evidence/kernel_sources/historical/initial-f1472392/) | [`01_initial_correctness`](../checkpoints/01_initial_correctness/) | `rerun_011_formal_64k_h16_historical_local.jsonl`; older archive: `formal_64k_h16_historical_local.jsonl` |
-| Local prepare-specialized AKO | [`historical/prepare-00a60b19`](../evidence/kernel_sources/historical/prepare-00a60b19/) | [`02_local_prepare_specialized`](../checkpoints/02_local_prepare_specialized/) | `rerun_011_formal_64k_h16_historical_local.jsonl`; older archive: `formal_64k_h16_historical_local.jsonl` |
-| Local h-tile diagnostic | [`historical/htile-82707454`](../evidence/kernel_sources/historical/htile-82707454/) | [`03_local_h_tile_diagnostic`](../checkpoints/03_local_h_tile_diagnostic/) | `rerun_011_formal_64k_h16_historical_local.jsonl`; older archive: `formal_64k_h16_historical_local.jsonl` |
-| Local BTHD wall | [`historical/bthdwall-d09c8f2d`](../evidence/kernel_sources/historical/bthdwall-d09c8f2d/) | [`04_local_wall`](../checkpoints/04_local_wall/) | `rerun_011_formal_64k_h16_historical_local.jsonl`; older archive: `formal_64k_h16_historical_local.jsonl` |
-| CP-split bridge | [`tileops_pr1596`](../evidence/kernel_sources/tileops_pr1596/) plus [`harness`](../evidence/ladder/harness/) | [`05_cp_split_bridge`](../checkpoints/05_cp_split_bridge/) | `formal_64k_h16_v5_ladder.jsonl` |
-| FlashQLA-style prepare-A + TileOps replay | [`flashqla_tl018_lowered`](../evidence/kernel_sources/flashqla_tl018_lowered/) plus [`tl018_fq_prepare_launcher.cu`](../evidence/ladder/harness/tl018_fq_prepare_launcher.cu) | [`06_flashqla_style_prepare`](../checkpoints/06_flashqla_style_prepare/) | `section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl` |
-| Blocked-inverse / Neumann prepare | [`tileops_pr1596`](../evidence/kernel_sources/tileops_pr1596/) plus [`harness`](../evidence/ladder/harness/) | [`07_neumann_prepare`](../checkpoints/07_neumann_prepare/) | `section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl` |
-| Scoped dispatch surface | [`tileops_pr1596`](../evidence/kernel_sources/tileops_pr1596/) | [`08_dispatch_surface`](../checkpoints/08_dispatch_surface/) | `production_surface_tileops_vs_fla_20260709_clean_pr1596_tl011_fla051.jsonl` |
+| Checkpoint | `64K/H16` result | Status | Public source snapshot | Rerun entry | Evidence |
+| --- | ---: | --- | --- | --- | --- |
+| Initial correct prefill | `5.5318 ms` | pass | [`historical/initial-f1472392`](../evidence/kernel_sources/historical/initial-f1472392/) | [`01_initial_correctness`](../checkpoints/01_initial_correctness/) | `rerun_011_formal_64k_h16_historical_local.jsonl`; older archive: `formal_64k_h16_historical_local.jsonl` |
+| Local prepare-specialized AKO | `5.3652 ms` | pass | [`historical/prepare-00a60b19`](../evidence/kernel_sources/historical/prepare-00a60b19/) | [`02_local_prepare_specialized`](../checkpoints/02_local_prepare_specialized/) | `rerun_011_formal_64k_h16_historical_local.jsonl`; older archive: `formal_64k_h16_historical_local.jsonl` |
+| Local h-tile diagnostic | `5.0852 ms` | fail, diagnostic only | [`historical/htile-82707454`](../evidence/kernel_sources/historical/htile-82707454/) | [`03_local_h_tile_diagnostic`](../checkpoints/03_local_h_tile_diagnostic/) | `rerun_011_formal_64k_h16_historical_local.jsonl`; older archive: `formal_64k_h16_historical_local.jsonl` |
+| Local BTHD wall | `2.9267 ms` | pass | [`historical/bthdwall-d09c8f2d`](../evidence/kernel_sources/historical/bthdwall-d09c8f2d/) | [`04_local_wall`](../checkpoints/04_local_wall/) | `rerun_011_formal_64k_h16_historical_local.jsonl`; older archive: `formal_64k_h16_historical_local.jsonl` |
+| CP-split bridge | `2.7674 ms` | pass | [`tileops_pr1596`](../evidence/kernel_sources/tileops_pr1596/) plus [`harness`](../evidence/ladder/harness/) | [`05_cp_split_bridge`](../checkpoints/05_cp_split_bridge/) | `formal_64k_h16_current_gpu4_rerun.jsonl`; older archive: `formal_64k_h16_v5_ladder.jsonl` |
+| FlashQLA-style prepare-A + TileOps replay | `0.8245 ms` | pass | [`flashqla_tl018_lowered`](../evidence/kernel_sources/flashqla_tl018_lowered/) plus [`tl018_fq_prepare_launcher.cu`](../evidence/ladder/harness/tl018_fq_prepare_launcher.cu) | [`06_flashqla_style_prepare`](../checkpoints/06_flashqla_style_prepare/) | `rerun_section11_ext_vs_neumann_pr1596_tl011_gpu4.jsonl`; older archive: `section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl` |
+| Blocked-inverse / Neumann prepare | `0.7474 ms` | pass | [`tileops_pr1596`](../evidence/kernel_sources/tileops_pr1596/) plus [`harness`](../evidence/ladder/harness/) | [`07_neumann_prepare`](../checkpoints/07_neumann_prepare/) | `rerun_section11_ext_vs_neumann_pr1596_tl011_gpu4.jsonl`; adapter checkpoint: `formal_64k_h16_pr1596_tl011_fla051_blocked_adapter.jsonl` |
+| Scoped dispatch surface | `0.7498 ms`; surface range `0.3990-2.5086 ms` | pass | [`tileops_pr1596`](../evidence/kernel_sources/tileops_pr1596/) | [`08_dispatch_surface`](../checkpoints/08_dispatch_surface/) | `production_surface_tileops_vs_fla_20260709_clean_pr1596_tl011_fla051.jsonl` |
 
 The source snapshots are included for audit and rerun setup. Historical rows
 now rerun under the same TileOpsGov CI image as the current TileOps rows:
@@ -243,10 +243,9 @@ the A/replay cross-ablation.
 
 The FlashQLA-alignment node is not the generic-A CP bridge. It is the A/replay
 cross-ablation: TL0.1.8 lowered FlashQLA KKT injected through an external
-launcher plus TileOps replay gives a measured `0.815029 ms` full path, faster
-than refreshed public FlashQLA full `1.306838 ms`; then TileOps blocksolve A
-plus the same replay family gives `0.695237 ms` in the same-input A-producer
-ablation row.
+launcher plus TileOps replay gives a refreshed measured `0.8245 ms` full path,
+faster than refreshed public FlashQLA full `1.306838 ms`; then TileOps
+blocksolve A plus the same replay family gives `0.7474 ms` in the same rerun.
 
 This experiment-adapter table alone is not the complete FlashQLA attribution
 story. The A/replay cross-ablation below adds the missing split: with
@@ -264,7 +263,8 @@ meanings:
 | Number | Evidence lane | Meaning |
 | ---: | --- | --- |
 | `0.715062 ms` | adapter bridge | compatibility evidence under the same CP downstream ABI |
-| `0.695237 ms` | same-input A-producer ablation | headline Neumann prepare comparison |
+| `0.7474 ms` | refreshed Section 11 same-run rerun | current clean A-producer comparison row |
+| `0.7655 ms` | clean PR1596/TL0.1.11 adapter checkpoint | separate adapter checkpoint against FLA 0.5.1 |
 | `0.692026 ms` / `0.7498 ms` | historical dispatch wrapper / clean surface sweep | dispatch-context evidence, not the ablation proof |
 
 #### SI.3.2 External And Final Anchors
@@ -370,12 +370,12 @@ headline Section 11 table.
 | `FQ/FQ` | public FlashQLA TL0.1.8 KKT | public FlashQLA TL0.1.8 CP replay | full public op | public FlashQLA self row | `1.306838 ms` |
 | `FQ/FQ producer` | public FlashQLA TL0.1.8 KKT | producer-only row | `chunk_local_cumsum + kkt_solve` | component timing only | `0.471233 ms` |
 | `FQ/FQ replay` | exported public FlashQLA A/g | public FlashQLA TL0.1.8 CP replay | `cp_preprocess + fused_gdr_fwd` | component timing only | `0.860569 ms` |
-| `TL018-lowering/TO full` | TL0.1.8 lowered KKT via external launcher | TileOps PR1596 CP replay | full combined row | public TL0.1.8 artifact | `0.815029 ms` |
-| `TL018-lowering/TO prepare` | TL0.1.8 lowered KKT via external launcher | producer-only row | current `chunk_local_cumsum` + external `kkt_solve` | exact `A/g` vs public artifact | `0.470905 ms` |
+| `TL018-lowering/TO full` | TL0.1.8 lowered KKT via external launcher | TileOps PR1596 CP replay | full combined row | public TL0.1.8 artifact | `0.8245 ms` |
+| `TL018-lowering/TO prepare` | TL0.1.8 lowered KKT via external launcher | producer-only row | current `chunk_local_cumsum` + external `kkt_solve` | exact `A/g` vs public artifact | `0.2693 ms` |
 | `TL018-lowering/TO replay` | produced TL0.1.8-lowering A/g | TileOps PR1596 CP replay | replay-only | public TL0.1.8 artifact | `0.542159 ms` |
 | `FQ18/TO` | exported public FlashQLA TL0.1.8 A/g | TileOps PR1596 CP replay | replay-only | recorded vendored FLA reference | `0.542807 ms` |
 | `TO/TO replay` | TileOps blocksolve A | TileOps PR1596 CP replay | replay-only | recorded vendored FLA reference | `0.542905 ms` |
-| `TO/TO full` | TileOps blocksolve A | TileOps PR1596 CP replay | include producers | public TL0.1.8 artifact | `0.695237 ms` |
+| `TO/TO full` | TileOps blocksolve A | TileOps PR1596 CP replay | include producers | public TL0.1.8 artifact | `0.7474 ms` |
 
 This changes the explanation. The generic-A CP bridge is not a faithful
 FlashQLA reproduction. It is a controlled bridge row that keeps a conservative
@@ -408,19 +408,19 @@ So the replay/output improvement is not merely a side effect of changing the A
 producer.
 
 The A producer still matters. Under the TileOps benchmark harness, the measured
-TL0.1.8-lowering prepare row is essentially tied with, and very slightly faster
-than, the refreshed public FlashQLA producer component:
+TL0.1.8-lowering prepare row is faster than the refreshed public FlashQLA
+producer component in the refreshed TileOps harness:
 
 ```text
-0.471233 ms / 0.470905 ms = 1.0007x
+0.471233 ms / 0.269292 ms = 1.75x
 ```
 
 The measured TL0.1.8-lowering full path is faster than public FlashQLA full
 path, but slower than the same-input TileOps full row:
 
 ```text
-1.306838 ms / 0.815029 ms = 1.60x
-0.815029 ms / 0.695237 ms = 1.17x
+1.306838 ms / 0.824524 ms = 1.59x
+0.824524 ms / 0.747375 ms = 1.10x
 ```
 
 That row is a measured single host-process path, but it is still an
@@ -432,8 +432,8 @@ This is also why the `2.7674 ms -> 0.715062 ms` adapter jump is not the main
 A-producer proof. The cleaner ablation is:
 
 ```text
-TL0.1.8-lowering prepare + TileOps replay: 0.815029 ms
-TileOps blocksolve producer + TileOps replay:       0.695237 ms
+TL0.1.8-lowering prepare + TileOps replay: 0.8245 ms
+TileOps blocksolve producer + TileOps replay:       0.7474 ms
 ```
 
 We also tried the native current-TL measured combined row:
