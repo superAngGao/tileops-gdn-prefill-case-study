@@ -7,9 +7,9 @@ than optimizing a standalone GEMM.
 
 In this case study, TileOps turns that recurrent operator into a scoped
 serving dispatch path. The path has merged into TileOps main via
-[PR1596](https://github.com/tile-ai/TileOPs/pull/1596). The archived
-pre-merge PR1596 benchmark package below measured `8.2-13.3x` faster than the
-recorded vendored FLA reference used as the correctness oracle, and `1.46-2.91x`
+[PR1596](https://github.com/tile-ai/TileOPs/pull/1596). Under the dependency
+contract below, the clean PR1596 merge-commit rerun measured `3.9-6.3x` faster
+than the FLA `0.5.1` reference used as the correctness oracle, and `1.36-2.68x`
 faster than a public-environment FlashQLA TL0.1.8 anchor.
 
 The useful lesson is narrower than "an agent invented a kernel." The repeatable
@@ -47,26 +47,29 @@ Benchmark scope for the headline table:
   distributions, other dtypes/layouts, or `B>1`.
 - Hardware/timer: H200 using CUPTI kernel-only timing with L2 flush. The
   archived surface rows use `warmup=5`, `repeat=20`, and `trials=3`.
-- Reference roles: FLA is a recorded vendored correctness/latency reference;
-  FlashQLA is a public TL0.1.8 anchor.
+- Dependency contract: TileOps rows use clean PR1596 merge commit
+  `79469fc0ddae584537df03e35d935575870574f6`, TileLang `0.1.11`, Torch
+  `2.10.0+cu129`, and FLA `0.5.1`.
+- Reference roles: FLA `0.5.1` is the correctness/latency reference for this
+  clean surface rerun; FlashQLA is a public TL0.1.8 anchor.
 - Claim role: this table supports the production serving-surface claim. It does
   not support same-lowering attribution claims about FlashQLA replay or KKT
   lowering. The entire `Speedup vs public FlashQLA anchor` column is a
   public-environment comparison.
-- Provenance: these headline rows are archived pre-merge PR1596 worktree
-  measurements under the recorded contract, not a rerun on merge commit
-  `79469fc0ddae584537df03e35d935575870574f6` or current upstream `main`.
+- Provenance: these headline TileOps/FLA rows are clean merge-commit reruns
+  with `dirty=false` recorded in JSONL. The FlashQLA rows remain public
+  external-anchor measurements under their own public environment.
 
-| Shape | TileOps scoped production dispatch | Recorded FLA reference | Public FlashQLA TL0.1.8 anchor | Speedup vs recorded FLA ref | Speedup vs public FlashQLA anchor |
+| Shape | TileOps scoped production dispatch | FLA 0.5.1 reference | Public FlashQLA TL0.1.8 anchor | Speedup vs FLA 0.5.1 | Throughput ratio vs public FlashQLA anchor |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| `32K/H16` | `0.3723 ms` | `3.7964 ms` | `0.5440 ms` | `10.20x` | `1.46x` |
-| `64K/H16` | `0.6951 ms` | `7.9840 ms` | `1.3073 ms` | `11.49x` | `1.88x` |
-| `128K/H16` | `1.2284 ms` | `16.3385 ms` | `2.6055 ms` | `13.30x` | `2.12x` |
-| `64K/H32` | `1.2238 ms` | `10.2402 ms` | `2.5942 ms` | `8.37x` | `2.12x` |
-| `64K/H64` | `2.3085 ms` | `18.9782 ms` | `6.7233 ms` | `8.22x` | `2.91x` |
+| `32K/H16` | `0.3990 ms` | `2.1303 ms` | `0.5440 ms` | `5.34x` | `1.36x` |
+| `64K/H16` | `0.7498 ms` | `4.2416 ms` | `1.3073 ms` | `5.66x` | `1.74x` |
+| `128K/H16` | `1.3404 ms` | `8.4520 ms` | `2.6055 ms` | `6.31x` | `1.94x` |
+| `64K/H32` | `1.3193 ms` | `5.4120 ms` | `2.5942 ms` | `4.10x` | `1.97x` |
+| `64K/H64` | `2.5086 ms` | `9.8426 ms` | `6.7233 ms` | `3.92x` | `2.68x` |
 
 Source of truth: the table uses the archived
-[`TileOps/FLA JSONL`](../evidence/ladder/results/production_surface_tileops_vs_fla_20260701.jsonl)
+[`TileOps/FLA JSONL`](../evidence/ladder/results/production_surface_tileops_vs_fla_20260709_clean_pr1596_tl011_fla051.jsonl)
 and
 [`FlashQLA JSONL`](../evidence/ladder/results/production_surface_flashqla_20260701.jsonl).
 The evidence-harness code snapshot is archived in
@@ -75,11 +78,10 @@ PR1596's body contains an earlier concise table under a different archived
 benchmark/reference package; the optimized path later merged at commit
 `79469fc0ddae584537df03e35d935575870574f6`.
 
-Reference identity: the FLA path used here is a vendored source reference with
-vendor commit `91d2f468944842ab2d947350d280ca1db793db57` and no independently
-verified package version in this evidence package. It supports the recorded
-correctness oracle and latency context; it is not a claim about an externally
-verified official FLA `0.5.1` package.
+Reference identity: the headline TileOps/FLA rerun imports
+`flash-linear-attention==0.5.1`; the package version is recorded in the JSONL.
+Older historical diagnostics may still use vendored FLA source snapshots and
+are labeled separately in the evidence bundle.
 
 Credit boundary:
 
@@ -527,8 +529,8 @@ Claim boundaries:
 1. FlashQLA supplied the CP-split replay schedule family.
 2. TileOps-vs-FlashQLA numbers are public-environment comparisons, not
    same-lowering replay attribution experiments.
-3. The FLA baseline is a recorded vendored reference unless package identity is
-   explicitly verified.
+3. The headline FLA baseline is `flash-linear-attention==0.5.1`; older
+   diagnostics that use vendored FLA snapshots keep their own caveats.
 4. The TL0.1.8-lowering FlashQLA-style prepare row is an external-lowering
    harness measurement, not a native current-TL KKT port.
 5. The blocked-inverse / Neumann-style formulas describe the implementation

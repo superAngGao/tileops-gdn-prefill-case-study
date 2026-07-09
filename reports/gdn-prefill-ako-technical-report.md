@@ -33,14 +33,14 @@ same causal state evolution across tens of thousands of tokens.
 The result of this case study is a TileOps-owned scoped serving prefill path
 that combines local agentic optimization, a FlashQLA-inspired CP-split replay
 schedule, and a human blocked-inverse / Neumann-style prepare algorithm. The
-path later merged into TileOps main through PR1596; the archived benchmark rows
-used in this report were collected from the pre-merge PR1596 benchmark package
-under the recorded contract. On the refreshed serving-shape sweep, the scoped
-dispatch path is faster than both the recorded FLA reference and the public
+path later merged into TileOps main through PR1596; the headline
+serving-shape sweep was refreshed on the clean PR1596 merge commit with
+TileLang `0.1.11` and FLA `0.5.1`. On that refreshed sweep, the scoped
+dispatch path is faster than both the FLA `0.5.1` reference and the public
 FlashQLA TL0.1.8 anchor. The FlashQLA comparison is a
 public-environment comparison, not a controlled same-lowering attribution
-experiment; the FLA row is a recorded vendored reference unless otherwise
-stated.
+experiment; older diagnostics that use vendored FLA snapshots are labeled
+separately.
 
 Code status: the GDN prefill scoped serving path entered TileOps main through
 [tile-ai/TileOps#1596](https://github.com/tile-ai/TileOPs/pull/1596), merge
@@ -131,26 +131,26 @@ and evidence inventory.
 
 **Controlled `64K/H16` story rows**
 
-| Story node | Case-study meaning | Latency | Perf vs recorded FLA ref (%) | Perf vs public FlashQLA anchor (%) |
+| Story node | Case-study meaning | Latency | Perf vs FLA 0.5.1 surface ref (%) | Perf vs public FlashQLA anchor (%) |
 | --- | --- | ---: | ---: | ---: |
-| initial correctness | the first serving prefill op is correct and measurable | `5.5318 ms` | `145.1%` | `23.6%` |
-| local prepare specialization | local AKO improves the fixed-contract path, but does not change replay depth | `5.3652 ms` | `149.6%` | `24.4%` |
-| local wall | BTHD/local tuning helps a lot, but the path is still a long legacy replay | `2.9267 ms` | `274.2%` | `44.7%` |
-| FlashQLA-style A + TileOps replay | after studying FlashQLA and improving replay/output, TileOps reaches the public FlashQLA performance neighborhood before Neumann | `0.815029 ms` | `984.7%` | `160.3%` |
-| Neumann prepare | human expert insight provides the blocked-inverse / Neumann-style prepare algorithm | `0.695237 ms` | `1154.4%` | `188.0%` |
+| initial correctness | the first serving prefill op is correct and measurable | `5.5318 ms` | `76.7%` | `23.6%` |
+| local prepare specialization | local AKO improves the fixed-contract path, but does not change replay depth | `5.3652 ms` | `79.1%` | `24.4%` |
+| local wall | BTHD/local tuning helps a lot, but the path is still a long legacy replay | `2.9267 ms` | `144.9%` | `44.7%` |
+| FlashQLA-style A + TileOps replay | after studying FlashQLA and improving replay/output, TileOps reaches the public FlashQLA performance neighborhood before Neumann | `0.815029 ms` | `520.4%` | `160.3%` |
+| Neumann prepare | human expert insight provides the blocked-inverse / Neumann-style prepare algorithm | `0.695237 ms` | `610.1%` | `188.0%` |
 
 **External `64K/H16` anchors**
 
-| Anchor | Role | Latency | Perf vs recorded FLA ref (%) | Perf vs public FlashQLA anchor (%) |
+| Anchor | Role | Latency | Perf vs FLA 0.5.1 surface ref (%) | Perf vs public FlashQLA anchor (%) |
 | --- | --- | ---: | ---: | ---: |
-| recorded FLA reference | behavioral correctness reference and FLA baseline | `8.02574 ms` | `100.0%` | `16.3%` |
-| public FlashQLA TL0.1.8 anchor | public-environment anchor for the CP-split schedule family | `1.306838 ms` | `614.1%` | `100.0%` |
+| FLA 0.5.1 surface reference | behavioral correctness reference and FLA baseline for the clean surface rerun | `4.2416 ms` | `100.0%` | `30.8%` |
+| public FlashQLA TL0.1.8 anchor | public-environment anchor for the CP-split schedule family | `1.306838 ms` | `324.6%` | `100.0%` |
 
 **Production dispatch surface**
 
-| Surface | Role | Latency range | Perf vs recorded FLA ref (%) | Perf vs public FlashQLA anchor (%) |
+| Surface | Role | Latency range | Perf vs FLA 0.5.1 ref (%) | Perf vs public FlashQLA anchor (%) |
 | --- | --- | ---: | ---: | ---: |
-| five serving shapes | the optimized path becomes a dispatchable kernel family across shape space | `0.3723-2.3085 ms` | `822%-1330%` | `146%-291%` |
+| five serving shapes | the optimized path becomes a dispatchable kernel family across shape space | `0.3990-2.5086 ms` | `392%-631%` | `136%-268%` |
 
 The local rerun also measured an h-tile diagnostic at `5.0852 ms`, but that row
 failed the formal `atol=rtol=5e-2` correctness gate, so it stays out of the
@@ -172,7 +172,7 @@ This article compares TileOps, FLA, and FlashQLA in three different roles:
 | Term | Role in this article |
 | --- | --- |
 | GDN | Gated DeltaNet, a recurrent linear-attention-style operator with decay gates and delta-rule residual writes. |
-| FLA | Flash Linear Attention. The main behavioral correctness reference for full-op validation; reported here as a recorded vendored FLA reference unless package identity is explicitly verified. |
+| FLA | Flash Linear Attention. The headline surface uses `flash-linear-attention==0.5.1`; older diagnostics may use recorded vendored FLA snapshots and keep their own caveats. |
 | FlashQLA | Qwen's FlashQLA project. The source-level reference for the h-state / corrected-segment-start CP-split schedule that TileOps later adapted and productionized. |
 | TileOps | The scoped production dispatch surface discussed here: TileLang-owned BTHD prefill path, dispatch, validation, and benchmark integration. |
 | AKO | Agentic Kernel Optimization: a gated loop of hypothesis, implementation, correctness, benchmark, lowering inspection, and decision logging. |
@@ -1098,7 +1098,7 @@ things:
 | ---: | --- | --- |
 | `0.715062 ms` | generic-A/blocksolve adapter bridge | Shows that the blocked-inverse producer can feed the same CP downstream ABI, but it is not the clean A-producer proof. |
 | `0.695237 ms` | same-input A-producer ablation | The headline Neumann prepare comparison against the `0.815029 ms` TL0.1.8-lowering FlashQLA-style prepare row. |
-| `0.692026 ms` / `~0.6951 ms` | dispatch wrapper and refreshed production surface | Dispatch-context evidence that the optimized path survives wrapper/dispatch policy; not the same-input ablation proof. |
+| `0.692026 ms` / `~0.7498 ms` | dispatch wrapper and refreshed production surface | Dispatch-context evidence that the optimized path survives wrapper/dispatch policy; not the same-input ablation proof. |
 
 Formal A-producer evidence:
 
@@ -1187,20 +1187,20 @@ flowchart LR
 ```
 
 The table below is the production-surface check, not another single-step row in
-the `64K/H16` algorithm ladder. All TileOps and FLA rows use the TileOps
-benchmark infrastructure on GPU3/H200 with `B=1,DK=DV=128,chunk64,fp16,BTHD`,
-`warmup=5,repeat=20,trials=3`, and correctness checked against the recorded FLA
-reference. FlashQLA rows are public TL0.1.8 Docker measurements under the same
-shape/timer settings; they remain a public-environment comparison, not a
-same-lowering attribution experiment.
+the `64K/H16` algorithm ladder. TileOps and FLA rows use a clean PR1596 merge
+commit on GPU4/H200 with TileLang `0.1.11`, FLA `0.5.1`,
+`B=1,DK=DV=128,chunk64,fp16,BTHD`, `warmup=5,repeat=20,trials=3`, and
+correctness checked against the FLA `0.5.1` reference. FlashQLA rows are public
+TL0.1.8 measurements under their own public environment; they remain a
+public-environment comparison, not a same-lowering attribution experiment.
 
-| Shape | TileOps scoped production dispatch | Recorded FLA reference | Public FlashQLA TL0.1.8 | TileOps vs recorded FLA ref (%) | TileOps vs public FlashQLA anchor (%) |
+| Shape | TileOps scoped production dispatch | FLA 0.5.1 reference | Public FlashQLA TL0.1.8 | TileOps vs FLA 0.5.1 (%) | TileOps vs public FlashQLA anchor (%) |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| `32K/H16` | `0.3723 ms` | `3.7964 ms` | `0.5440 ms` | `1020%` | `146%` |
-| `64K/H16` | `0.6951 ms` | `7.9840 ms` | `1.3073 ms` | `1149%` | `188%` |
-| `128K/H16` | `1.2284 ms` | `16.3385 ms` | `2.6055 ms` | `1330%` | `212%` |
-| `64K/H32` | `1.2238 ms` | `10.2402 ms` | `2.5942 ms` | `837%` | `212%` |
-| `64K/H64` | `2.3085 ms` | `18.9782 ms` | `6.7233 ms` | `822%` | `291%` |
+| `32K/H16` | `0.3990 ms` | `2.1303 ms` | `0.5440 ms` | `534%` | `136%` |
+| `64K/H16` | `0.7498 ms` | `4.2416 ms` | `1.3073 ms` | `566%` | `174%` |
+| `128K/H16` | `1.3404 ms` | `8.4520 ms` | `2.6055 ms` | `631%` | `194%` |
+| `64K/H32` | `1.3193 ms` | `5.4120 ms` | `2.5942 ms` | `410%` | `194%` |
+| `64K/H64` | `2.5086 ms` | `9.8426 ms` | `6.7233 ms` | `392%` | `268%` |
 
 This table is the more meaningful production claim. The explicit `64K/H16`
 blocked-inverse adapter row and the dispatch wrapper row remain useful
@@ -1306,5 +1306,5 @@ The claims above are bounded by these constraints:
    `DK=DV=128`, `chunk64` production path.
 6. TileOps-vs-FlashQLA numbers are public-environment comparisons; full-op
    speedups alone do not imply replay algorithm attribution.
-7. "Externally verified FLA 0.5.1" requires package-identity verification;
-   otherwise the safe phrase is "recorded vendored FLA reference."
+7. Headline FLA rows use `flash-linear-attention==0.5.1`; older diagnostics
+   that use vendored FLA snapshots must keep that caveat attached.

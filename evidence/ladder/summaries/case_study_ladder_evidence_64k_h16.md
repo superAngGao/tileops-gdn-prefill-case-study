@@ -128,13 +128,14 @@ anchor.
 
 Merge note: PR1596 has since entered TileOps main at merge commit
 `79469fc0ddae584537df03e35d935575870574f6`. Paths under
-`/home/ga/TileOps-pr1596` below are archived pre-merge provenance for the
-benchmark artifacts.
+`/home/ga/TileOps-pr1596` below are archived pre-merge provenance for older
+benchmark artifacts. The headline production-surface sweep has since been
+refreshed on clean PR1596 merge commit `79469fc0ddae584537df03e35d935575870574f6`.
 
 | Registry key | Role | Latency ms | Correctness | Use in case study |
 | --- | --- | ---: | --- | --- |
-| `ref_fla_051` | External correctness oracle and FLA latency baseline. | 8.02574 | self/reference row | May be reported as the recorded vendored FLA reference baseline, with version caveat. |
-| `tileops_final_dispatch` | Merged PR1596 production wrapper / dispatch context. | 0.692026 historical anchor; 0.6951 in refreshed surface sweep | pass vs FLA reference | May be reported as the production dispatch surface, not as an experiment-adapter step. |
+| `ref_fla_051` | External correctness oracle and FLA latency baseline. | 4.2416 in clean refreshed surface sweep; 8.02574 older historical anchor | self/reference row | May be reported as the FLA 0.5.1 reference for the refreshed surface; older vendored rows keep their caveat. |
+| `tileops_final_dispatch` | Merged PR1596 production wrapper / dispatch context. | 0.692026 historical anchor; 0.7498 in clean refreshed surface sweep | pass vs FLA reference | May be reported as the production dispatch surface, not as an experiment-adapter step. |
 
 The historical `tileops_final_dispatch` anchor is slightly faster than the
 explicit blocked-inverse adapter:
@@ -149,18 +150,18 @@ algorithmic jump after the blocked-inverse A producer.
 Production-surface evidence:
 
 - TileOps vs FLA, GPU3/H200, TileOps benchmark infrastructure:
-  `evidence/ladder/results/production_surface_tileops_vs_fla_20260701.jsonl`.
+  `evidence/ladder/results/production_surface_tileops_vs_fla_20260709_clean_pr1596_tl011_fla051.jsonl`.
 - Public FlashQLA TL0.1.8 Docker sweep:
   `evidence/ladder/results/production_surface_flashqla_20260701.jsonl`.
 
-The measured TileOps production-dispatch rows are `0.3723 ms` at `32K/H16`,
-`0.6951 ms` at `64K/H16`, `1.2284 ms` at `128K/H16`, `1.2238 ms` at
-`64K/H32`, and `2.3085 ms` at `64K/H64`.
+The measured TileOps production-dispatch rows are `0.3990 ms` at `32K/H16`,
+`0.7498 ms` at `64K/H16`, `1.3404 ms` at `128K/H16`, `1.3193 ms` at
+`64K/H32`, and `2.5086 ms` at `64K/H64`.
 
 The corresponding public FlashQLA TL0.1.8 full-op rows are `0.5440 ms` at
 `32K/H16`, `1.3073 ms` at `64K/H16`, `2.6055 ms` at `128K/H16`,
 `2.5942 ms` at `64K/H32`, and `6.7233 ms` at `64K/H64`. Under the
-public-environment comparison lane, TileOps production dispatch is `146%-291%`
+public-environment comparison lane, TileOps production dispatch is `136%-268%`
 of public FlashQLA throughput across this measured surface. This is still not a
 same-lowering replay attribution experiment.
 

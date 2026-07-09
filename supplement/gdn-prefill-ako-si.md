@@ -21,12 +21,12 @@ than the spine of the story.
 
 Code status: the scoped serving path discussed by the main article entered TileOps
 main through [tile-ai/TileOps#1596](https://github.com/tile-ai/TileOPs/pull/1596),
-merge commit `79469fc0ddae584537df03e35d935575870574f6`. Some archived JSONL
-rows below still record the pre-merge PR worktree path because that is where the
-benchmark artifacts were collected. Some of those archived rows also record
-`dirty=true` for the local TileOps or PR1596 worktree; they are archived
-evidence under the recorded metadata, not clean-commit reproduction claims. The
-evidence-generation harness and adapters are snapshotted in
+merge commit `79469fc0ddae584537df03e35d935575870574f6`. The headline
+production-surface TileOps/FLA rows were refreshed on that clean merge commit
+with TileLang `0.1.11` and FLA `0.5.1`. Some older archived JSONL rows below
+still record pre-merge or dirty local worktree metadata; those rows are retained
+as historical diagnostics under their recorded metadata, not as clean-commit
+headline claims. The evidence-generation harness and adapters are snapshotted in
 [`evidence/ladder/harness/`](../evidence/ladder/harness/).
 
 ### SI.0 Checkpoint Code Map
@@ -48,7 +48,7 @@ code saved in this repository.
 | CP-split bridge | [`tileops_pr1596`](../evidence/kernel_sources/tileops_pr1596/) plus [`harness`](../evidence/ladder/harness/) | [`05_cp_split_bridge`](../checkpoints/05_cp_split_bridge/) | `formal_64k_h16_v5_ladder.jsonl` |
 | FlashQLA-style prepare-A + TileOps replay | [`flashqla_tl018_lowered`](../evidence/kernel_sources/flashqla_tl018_lowered/) plus [`tl018_fq_prepare_launcher.cu`](../evidence/ladder/harness/tl018_fq_prepare_launcher.cu) | [`06_flashqla_style_prepare`](../checkpoints/06_flashqla_style_prepare/) | `section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl` |
 | Blocked-inverse / Neumann prepare | [`tileops_pr1596`](../evidence/kernel_sources/tileops_pr1596/) plus [`harness`](../evidence/ladder/harness/) | [`07_neumann_prepare`](../checkpoints/07_neumann_prepare/) | `section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl` |
-| Scoped dispatch surface | [`tileops_pr1596`](../evidence/kernel_sources/tileops_pr1596/) | [`08_dispatch_surface`](../checkpoints/08_dispatch_surface/) | `production_surface_tileops_vs_fla_20260701.jsonl` |
+| Scoped dispatch surface | [`tileops_pr1596`](../evidence/kernel_sources/tileops_pr1596/) | [`08_dispatch_surface`](../checkpoints/08_dispatch_surface/) | `production_surface_tileops_vs_fla_20260709_clean_pr1596_tl011_fla051.jsonl` |
 
 The source snapshots are included for audit and rerun setup. Historical rows
 now rerun under the same TileOpsGov CI image as the current TileOps rows:
@@ -59,10 +59,11 @@ values.
 
 Runtime matrix:
 
-| Checkpoints | Runtime image | nvcc | Torch | TileLang |
+| Checkpoints | nvcc | Torch | TileLang | FLA |
 | --- | --- | --- | --- | --- |
-| `01`-`05`, `08` | `ghcr.io/tile-ai/tileops-runner:65dbc98-torch2.10` | `12.9` (`Build cuda_12.9.r12.9/compiler.36037853_0`) | `2.10.0+cu129` (`torch.version.cuda=12.9`) | `0.1.11+cu129.git65dbc983` |
-| `06`, `07` | `ghcr.io/tile-ai/tileops-runner:65dbc98-torch2.10` for TileOps replay; TL0.1.8 artifact/toolchain for FlashQLA-style prepare-A | `12.9` in the TileOps replay runner | `2.10.0+cu129` (`torch.version.cuda=12.9`) for TileOps replay | `0.1.11+cu129.git65dbc983` for TileOps replay; TL0.1.8 for external prepare-A artifact |
+| `01`-`05` | `12.9` (`Build cuda_12.9.r12.9/compiler.36037853_0`) | `2.10.0+cu129` (`torch.version.cuda=12.9`) | `0.1.11+cu129.git65dbc983` | historical/reference row metadata |
+| `08` | `12.9` (`Build cuda_12.9.r12.9/compiler.36037853_0`) | `2.10.0+cu129` (`torch.version.cuda=12.9`) | `0.1.11+cu129.git65dbc983` | `flash-linear-attention==0.5.1` |
+| `06`, `07` | `12.9` in the TileOps replay runner | `2.10.0+cu129` (`torch.version.cuda=12.9`) for TileOps replay | `0.1.11+cu129.git65dbc983` for TileOps replay; TL0.1.8 for external prepare-A artifact | recorded in each Section 11 JSONL row |
 
 ### SI.1 Source Similarity Is Not Performance Equality
 
@@ -264,7 +265,7 @@ meanings:
 | ---: | --- | --- |
 | `0.715062 ms` | adapter bridge | compatibility evidence under the same CP downstream ABI |
 | `0.695237 ms` | same-input A-producer ablation | headline Neumann prepare comparison |
-| `0.692026 ms` / `~0.6951 ms` | dispatch wrapper / surface sweep | dispatch-context evidence, not the ablation proof |
+| `0.692026 ms` / `0.7498 ms` | historical dispatch wrapper / clean surface sweep | dispatch-context evidence, not the ablation proof |
 
 #### SI.3.2 External And Final Anchors
 
@@ -274,15 +275,15 @@ sweep is the production claim.
 
 | Registry key | Role | `64K/H16` latency | Correctness | Use in case study |
 | --- | --- | ---: | --- | --- |
-| `ref_fla_051` | recorded vendored FLA reference baseline | `8.02574 ms` | self/reference row | correctness oracle and FLA latency context, with version caveat |
-| `tileops_final_dispatch` | merged PR1596 dispatch wrapper / dispatch context | `0.692026 ms` historical anchor; `0.6951 ms` in the refreshed surface sweep | pass vs recorded FLA reference | production-surface row family, not an experiment-adapter step |
+| `ref_fla_051` | FLA reference baseline | `4.2416 ms` in clean refreshed surface sweep; `8.02574 ms` older historical anchor | self/reference row | FLA `0.5.1` for the refreshed surface; older vendored rows keep their caveat |
+| `tileops_final_dispatch` | merged PR1596 dispatch wrapper / dispatch context | `0.692026 ms` historical anchor; `0.7498 ms` in the clean refreshed surface sweep | pass vs FLA reference | production-surface row family, not an experiment-adapter step |
 
 Write `tileops_final_dispatch` as a dispatch wrapper / dispatch-context
 observation, not as an additional algorithmic improvement after the
 blocked-inverse A producer. The historical single-shape wrapper delta is kept in
 the evidence note; the stronger main-text statement is the refreshed shape
 sweep:
-`evidence/ladder/results/production_surface_tileops_vs_fla_20260701.jsonl`
+`evidence/ladder/results/production_surface_tileops_vs_fla_20260709_clean_pr1596_tl011_fla051.jsonl`
 plus the public FlashQLA TL0.1.8 sweep:
 `evidence/ladder/results/production_surface_flashqla_20260701.jsonl`.
 
@@ -332,10 +333,11 @@ version_status=unverified_commit_based_reference
 vendor_commit_file=91d2f468944842ab2d947350d280ca1db793db57
 ```
 
-This does not invalidate the TileOps experiment-adapter rows because
-all rows use the same recorded reference and same input artifact for
-correctness. External FLA claims use "recorded vendored FLA reference" unless
-the package identity is independently verified.
+This does not invalidate the historical TileOps experiment-adapter rows because
+those rows use the same recorded reference and same input artifact for
+correctness. Headline surface rows use `flash-linear-attention==0.5.1`; older
+diagnostics that depend on vendored snapshots keep the "recorded vendored FLA
+reference" label unless package identity is independently verified.
 
 #### SI.3.4 A/Replay Cross-Ablation
 
@@ -596,7 +598,7 @@ counts, and input hashes.
 
 | Evidence | Files |
 | --- | --- |
-| production-surface correctness metrics | [`production_surface_correctness_metrics_20260708.md`](../evidence/ladder/summaries/production_surface_correctness_metrics_20260708.md), [`production_surface_correctness_metrics_20260708.jsonl`](../evidence/ladder/results/production_surface_correctness_metrics_20260708.jsonl) |
+| production-surface correctness metrics | [`production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.md`](../evidence/ladder/summaries/production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.md), [`production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.jsonl`](../evidence/ladder/results/production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.jsonl) |
 
 Large max-relative values are interpreted with absolute error and final-state
 checks because near-zero reference values can inflate relative error. For very
@@ -614,8 +616,8 @@ The archived evidence files are the publication source of truth:
 | --- | --- |
 | Main `64K/H16` ladder and evidence summary | [`case_study_ladder_evidence_64k_h16.md`](../evidence/ladder/summaries/case_study_ladder_evidence_64k_h16.md), [`formal_64k_h16_current_gpu4_rerun.jsonl`](../evidence/ladder/results/formal_64k_h16_current_gpu4_rerun.jsonl), current TileLang `0.1.11` historical rerun [`rerun_011_formal_64k_h16_historical_local.md`](../evidence/ladder/summaries/rerun_011_formal_64k_h16_historical_local.md) / [`rerun_011_formal_64k_h16_historical_local.jsonl`](../evidence/ladder/results/rerun_011_formal_64k_h16_historical_local.jsonl), older historical archive [`formal_64k_h16_historical_local.jsonl`](../evidence/ladder/results/formal_64k_h16_historical_local.jsonl) |
 | A/replay cross-ablation | [`section11_a_producer_ablation_64k_h16.md`](../evidence/ladder/summaries/section11_a_producer_ablation_64k_h16.md), legacy diagnostic [`a_replay_cross_ablation_64k_h16.md`](../evidence/ladder/summaries/a_replay_cross_ablation_64k_h16.md), [`section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl`](../evidence/ladder/results/section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl), [`section11_a_producer_ablation_64k_h16_fq18_to_replay.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq18_to_replay.jsonl), [`section11_a_producer_ablation_64k_h16_to_to_replay.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_to_to_replay.jsonl), [`section11_a_producer_ablation_64k_h16_to_to_full.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_to_to_full.jsonl), [`section11_a_producer_ablation_64k_h16_fq_current_to_full.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq_current_to_full.jsonl), [`section11_a_producer_ablation_64k_h16_fq_current_to_full_legacy.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq_current_to_full_legacy.jsonl), [`section11_a_producer_ablation_64k_h16_fq_current_to_full_wgmma.jsonl`](../evidence/ladder/results/section11_a_producer_ablation_64k_h16_fq_current_to_full_wgmma.jsonl) |
-| Production dispatch surface | [`production_surface_tileops_vs_fla_20260701.jsonl`](../evidence/ladder/results/production_surface_tileops_vs_fla_20260701.jsonl), [`production_surface_flashqla_20260701.jsonl`](../evidence/ladder/results/production_surface_flashqla_20260701.jsonl) |
-| Production-surface correctness metrics | [`production_surface_correctness_metrics_20260708.md`](../evidence/ladder/summaries/production_surface_correctness_metrics_20260708.md), [`production_surface_correctness_metrics_20260708.jsonl`](../evidence/ladder/results/production_surface_correctness_metrics_20260708.jsonl) |
+| Production dispatch surface | [`production_surface_tileops_vs_fla_20260709_clean_pr1596_tl011_fla051.jsonl`](../evidence/ladder/results/production_surface_tileops_vs_fla_20260709_clean_pr1596_tl011_fla051.jsonl), [`production_surface_flashqla_20260701.jsonl`](../evidence/ladder/results/production_surface_flashqla_20260701.jsonl) |
+| Production-surface correctness metrics | [`production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.md`](../evidence/ladder/summaries/production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.md), [`production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.jsonl`](../evidence/ladder/results/production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.jsonl) |
 
 For maintainers with the archived TileOps roots and tensor artifacts, the
 original scoped `64K/H16` harness command was:

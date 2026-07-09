@@ -13,9 +13,9 @@ machine-readable source of truth.
 | Variant inventory and claim roles | [`ladder/docs/variant_inventory.md`](ladder/docs/variant_inventory.md) |
 | Same-input A-producer ablation | [`ladder/summaries/section11_a_producer_ablation_64k_h16.md`](ladder/summaries/section11_a_producer_ablation_64k_h16.md) |
 | Legacy replay-side diagnostics | [`ladder/summaries/a_replay_cross_ablation_64k_h16.md`](ladder/summaries/a_replay_cross_ablation_64k_h16.md) |
-| Production dispatch surface, TileOps vs FLA | [`ladder/results/production_surface_tileops_vs_fla_20260701.jsonl`](ladder/results/production_surface_tileops_vs_fla_20260701.jsonl) |
+| Production dispatch surface, TileOps vs FLA | [`ladder/summaries/production_surface_tileops_vs_fla_20260709_clean_pr1596_tl011_fla051.md`](ladder/summaries/production_surface_tileops_vs_fla_20260709_clean_pr1596_tl011_fla051.md), [`ladder/results/production_surface_tileops_vs_fla_20260709_clean_pr1596_tl011_fla051.jsonl`](ladder/results/production_surface_tileops_vs_fla_20260709_clean_pr1596_tl011_fla051.jsonl) |
 | Production dispatch surface, public FlashQLA | [`ladder/results/production_surface_flashqla_20260701.jsonl`](ladder/results/production_surface_flashqla_20260701.jsonl) |
-| Production-surface correctness diagnostics | [`ladder/summaries/production_surface_correctness_metrics_20260708.md`](ladder/summaries/production_surface_correctness_metrics_20260708.md), [`ladder/results/production_surface_correctness_metrics_20260708.jsonl`](ladder/results/production_surface_correctness_metrics_20260708.jsonl) |
+| Production-surface correctness diagnostics | [`ladder/summaries/production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.md`](ladder/summaries/production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.md), [`ladder/results/production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.jsonl`](ladder/results/production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.jsonl) |
 | Evidence harness code snapshot | [`ladder/harness/`](ladder/harness/) |
 | Kernel source snapshots | [`kernel_sources/`](kernel_sources/) |
 | Checkpoint rerun map | [`../checkpoints/`](../checkpoints/) |
@@ -30,8 +30,8 @@ pointer above uses the non-`tmpdir` artifact name.
   diagnostics, and production-wrapper rows as if they were one causal ladder.
 - Use `publication_role`, `causal_ladder_eligible`, and correctness metadata in
   the JSONL rows to determine what each row is allowed to support.
-- FLA references are recorded vendored references unless the row metadata
-  explicitly verifies package identity.
+- Headline FLA rows use `flash-linear-attention==0.5.1`. Older diagnostic rows
+  may use recorded vendored FLA snapshots and are labeled in metadata.
 - Rows that record `dirty=true` for a TileOps worktree are archived evidence
   rows, not clean-commit reproduction claims. The harness/adapters used to
   generate the archived rows are snapshotted in [`ladder/harness/`](ladder/harness/).

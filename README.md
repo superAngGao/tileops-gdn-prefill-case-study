@@ -15,8 +15,8 @@ a scoped serving dispatch path using three ingredients:
 
 The optimized path has merged into TileOps main through
 [tile-ai/TileOps#1596](https://github.com/tile-ai/TileOPs/pull/1596). The
-archived benchmark package in this repository was collected from the pre-merge
-PR1596 worktree under the recorded benchmark contract.
+headline benchmark package in this repository was refreshed on the clean
+PR1596 merge commit under the recorded dependency contract.
 
 ## What To Read
 
@@ -59,14 +59,14 @@ The headline comparisons have different roles:
 | Row family | Role |
 | --- | --- |
 | TileOps scoped dispatch | The optimized TileOps GDN prefill path discussed in the case study. |
-| Recorded vendored FLA reference | Correctness oracle and latency context; not an externally verified official FLA package claim. |
+| FLA `0.5.1` reference | Correctness oracle and latency context for the headline TileOps/FLA surface. |
 | Public FlashQLA TL0.1.8 anchor | Public-environment comparison and schedule reference; not same-lowering attribution. |
 
 The machine-readable source of truth for the headline surface is:
 
-- [`production_surface_tileops_vs_fla_20260701.jsonl`](evidence/ladder/results/production_surface_tileops_vs_fla_20260701.jsonl)
+- [`production_surface_tileops_vs_fla_20260709_clean_pr1596_tl011_fla051.jsonl`](evidence/ladder/results/production_surface_tileops_vs_fla_20260709_clean_pr1596_tl011_fla051.jsonl)
 - [`production_surface_flashqla_20260701.jsonl`](evidence/ladder/results/production_surface_flashqla_20260701.jsonl)
-- [`production_surface_correctness_metrics_20260708.jsonl`](evidence/ladder/results/production_surface_correctness_metrics_20260708.jsonl)
+- [`production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.jsonl`](evidence/ladder/results/production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.jsonl)
 
 ## Repository Map
 
@@ -98,8 +98,8 @@ If you are reviewing claims rather than reading the story:
 
 - TileOps vs FlashQLA numbers are public-environment comparisons, not
   same-lowering replay-attribution experiments.
-- FLA rows are recorded vendored FLA references unless package identity is
-  explicitly verified in the evidence metadata.
+- Headline FLA rows use `flash-linear-attention==0.5.1`; older diagnostic rows
+  may use recorded vendored FLA source snapshots and are labeled in metadata.
 - FlashQLA supplied the CP-split replay schedule family. TileOps adapted that
   schedule, combined it with a blocked-inverse / Neumann-style A producer, and
   turned the result into a scoped dispatch surface in TileOps.

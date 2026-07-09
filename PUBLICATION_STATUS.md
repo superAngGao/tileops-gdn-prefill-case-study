@@ -20,18 +20,19 @@ This repository packages the current GDN prefill AKO case study as three layers:
   commit `79469fc0ddae584537df03e35d935575870574f6`.
 - A-producer attribution: same-input A/replay ablation rows archived under
   `evidence/ladder/results/section11_*`.
-- Correctness reference: recorded vendored FLA reference, with package identity
-  caveats preserved in metadata. The five-shape production surface has an
+- Correctness reference: `flash-linear-attention==0.5.1` for the headline
+  clean PR1596 surface; older diagnostics may use recorded vendored FLA source
+  snapshots and keep that caveat in metadata. The five-shape production surface has an
   archived correctness-metrics refresh with p95/p99 absolute error, mean
   absolute error, L2 norm-relative error, nonfinite counts, and input hashes:
-  `evidence/ladder/summaries/production_surface_correctness_metrics_20260708.md`.
+  `evidence/ladder/summaries/production_surface_correctness_metrics_20260709_clean_pr1596_tl011_fla051.md`.
 
 ## Release Caveats
 
 - The FlashQLA comparison is public-environment context, not a same-lowering
   attribution experiment.
-- The FLA baseline is described as a recorded vendored FLA reference unless
-  package identity is independently verified.
+- Headline FLA rows use `flash-linear-attention==0.5.1`. Older diagnostics that
+  rely on vendored FLA snapshots remain labeled as recorded vendored references.
 - The TL0.1.8-lowering FlashQLA-style prepare row is an external-lowering
   harness row, not a native current-TileLang KKT port.
 - Benchmark tables require refresh if the TileOps main/release commit,

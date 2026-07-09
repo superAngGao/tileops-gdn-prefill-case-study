@@ -167,6 +167,19 @@ def _fla_root_meta() -> dict[str, Any]:
 def _fla_reference_identity() -> dict[str, Any]:
     package_version = _package_version("flash-linear-attention") or _package_version("fla")
     vendor = _fla_vendor_path()
+    if package_version == "0.5.1":
+        version_note = (
+            "The environment imports flash-linear-attention package version 0.5.1; "
+            "this satisfies the requested FLA reference identity for rows that "
+            "record package_version=0.5.1."
+        )
+    else:
+        version_note = (
+            "The experiment plan asks for FLA 0.5.1. This environment imports "
+            "the vendored FLA op source directly when the package metadata is "
+            "unavailable; formal ladder rows must verify package version or map "
+            "the recorded commit to the intended release."
+        )
     return {
         "variant_id": "ref_fla_051",
         "requested_version": "0.5.1",
@@ -178,12 +191,7 @@ def _fla_reference_identity() -> dict[str, Any]:
             if package_version == "0.5.1"
             else "unverified_commit_based_reference"
         ),
-        "version_note": (
-            "The experiment plan asks for FLA 0.5.1. This environment imports "
-            "the vendored FLA op source directly when the package metadata is "
-            "unavailable; formal ladder rows must verify package version or map "
-            "the recorded commit to the intended release."
-        ),
+        "version_note": version_note,
     }
 
 
