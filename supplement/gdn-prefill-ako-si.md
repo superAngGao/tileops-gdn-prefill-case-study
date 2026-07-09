@@ -29,6 +29,27 @@ evidence under the recorded metadata, not clean-commit reproduction claims. The
 evidence-generation harness and adapters are snapshotted in
 [`evidence/ladder/harness/`](../evidence/ladder/harness/).
 
+### SI.0 Checkpoint Code Map
+
+Each checkpoint has a public source snapshot and a rerun entry under
+[`checkpoints/`](../checkpoints/). The table below maps the main evidence nodes
+to the complete kernel or harness code saved in this repository.
+
+| Checkpoint | Public source snapshot | Rerun entry | Evidence |
+| --- | --- | --- | --- |
+| Initial correct prefill | [`historical/initial-f1472392`](../evidence/kernel_sources/historical/initial-f1472392/) | [`01_initial_correctness`](../checkpoints/01_initial_correctness/) | `formal_64k_h16_historical_local.jsonl` |
+| Local prepare-specialized AKO | [`historical/prepare-00a60b19`](../evidence/kernel_sources/historical/prepare-00a60b19/) | [`02_local_prepare_specialized`](../checkpoints/02_local_prepare_specialized/) | `formal_64k_h16_historical_local.jsonl` |
+| Local h-tile diagnostic | [`historical/htile-82707454`](../evidence/kernel_sources/historical/htile-82707454/) | [`03_local_h_tile_diagnostic`](../checkpoints/03_local_h_tile_diagnostic/) | `formal_64k_h16_historical_local.jsonl` |
+| Local BTHD wall | [`historical/bthdwall-d09c8f2d`](../evidence/kernel_sources/historical/bthdwall-d09c8f2d/) | [`04_local_wall`](../checkpoints/04_local_wall/) | `formal_64k_h16_historical_local.jsonl` |
+| CP-split bridge | [`tileops_pr1596`](../evidence/kernel_sources/tileops_pr1596/) plus [`harness`](../evidence/ladder/harness/) | [`05_cp_split_bridge`](../checkpoints/05_cp_split_bridge/) | `formal_64k_h16_v5_ladder.jsonl` |
+| FlashQLA-style prepare-A + TileOps replay | [`flashqla_tl018_lowered`](../evidence/kernel_sources/flashqla_tl018_lowered/) plus [`tl018_fq_prepare_launcher.cu`](../evidence/ladder/harness/tl018_fq_prepare_launcher.cu) | [`06_flashqla_style_prepare`](../checkpoints/06_flashqla_style_prepare/) | `section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl` |
+| Blocked-inverse / Neumann prepare | [`tileops_pr1596`](../evidence/kernel_sources/tileops_pr1596/) plus [`harness`](../evidence/ladder/harness/) | [`07_neumann_prepare`](../checkpoints/07_neumann_prepare/) | `section11_tileops_benchmark_ext_lowering_vs_neumann_64k_h16.jsonl` |
+| Scoped dispatch surface | [`tileops_pr1596`](../evidence/kernel_sources/tileops_pr1596/) | [`08_dispatch_surface`](../checkpoints/08_dispatch_surface/) | `production_surface_tileops_vs_fla_20260701.jsonl` |
+
+The source snapshots are included for audit and rerun setup. For performance
+reruns, use a full TileOps checkout at the listed commit or reconstruct an
+equivalent root from the snapshot and normal TileOps tree.
+
 ### SI.1 Source Similarity Is Not Performance Equality
 
 Studying FlashQLA was a source-level adaptation of a schedule idea, not a

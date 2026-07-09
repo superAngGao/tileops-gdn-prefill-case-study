@@ -19,12 +19,15 @@ import torch
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_PR1596_ROOT = Path("/home/ga/TileOPs-pr1596")
+DEFAULT_PR1596_ROOT = Path(os.environ.get("TILEOPS_GDN_PR1596_ROOT", "/home/ga/TileOPs-pr1596"))
+DEFAULT_HISTORY_ROOT_BASE = Path(
+    os.environ.get("TILEOPS_GDN_HISTORY_ROOT_BASE", "/home/ga/TileOPs-gdn-history")
+)
 HISTORICAL_PREFILL_ROOTS = {
-    "local_initial_prefill_f147": Path("/home/ga/TileOPs-gdn-history/initial-f1472392"),
-    "local_prepare_specialized_00a60": Path("/home/ga/TileOPs-gdn-history/prepare-00a60b19"),
-    "local_h_tile_tuned_827": Path("/home/ga/TileOPs-gdn-history/htile-82707454"),
-    "local_bthd_wall_d09c": Path("/home/ga/TileOPs-gdn-history/bthdwall-d09c8f2d"),
+    "local_initial_prefill_f147": DEFAULT_HISTORY_ROOT_BASE / "initial-f1472392",
+    "local_prepare_specialized_00a60": DEFAULT_HISTORY_ROOT_BASE / "prepare-00a60b19",
+    "local_h_tile_tuned_827": DEFAULT_HISTORY_ROOT_BASE / "htile-82707454",
+    "local_bthd_wall_d09c": DEFAULT_HISTORY_ROOT_BASE / "bthdwall-d09c8f2d",
 }
 
 

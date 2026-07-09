@@ -1,0 +1,8 @@
+tileops/ops/gated_deltanet.py
+tileops/kernels/gated_deltanet/fused_prepare_compute_w_u.py
+tileops/kernels/gated_deltanet/gated_deltanet_fwd.py
+tileops/kernels/gated_deltanet/gated_deltanet_prefill.py
+benchmarks/ops/bench_gated_deltanet.py
+benchmarks/ops/bench_gated_deltanet_prefill.py
+tests/ops/test_gated_deltanet_fwd.py
+tests/ops/test_gated_deltanet_prefill.py

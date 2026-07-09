@@ -30,10 +30,12 @@ archived JSONL evidence package.
 ## Provenance Boundary
 
 Several archived JSONL rows record `dirty=true` for the local TileOps or
-pre-merge PR1596 worktree. That means the rows should be treated as archived
-evidence under their recorded metadata, not as clean-commit reproduction claims.
+pre-merge PR1596 worktree. That means those rows should be interpreted under
+their recorded metadata. The checkpoint map in `../../../checkpoints/` gives
+rerun commands and source snapshots so the same nodes can be rerun from explicit
+TileOps roots instead of relying on the old local paths.
 
-This snapshot makes the evidence-generation code inspectable, but it does not
-turn the archived rows into a one-command public reproduction package. A clean
-main/release performance claim should be collected from the merged TileOps code
-under a clean checkout and recorded as a new evidence package.
+This snapshot makes the evidence-generation code inspectable and rerunnable in
+a compatible TileOps/FlashQLA/H200 environment. A clean main/release
+performance claim should still be collected from the merged TileOps code under
+a clean checkout and recorded as a new evidence package.

@@ -42,6 +42,13 @@ Use the supporting information as the artifact index:
 It points to JSONL files, reproduction commands, lowering caveats, source
 caveats, and supplementary diagnostics.
 
+Use the checkpoint map when you want to rerun a specific story node:
+
+[`checkpoints/`](checkpoints/)
+
+Each checkpoint folder names the variant or row, the expected evidence file, the
+kernel source snapshot, and the rerun command.
+
 ## Headline Scope
 
 The main article reports a five-shape H200 production-surface sweep for
@@ -68,7 +75,8 @@ The machine-readable source of truth for the headline surface is:
 | `articles/` | Public case-study entry point. |
 | `reports/` | Companion evidence report. |
 | `supplement/` | Artifact index and claim guardrails. |
-| `evidence/` | Archived summaries, JSONL benchmark outputs, and variant inventory. |
+| `checkpoints/` | Per-checkpoint source map and rerun commands. |
+| `evidence/` | Archived summaries, JSONL benchmark outputs, source snapshots, harness code, and variant inventory. |
 | `algorithm/` | Supplemental algorithm notes. |
 | `archive/` | Historical drafts and planning documents retained for provenance. |
 
@@ -79,9 +87,11 @@ If you are reviewing claims rather than reading the story:
 1. Check the headline surface JSONL files listed above.
 2. Check prepare-A / replay attribution:
    [`section11_a_producer_ablation_64k_h16.md`](evidence/ladder/summaries/section11_a_producer_ablation_64k_h16.md).
-3. Check variant roles and rejected rows:
+3. Check checkpoint-specific source and rerun commands:
+   [`checkpoints/`](checkpoints/).
+4. Check variant roles and rejected rows:
    [`variant_inventory.md`](evidence/ladder/docs/variant_inventory.md).
-4. Check rerun commands and caveats:
+5. Check supplementary caveats:
    [`gdn-prefill-ako-si.md`](supplement/gdn-prefill-ako-si.md).
 
 ## Evidence Boundaries
@@ -95,6 +105,9 @@ If you are reviewing claims rather than reading the story:
   turned the result into a scoped dispatch surface in TileOps.
 - JSONL files under `evidence/` are the machine-readable source of truth for
   the archived benchmark rows.
+- Kernel source snapshots under `evidence/kernel_sources/` and harness code
+  under `evidence/ladder/harness/` make each checkpoint auditable and rerunnable
+  in a compatible TileOps/FlashQLA/H200 environment.
 
 See [`PUBLICATION_STATUS.md`](PUBLICATION_STATUS.md) for the current release
 status and known caveats.
