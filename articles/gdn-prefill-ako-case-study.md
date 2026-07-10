@@ -5,8 +5,9 @@ needs to process thousands of tokens in parallel, but the operator must still
 produce the same recurrent state as sequential decode. That makes it harder
 than optimizing a standalone GEMM.
 
-In this case study, TileOps turns that recurrent operator into a scoped
-synthetic serving dispatch path. The path has merged into TileOps main via
+This case study follows how TileOps turned the recurrent GDN prefill operator
+into a scoped, dispatchable serving path for synthetic long-context workloads.
+The path has merged into TileOps main via
 [PR1596](https://github.com/tile-ai/TileOPs/pull/1596). Under the dependency
 contract below, the clean PR1596 merge-commit rerun measured `3.9-6.3x` faster
 than the FLA `0.5.1` reference used as the correctness oracle, with a
@@ -95,6 +96,15 @@ Reference identity: the headline TileOps/FLA rerun imports
 `flash-linear-attention==0.5.1`; the package version is recorded in the JSONL.
 Older historical diagnostics may still use vendored FLA source snapshots and
 are labeled separately in the evidence bundle.
+
+Validity scope:
+
+- synthetic inputs only; no claim about real model activation distributions;
+- `B=1`, fp16, BTHD, `DK=DV=128`, `chunk64`;
+- H200 only for the headline rows;
+- one recorded seed per headline shape;
+- FlashQLA rows are public-context measurements with lighter provenance
+  metadata than the clean TileOps/FLA rerun.
 
 Credit boundary:
 
@@ -333,7 +343,7 @@ The first TileOps-owned CP adaptation was useful as bridge evidence, but it
 was not a finished FlashQLA reproduction. The row provided bridge evidence that
 the schedule idea could be adapted into TileOps, and it also made the difference
 between a schedule idea and a production-quality kernel visible. The main text
-therefore uses the later A/replay ablation and production sweep for performance
+therefore uses the later A/replay ablation and scoped-surface sweep for performance
 claims; the intermediate bridge row stays in SI.
 
 ## 5. Search-Space Expansion II: Blocked-Inverse / Neumann Prepare
@@ -371,6 +381,15 @@ producer and the replay/output kernel. In the headline CP dispatch path, the
 materialized `A` is not a complete gate-folded logical `A`: TileOps constructs
 it with a `g_zero` convention and passes chunk-local `g_cum` separately into
 replay.
+
+Implementation ABI contract:
+
+| Item | Headline CP dispatch path |
+| --- | --- |
+| Materialized `A` | Blocked-inverse / Neumann-style `A` built with the `g_zero` convention. |
+| Replay inputs | `A`, chunk-local `g_cum`, `beta`, and the usual `q/k/v` tensors. |
+| Factor ownership | Gate accumulation is split: not all gate factors are folded into materialized `A`. |
+| Correctness claim | Full `o` and `final_state` correctness under the recorded reference, not equality to every generic/KKT materialized `A`. |
 
 The beta index is also convention-dependent. Some derivations place the write
 strength on the earlier token or fold it into the key/value write tensors. These
@@ -429,25 +448,25 @@ it is a more parallel backend-friendly shape. The win is therefore a scheduling
 and backend-shape win, not a claim that the mathematical operator became cheaper
 in the abstract. SI gives the full MAC accounting.
 
-The prepare-A claim rests on the following same-shape context rows. The public
-FlashQLA row is external context; the attribution comparison is the two
-TileOps-replay rows. The middle row uses the FlashQLA TL0.1.8-lowered KKT
-producer through an external launcher, then feeds its produced `A/g` tensors
-into the TileOps PR1596 replay path. It is not a native current-TileLang KKT
-port and not a direct call to the full FlashQLA forward path. This A/replay
-ablation in the companion report uses the exported public TL0.1.8 artifact as
-its fixed reference context; the headline surface correctness gate uses FLA
-`0.5.1`.
+The prepare-A claim rests on the following same-shape context rows. The
+`Public FlashQLA full path` row is external context; the attribution comparison
+is between `FlashQLA-style A on TileOps replay` and
+`TileOps blocked-inverse A on TileOps replay`. The FlashQLA-style A row uses
+the FlashQLA TL0.1.8-lowered KKT producer through an external launcher, then
+feeds its produced `A/g` tensors into the TileOps PR1596 replay path. It is not
+a native current-TileLang KKT port and not a direct call to the full FlashQLA
+forward path. This A/replay ablation in the companion report uses the exported
+public TL0.1.8 artifact as its fixed reference context; the headline surface
+correctness gate uses FLA `0.5.1`.
 
 | Row | Prepare-A producer | Replay/output | `64K/H16` latency | Meaning |
 | --- | --- | --- | ---: | --- |
-| public FlashQLA full | public FlashQLA TL0.1.8 KKT | public FlashQLA TL0.1.8 CP replay | `1.306838 ms` | external baseline |
-| FlashQLA-style prepare A + TileOps replay | TL0.1.8-lowered KKT producer via external launcher | TileOps CP replay | `0.8245 ms` | refreshed no-Neumann combined row |
-| TileOps prepare A + TileOps replay | blocked-inverse / Neumann-style A | TileOps CP replay | `0.7474 ms` | refreshed same-run Neumann combined row |
+| Public FlashQLA full path | public FlashQLA TL0.1.8 KKT | public FlashQLA TL0.1.8 CP replay | `1.306838 ms` | external baseline |
+| FlashQLA-style A on TileOps replay | TL0.1.8-lowered KKT producer via external launcher | TileOps CP replay | `0.8245 ms` | FlashQLA-style prepare-A source feeding TileOps replay |
+| TileOps blocked-inverse A on TileOps replay | blocked-inverse / Neumann-style A | TileOps CP replay | `0.7474 ms` | TileOps prepare-A source feeding the same TileOps replay |
 
-Nearby wrapper and bridge numbers are separated in the SI so the A-producer
-attribution, replay attribution, and scoped-dispatch claim do not collapse into
-one misleading speedup ladder.
+The SI keeps wrapper rows and bridge rows out of the main ladder because they
+answer different attribution questions.
 
 ### Final Attribution Split
 
@@ -466,10 +485,11 @@ The attribution split is:
 | --- | --- | --- |
 | CP-split schedule | FlashQLA source and public anchor | FlashQLA supplied the schedule family that breaks the long replay wall. |
 | Replay/output implementation | replay-only: exported public FlashQLA `A/g` + TileOps replay: `0.542807 ms`; public FlashQLA replay anchor: `0.860569 ms` | TileOps replay/output contributes an independent speedup under this benchmark method. |
-| Prepare-A producer | FlashQLA-style prepare + TileOps replay: `0.8245 ms`; TileOps prepare + TileOps replay: `0.7474 ms` | blocked-inverse / Neumann-style prepare improves the same replay family in the refreshed same-run measurement. |
+| Prepare-A producer | `FlashQLA-style A on TileOps replay`: `0.8245 ms`; `TileOps blocked-inverse A on TileOps replay`: `0.7474 ms` | blocked-inverse / Neumann-style prepare improves the same replay family in the refreshed same-run measurement. |
 
 The native current-TL FlashQLA-style KKT producer remains a rejected diagnostic
-at `64K/H16`; the no-Neumann row above uses the TL0.1.8-lowering harness.
+at `64K/H16`; `FlashQLA-style A on TileOps replay` uses the TL0.1.8-lowering
+harness.
 
 ## 6. Production: From Point Kernel To Scoped Dispatch Surface
 
@@ -502,7 +522,8 @@ explicit attribution lanes, and clear credit boundaries.
 The reusable workflow has six parts:
 
 1. **Separate evidence lanes.** A public anchor, a same-input ablation, a
-   historical diagnostic, and a production sweep answer different questions.
+   historical diagnostic, and a scoped dispatch sweep answer different
+   questions.
 2. **Treat failed rows as information, not benchmarks.** A failed current-TL
    KKT port explains a boundary; it does not become a performance row.
 3. **Inspect lowering when the claim depends on lowering.** Source-level
@@ -515,10 +536,11 @@ The reusable workflow has six parts:
 6. **Benchmark the dispatch surface.** Serving kernels are selected by shape and
    policy, not by a single isolated latency number.
 
-The broader lesson returns to the opening scheduling conflict. Agents can move
-quickly inside a measured search space, but correctness gates, benchmark
-metadata, evidence lanes, and attribution boundaries determine which results
-are safe to publish.
+The broader lesson returns to the opening scheduling conflict. The reusable
+result is not an isolated speedup number; it is the audit framework around the
+speedup. Agents can move quickly inside a measured search space, but
+correctness gates, benchmark metadata, evidence lanes, and attribution
+boundaries determine which results are safe to publish.
 
 ## References
 

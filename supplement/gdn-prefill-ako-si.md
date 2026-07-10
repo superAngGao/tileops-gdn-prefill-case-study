@@ -367,15 +367,15 @@ headline Section 11 table.
 
 | Row | A producer | Replay/output path | Timing scope | Correctness reference | Latency |
 | --- | --- | --- | --- | --- | ---: |
-| `FQ/FQ` | public FlashQLA TL0.1.8 KKT | public FlashQLA TL0.1.8 CP replay | full public op | public FlashQLA self row | `1.306838 ms` |
+| `Public FlashQLA full path` | public FlashQLA TL0.1.8 KKT | public FlashQLA TL0.1.8 CP replay | full public op | public FlashQLA self row | `1.306838 ms` |
 | `FQ/FQ producer` | public FlashQLA TL0.1.8 KKT | producer-only row | `chunk_local_cumsum + kkt_solve` | component timing only | `0.471233 ms` |
 | `FQ/FQ replay` | exported public FlashQLA A/g | public FlashQLA TL0.1.8 CP replay | `cp_preprocess + fused_gdr_fwd` | component timing only | `0.860569 ms` |
-| `TL018-lowering/TO full` | TL0.1.8 lowered KKT via external launcher | TileOps PR1596 CP replay | full combined row | public TL0.1.8 artifact | `0.8245 ms` |
+| `FlashQLA-style A on TileOps replay` | TL0.1.8 lowered KKT via external launcher | TileOps PR1596 CP replay | full combined row | public TL0.1.8 artifact | `0.8245 ms` |
 | `TL018-lowering/TO prepare` | TL0.1.8 lowered KKT via external launcher | producer-only row | current `chunk_local_cumsum` + external `kkt_solve` | exact `A/g` vs public artifact | `0.2693 ms` |
 | `TL018-lowering/TO replay` | produced TL0.1.8-lowering A/g | TileOps PR1596 CP replay | replay-only | public TL0.1.8 artifact | `0.542159 ms` |
 | `FQ18/TO` | exported public FlashQLA TL0.1.8 A/g | TileOps PR1596 CP replay | replay-only | recorded vendored FLA reference | `0.542807 ms` |
 | `TO/TO replay` | TileOps blocksolve A | TileOps PR1596 CP replay | replay-only | recorded vendored FLA reference | `0.542905 ms` |
-| `TO/TO full` | TileOps blocksolve A | TileOps PR1596 CP replay | include producers | public TL0.1.8 artifact | `0.7474 ms` |
+| `TileOps blocked-inverse A on TileOps replay` | TileOps blocksolve A | TileOps PR1596 CP replay | include producers | public TL0.1.8 artifact | `0.7474 ms` |
 
 This changes the explanation. The generic-A CP bridge is not a faithful
 FlashQLA reproduction. It is a controlled bridge row that keeps a conservative
@@ -449,7 +449,7 @@ artifact while the current-TL `A` contains nonfinite/extreme values. Therefore
 the measured combined row is a rejected diagnostic, not a performance point.
 The passing July 1 row uses the TL0.1.8 lowered KKT binary/lowering through an
 external launcher. The native current-TL port is still rejected, but the strict
-publication state for the no-Neumann combined row is now measured.
+publication state for `FlashQLA-style A on TileOps replay` is now measured.
 
 The supported narrative is therefore:
 
