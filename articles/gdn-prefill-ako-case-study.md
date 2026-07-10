@@ -189,11 +189,14 @@ contract. Each candidate needed four gates:
    relative error near zero is interpreted together with absolute error and
    final-state checks. The gate is intentionally a little wider than the final
    observed errors so AKO candidates can iterate without being rejected by
-   harmless fp16 long-recurrence noise. The accepted headline rows are much
-   tighter in practice: sampled output `p99_abs` is `6.104e-05`, output
-   `max_abs` stays within `0.002502`, output L2 relative error stays within
-   `0.003501`, nonfinite counts are zero, final-state sampled `p99_abs` stays
-   within `8.757e-05`, and final-state `max_abs` stays within `6.901e-04`.
+   harmless fp16 long-recurrence noise. It also lets the agent try more
+   aggressive implementation variants during search, such as reordering local
+   arithmetic or changing store/replay paths, without treating every small fp16
+   drift as a hard stop. The accepted headline rows are much tighter in
+   practice: sampled output `p99_abs` is `6.104e-05`, output `max_abs` stays
+   within `0.002502`, output L2 relative error stays within `0.003501`,
+   nonfinite counts are zero, final-state sampled `p99_abs` stays within
+   `8.757e-05`, and final-state `max_abs` stays within `6.901e-04`.
    This tolerance is scoped to fp16 long-sequence recurrent accumulation and
    requires both output and final-state checks, not only a single output tensor.
 2. **Benchmark gate.** Use the TileOps benchmark infrastructure and preserve
